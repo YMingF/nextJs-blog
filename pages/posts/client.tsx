@@ -1,5 +1,6 @@
 import { GetStaticProps } from 'next';
 import { getPosts } from '@/lib/posts';
+import Link from 'next/link';
 
 type Props = {
   posts: Post[];
@@ -10,7 +11,11 @@ export default function ClientPage(props: Props) {
     <div>
       <h1>静态内容</h1>
       { posts.map((p: Post) => (
-          <div key={ p.id }></div>
+          <div key={ p.id }>
+            <Link href={p.id}>
+              {p.id }
+            </Link>
+          </div>
       )) }
     </div>
   );
