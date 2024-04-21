@@ -1,15 +1,32 @@
-import Image from "next/image";
-import { Inter } from "next/font/google";
-import png from 'assets/1.png'
-import Link from 'next/link';
+import { GetServerSideProps, NextPage } from 'next';
+import UAParser from 'ua-parser-js';
 
-const inter = Inter({ subsets: ["latin"] });
-export default function Home() {
+type Props = {
+  browser: {
+    name: string;
+    version: string;
+    major: string;
+  };
+};
+const Index: NextPage<Props> = (props) => {
+  const { browser } = props;
   return (
-   <main>
-     <h1>测试而已</h1>
-       <Link href='posts/test.js'>点击跳转到另一个页面</Link>
-     <Image src={png} alt={'ss'}></Image>
-   </main>
+    <main>
+      <h1>你的浏览器是{browser.name}</h1>
+    </main>
   );
-}
+};
+export default Index;
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const ua = context.req.headers["user-agent"];
+  /*
+  * to detect Browser, Engine, OS, CPU, and Device type/model from User-Agent data with relatively small footprint
+  * (~17KB minified, ~6KB gzipped) that can be used either in browser (client-side) or node.js (server-side).
+  * */
+  const result = new UAParser(ua).getResult();
+  return {
+    props: {
+      browser: result.browser,
+    },
+  };
+};

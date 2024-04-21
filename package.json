@@ -10,12 +10,14 @@
   },
   "dependencies": {
     "@types/axios": "^0.14.0",
+    "@types/ua-parser-js": "^0.7.39",
     "axios": "^1.6.8",
     "file-loader": "^6.2.0",
     "gray-matter": "^4.0.3",
     "next": "14.2.2",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "ua-parser-js": "^1.0.37"
   },
   "devDependencies": {
     "@types/node": "^20",
