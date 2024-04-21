@@ -1,22 +1,26 @@
-import axios from "axios";
-import { SetStateAction, useEffect, useState } from "react";
-import { NextPage } from "next";
-import ClientHook from '@/hooks/usePosts';
+import { GetStaticProps } from 'next';
+import { getPosts } from '@/lib/posts';
 
-
-export default function ClientPage() {
-  const { posts, isLoading } = ClientHook();
+type Props = {
+  posts: Post[];
+};
+export default function ClientPage(props: Props) {
+  const { posts } = props;
   return (
     <div>
-      {isLoading ? (
-        <div>加载中</div>
-      ) : (
-        posts.map((p) => (
-          <div key={p.id}>
-            {p.id}--{p.content}
-          </div>
-        ))
-      )}
+      <h1>静态内容</h1>
+      { posts.map((p: Post) => (
+          <div key={ p.id }></div>
+      )) }
     </div>
   );
 }
+// export一定不能漏
+export const getStaticProps: GetStaticProps = async () => {
+  const posts = await getPosts();
+  return {
+    props: {
+      posts,
+    },
+  };
+};

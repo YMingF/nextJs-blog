@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-type Post = {
-  id: string;
-  content: string;
-};
+
 export default function ClientHook() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
