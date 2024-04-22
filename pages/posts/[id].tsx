@@ -6,7 +6,11 @@ type Props = {
 };
 const postsShow: NextPage<Props> = (props) => {
   const { post } = props;
-  return <div>{post}</div>;
+  return (
+    <div>
+      <article dangerouslySetInnerHTML={ { __html: post } }></article>
+    </div>
+  );
 };
 export default postsShow;
 
