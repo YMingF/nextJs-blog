@@ -17,9 +17,11 @@ export default function ClientPage(props: Props) {
             </Link>
           </div>
       )) }
+      <Link href={'test'}>点击看下</Link>
     </div>
   );
 }
+
 // export一定不能漏
 export const getStaticProps: GetStaticProps = async () => {
   const posts = await getPosts();
