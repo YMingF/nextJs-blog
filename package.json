@@ -8,7 +8,8 @@
       "start": "next start",
       "migration:run": "typeorm migration:run",
       "migration:revert": "typeorm migration:revert",
-      "entity:create": "typeorm entity:create"
+      "entity:create": "typeorm entity:create",
+      "typeorm:build": "babel -w ./src --out-dir dist --extensions .ts,.tsx"
    },
    "dependencies": {
       "@babel/cli": "^7.10.1",
