@@ -1,39 +1,39 @@
 {
-  "name": "my-app",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "ts-node src/index.ts",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@babel/cli": "^7.24.5",
-    "@types/axios": "^0.14.0",
-    "@types/marked": "^6.0.0",
-    "@types/ua-parser-js": "^0.7.39",
-    "axios": "^1.6.8",
-    "file-loader": "^6.2.0",
-    "gray-matter": "^4.0.3",
-    "marked": "^12.0.2",
-    "next": "14.2.2",
-    "pg": "^8.11.5",
-    "react": "^18",
-    "react-dom": "^18",
-    "reflect-metadata": "^0.2.2",
-    "typeorm": "^0.3.20",
-    "ua-parser-js": "^1.0.37"
-  },
-  "devDependencies": {
-    "@babel/plugin-proposal-decorators": "^7.24.1",
-    "@types/node": "^20.12.7",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.2",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5"
-  }
+   "name": "nextjs-blog-1",
+   "version": "0.1.0",
+   "private": true,
+   "scripts": {
+      "dev": "concurrently \"next dev\" \"babel -w ./src --out-dir dist --extensions .ts,.tsx\"",
+      "build": "next build",
+      "start": "next start",
+      "migration:run": "typeorm migration:run",
+      "migration:revert": "typeorm migration:revert",
+      "entity:create": "typeorm entity:create"
+   },
+   "dependencies": {
+      "@babel/cli": "^7.10.1",
+      "axios": "^0.19.2",
+      "gray-matter": "^4.0.2",
+      "marked": "^1.1.0",
+      "next": "9.4.1",
+      "pg": "^8.2.1",
+      "react": "16.13.1",
+      "react-dom": "16.13.1",
+      "reflect-metadata": "^0.1.13",
+      "sass": "^1.26.5",
+      "typeorm": "^0.2.25",
+      "ua-parser-js": "^0.7.21"
+   },
+   "devDependencies": {
+      "@babel/plugin-proposal-decorators": "^7.10.1",
+      "@types/axios": "^0.14.0",
+      "@types/marked": "^0.7.4",
+      "@types/node": "^14.0.6",
+      "@types/react": "^16.9.35",
+      "@types/react-dom": "^16.9.8",
+      "@types/ua-parser-js": "^0.7.33",
+      "concurrently": "^5.2.0",
+      "next-images": "^1.4.0",
+      "typescript": "^3.9.2"
+   }
 }
