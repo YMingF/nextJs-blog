@@ -1,12 +1,13 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export class CreatePost1716610977922 implements MigrationInterface {
+export class CreateUsers1716617668193 implements MigrationInterface {
+
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         // 升级数据库
         return await queryRunner.createTable(
             new Table({
-                name: "posts",
+                name: "users",
                 columns: [
                     {
                         name: "id",
@@ -16,12 +17,12 @@ export class CreatePost1716610977922 implements MigrationInterface {
                         generationStrategy: "increment",
                     },
                     {
-                        name: "title",
+                        name: "username",
                         type: "varchar",
                     },
                     {
-                        name: "content",
-                        type: "text",
+                        name: "password_digest",
+                        type: "varchar",
                     },
                 ],
             })
@@ -30,6 +31,6 @@ export class CreatePost1716610977922 implements MigrationInterface {
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         // 降级数据库
-        return await queryRunner.dropTable("posts");
+        return await queryRunner.dropTable("users" );
     }
 }
