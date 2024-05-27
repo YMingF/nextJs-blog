@@ -1,25 +1,28 @@
-import 'reflect-metadata';
-import { createConnection } from 'typeorm';
-import { Post } from './entity/Post';
+import "reflect-metadata";
+import { createConnection } from "typeorm";
+import { User } from "./entity/User";
+import { Post } from "./entity/Post";
+import { Comment } from "./entity/Comment";
 
 createConnection()
   .then(async (connection) => {
-    // 查询当前post数据库中有的数据
-    const posts = await connection.manager.find(Post);
-      console.log(`posts.length`, posts.length);
-    if (posts.length === 0) {
-      // 新建一个记录。并存到数据库中
-      await connection.manager.save(
-        new Array(10).fill(1).map((i,index) => {
-          return new Post({ title: `post ${index+1}`, content: `第${index+1}个文章` });
-        })
-      );
-    }
-
-    //再次查询当前posts数据库中的数据。
-    const newPost = await connection.manager.find(Post);
-    console.log(`newPost`, newPost);
-
+    const { manager } = connection;
+    const u1 = new User();
+    u1.username = "asda";
+    u1.passwordDigest = "123";
+    await manager.save(u1);
+    //
+    const p1 = new Post();
+    p1.title = "title1";
+    p1.content = "简单的内容";
+    p1.author = u1;
+    await manager.save(p1);
+    //
+    const c1 = new Comment();
+    c1.content = "content111";
+    c1.user = u1;
+    c1.post = p1;
+    await manager.save(c1);
     connection.close();
   })
   .catch((error) => console.log(error));

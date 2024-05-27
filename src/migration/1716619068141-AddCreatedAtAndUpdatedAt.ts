@@ -7,13 +7,13 @@ export class AddCreatedAtAndUpdatedAt1716619068141
     await queryRunner.addColumns("users", [
       new TableColumn({
         name: "createdAt",
-        type: "time",
+        type: "timestamp",
         default: "now()",
         isNullable: false,
       }),
       new TableColumn({
         name: "updatedAt",
-        type: "time",
+        type: "timestamp",
         default: "now()",
         isNullable: false,
       }),
@@ -21,13 +21,13 @@ export class AddCreatedAtAndUpdatedAt1716619068141
     await queryRunner.addColumns("comments", [
       new TableColumn({
         name: "createdAt",
-        type: "time",
+        type: "timestamp",
         default: "now()",
         isNullable: false,
       }),
       new TableColumn({
         name: "updatedAt",
-        type: "time",
+        type: "timestamp",
         default: "now()",
         isNullable: false,
       }),
@@ -35,13 +35,13 @@ export class AddCreatedAtAndUpdatedAt1716619068141
     await queryRunner.addColumns("posts", [
       new TableColumn({
         name: "createdAt",
-        type: "time",
+        type: "timestamp",
         default: "now()",
         isNullable: false,
       }),
       new TableColumn({
         name: "updatedAt",
-        type: "time",
+        type: "timestamp",
         default: "now()",
         isNullable: false,
       }),
