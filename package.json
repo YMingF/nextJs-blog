@@ -9,7 +9,7 @@
       "m:create": "typeorm migration:create -n",
       "m:run": "typeorm migration:run",
       "m:revert": "typeorm migration:revert",
-      "entity:create": "typeorm entity:create",
+      "e:create": "typeorm entity:create -n",
       "typeorm:build": "babel -w ./src --out-dir dist --extensions .ts,.tsx",
       "dist": "node dist/seed.js"
    },
