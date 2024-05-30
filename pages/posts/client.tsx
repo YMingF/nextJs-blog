@@ -1,6 +1,6 @@
-import { GetStaticProps } from 'next';
-import { getPosts } from '@/lib/posts';
-import Link from 'next/link';
+import { GetStaticProps } from "next";
+import { getPosts } from "lib/posts";
+import Link from "next/link";
 
 type Props = {
   posts: Post[];
@@ -10,14 +10,12 @@ export default function ClientPage(props: Props) {
   return (
     <div>
       <h1>静态内容</h1>
-      { posts.map((p: Post) => (
-          <div key={ p.id }>
-            <Link href={p.id}>
-              {p.id }
-            </Link>
-          </div>
-      )) }
-      <Link href={'test'}>点击看下</Link>
+      {posts.map((p: Post) => (
+        <div key={p.id}>
+          <Link href={p.id}>{p.id}</Link>
+        </div>
+      ))}
+      <Link href={"test"}>点击看下</Link>
     </div>
   );
 }
@@ -28,6 +26,6 @@ export const getStaticProps: GetStaticProps = async () => {
   return {
     props: {
       posts,
-    }, 
+    },
   };
 };

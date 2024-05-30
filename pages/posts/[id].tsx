@@ -1,5 +1,5 @@
-import { getPost, getPostIds } from '@/lib/posts';
-import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
+import { getPost, getPostIds } from "lib/posts";
+import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 
 type Props = {
   post: string;
@@ -8,7 +8,7 @@ const postsShow: NextPage<Props> = (props) => {
   const { post } = props;
   return (
     <div>
-      <article dangerouslySetInnerHTML={ { __html: post } }></article>
+      <article dangerouslySetInnerHTML={{ __html: post }}></article>
     </div>
   );
 };
