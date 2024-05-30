@@ -1,19 +1,25 @@
 import { createConnection, getConnectionManager } from "typeorm";
+import { Post } from "src/entity/Post";
+import { User } from "src/entity/User";
+import { Comment } from "src/entity/Comment";
+import "reflect-metadata";
+import config from "ormconfig.json";
 
-const connectionPromise = (() => {
+const create = async () => {
+  // @ts-ignore
+  return createConnection({
+    ...config,
+    entities: [Post, User, Comment],
+  });
+};
+const connectionPromise = (async () => {
   const manager = getConnectionManager();
-  if (!manager.has("default")) {
-    // 若无默认connection，就创建新的
-    return createConnection();
-  } else {
-    // 复用之前已有的connection
-    const current = manager.get("default");
-    if (current.isConnected) {
-      return current;
-    } else {
-      return createConnection();
-    }
+  // 复用之前已有的connection
+  const current = manager.has("default") && manager.get("default");
+  if (current?.isConnected) {
+    await current.close();
   }
+  return create();
 })();
 export const getDatabaseConnection = async () => {
   return connectionPromise;

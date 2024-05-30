@@ -1,35 +1,33 @@
-import { getPost, getPostIds } from "lib/posts";
-import { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import { GetServerSideProps, NextPage } from "next";
+import { getDatabaseConnection } from "../../lib/getDatabaseConnection";
+import { Post } from "../../src/entity/Post";
 
 type Props = {
-  post: string;
+  post: Post;
 };
 const postsShow: NextPage<Props> = (props) => {
   const { post } = props;
   return (
     <div>
-      <article dangerouslySetInnerHTML={{ __html: post }}></article>
+      <h1>{post.title}</h1>
+      <article dangerouslySetInnerHTML={{ __html: post.content }}></article>
     </div>
   );
 };
 export default postsShow;
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const idList = await getPostIds();
-  const paths = idList.map((id) => {
-    return { params: { id } };
-  });
-  return {
-    paths,
-    fallback: false,
-  };
-};
-export const getStaticProps: GetStaticProps = async (x: any) => {
-  const id = x.params.id;
-  const post = await getPost(id);
+export const getServerSideProps: GetServerSideProps<
+  any,
+  { id: string }
+> = async (context) => {
+  // 拿到连接，从连接中去获取数据。
+  const connection = await getDatabaseConnection();
+  //  用context.params.id去获取你路由跳转时传过来的id值
+  const post = await connection.manager.findOne(Post, context.params.id);
+  console.log(`post`, post);
   return {
     props: {
-      post,
+      post: JSON.parse(JSON.stringify(post)),
     },
   };
 };

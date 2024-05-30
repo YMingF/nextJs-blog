@@ -1,27 +1,32 @@
 import { GetServerSideProps, NextPage } from "next";
 import UAParser from "ua-parser-js";
 import { getDatabaseConnection } from "../lib/getDatabaseConnection";
+import { Post } from "../src/entity/Post";
+import Link from "next/link";
 
 type Props = {
-  browser: {
-    name: string;
-    version: string;
-    major: string;
-  };
+  posts: Post[];
 };
 const Index: NextPage<Props> = (props) => {
-  const { browser } = props;
+  const { posts } = props;
+  console.log(`posts1 `, posts);
+
   return (
     <main>
-      <h1>你的浏览器是{browser.name}</h1>
+      <h1>文章列表</h1>
+      {posts.map((post) => (
+        <Link key={post.id} href={`/posts/${post.id}`}>
+          <a>{post.title}</a>
+        </Link>
+      ))}
     </main>
   );
 };
 export default Index;
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // 拿到连接，从连接中去获取数据。
-  const connect = await getDatabaseConnection();
-  console.log(`connect`, connect);
+  const connection = await getDatabaseConnection();
+  const posts = await connection.manager.find(Post);
 
   const ua = context.req.headers["user-agent"];
   /*
@@ -32,6 +37,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       browser: result.browser,
+      posts: JSON.parse(JSON.stringify(posts)),
     },
   };
 };
