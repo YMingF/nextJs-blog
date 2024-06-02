@@ -22,6 +22,10 @@ const Users = async (req: NextApiRequest, res: NextApiResponse) => {
     errors.username.push("格式不对");
     statusCode = 422;
   }
+  const found = await connection.manager.find(User, { username });
+  if (found) {
+    errors.username.push("不能重复创建");
+  }
   if (password !== passwordConfirmation) {
     errors.passwordConfirmation.push("密码不一致");
     statusCode = 422;
