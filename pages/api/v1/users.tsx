@@ -14,28 +14,14 @@ const Users = async (req: NextApiRequest, res: NextApiResponse) => {
   };
   const connection = await getDatabaseConnection();
   const user = new User();
-  if (username.trim() === "") {
-    errors.username.push("this field is required");
+  user.username = username.trim();
+  user.password = password;
+  user.passwordConfirmation = passwordConfirmation;
+  await user.validate();
+  if (user.hasErrors()) {
     statusCode = 422;
-  }
-  if (!/[a-zA-Z0-9]/.test(username.trim())) {
-    errors.username.push("格式不对");
-    statusCode = 422;
-  }
-  const found = await connection.manager.find(User, { username });
-  if (found) {
-    errors.username.push("不能重复创建");
-  }
-  if (password !== passwordConfirmation) {
-    errors.passwordConfirmation.push("密码不一致");
-    statusCode = 422;
-  }
-  const hasError = Object.values(errors).find((item) => item.length > 0);
-  if (hasError) {
-    responseData = errors;
+    responseData = user.errors;
   } else {
-    user.username = username.trim();
-    user.passwordDigest = password;
     // 调用manager将数据存储到数据库中。
     await connection.manager.save(user);
     responseData = user;
