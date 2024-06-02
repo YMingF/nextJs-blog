@@ -1,4 +1,5 @@
 import {
+  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
@@ -9,6 +10,8 @@ import {
 import { Post } from "./Post";
 import { Comment } from "./Comment";
 import { getDatabaseConnection } from "../../lib/getDatabaseConnection";
+// @ts-ignore
+import { omit } from "lodash";
 
 @Entity("users")
 export class User {
@@ -57,5 +60,12 @@ export class User {
   }
   hasErrors() {
     return !!Object.values(this.errors).find((item) => item.length > 0);
+  }
+  @BeforeInsert()
+  generatePasswordDigest() {
+    this.passwordDigest = this.password;
+  }
+  toJSON() {
+    return omit(this, ["password", "passwordConfirmation", "passwordDigest"]);
   }
 }
