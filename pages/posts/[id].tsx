@@ -24,7 +24,6 @@ export const getServerSideProps: GetServerSideProps<
   const connection = await getDatabaseConnection();
   //  用context.params.id去获取你路由跳转时传过来的id值
   const post = await connection.manager.findOne(Post, context.params.id);
-  console.log(`post`, post);
   return {
     props: {
       post: JSON.parse(JSON.stringify(post)),
