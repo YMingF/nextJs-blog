@@ -8,16 +8,25 @@ const signUpPage: NextPage = () => {
     password: "",
     passwordConfirmation: "",
   });
+  const [errors, setErrors] = useState({
+    username: [],
+    password: [],
+    passwordConfirmation: [],
+  });
   const onSubmit = useCallback(
-    async (e) => {
+    (e) => {
       e.preventDefault();
-      await axios.post(`/api/v1/users`, formData);
+      axios.post(`/api/v1/users`, formData).then(
+        () => {},
+        (err) => {
+          setErrors(err.response.data);
+        }
+      );
     },
     [formData]
   );
   return (
     <>
-      {JSON.stringify(formData)}
       <h1>注册页面</h1>
       <form onSubmit={onSubmit}>
         <div>
@@ -31,6 +40,9 @@ const signUpPage: NextPage = () => {
               }
             />
           </label>
+          {errors && errors?.username?.length > 0 && (
+            <div>{errors.username.join(",")}</div>
+          )}
         </div>
         <div>
           <label>
@@ -43,6 +55,9 @@ const signUpPage: NextPage = () => {
               }
             />
           </label>
+          {errors && errors?.password?.length > 0 && (
+            <div>{errors.password.join(",")}</div>
+          )}
         </div>
         <div>
           <label>
@@ -58,6 +73,9 @@ const signUpPage: NextPage = () => {
               }
             />
           </label>
+          {errors && errors?.passwordConfirmation?.length > 0 && (
+            <div>{errors.passwordConfirmation.join(",")}</div>
+          )}
         </div>
         <div>
           <button type={"submit"}>注册</button>
