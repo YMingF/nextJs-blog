@@ -1,8 +1,8 @@
 import { NextPage } from "next";
 import { useCallback, useState } from "react";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 
-const signUpPage: NextPage = () => {
+const signInPage: NextPage = () => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -16,17 +16,14 @@ const signUpPage: NextPage = () => {
   const onSubmit = useCallback(
     (e) => {
       e.preventDefault();
-      axios.post(`/api/v1/users`, formData).then(
+      axios.post(`/api/v1/sessions`, formData).then(
         () => {
-          window.alert("注册成功");
-          window.location.href = "/sign_in";
+          window.alert("登录成功");
         },
         (err) => {
-          if (err.response) {
-            const response: AxiosResponse = err.response;
-            if (response.status === 422) {
-              setErrors(response.data);
-            }
+          console.log(`err`, err.response);
+          if (err.response.status === 422) {
+            setErrors(err.response.data);
           }
         }
       );
@@ -35,7 +32,7 @@ const signUpPage: NextPage = () => {
   );
   return (
     <>
-      <h1>注册页面</h1>
+      <h1>登录页面</h1>
       <form onSubmit={onSubmit}>
         <div>
           <label>
@@ -48,6 +45,7 @@ const signUpPage: NextPage = () => {
               }
             />
           </label>
+          {JSON.stringify(errors)}
           {errors && errors?.username?.length > 0 && (
             <div>{errors.username.join(",")}</div>
           )}
@@ -68,28 +66,10 @@ const signUpPage: NextPage = () => {
           )}
         </div>
         <div>
-          <label>
-            确认密码
-            <input
-              type="password"
-              value={formData.passwordConfirmation}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  passwordConfirmation: e.target.value,
-                })
-              }
-            />
-          </label>
-          {errors && errors?.passwordConfirmation?.length > 0 && (
-            <div>{errors.passwordConfirmation.join(",")}</div>
-          )}
-        </div>
-        <div>
-          <button type={"submit"}>注册</button>
+          <button type={"submit"}>登录</button>
         </div>
       </form>
     </>
   );
 };
-export default signUpPage;
+export default signInPage;
