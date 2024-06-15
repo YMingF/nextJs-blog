@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import axios from "axios";
 import { withSession } from "../lib/withSession";
 import { User } from "../src/entity/User";
+import { Form } from "../components/Form";
 
 const signInPage: NextPage<{ user: User }> = (props) => {
   const [formData, setFormData] = useState({
@@ -32,47 +33,37 @@ const signInPage: NextPage<{ user: User }> = (props) => {
     },
     [formData]
   );
+  const onChanged = useCallback(
+    (key, value) => {
+      setFormData({ ...formData, [key]: value });
+    },
+    [formData]
+  );
   return (
     <>
       {props.user && <div>当前登录用户为：{props.user.username}</div>}
 
       <h1>登录页面</h1>
-      <form onSubmit={onSubmit}>
-        <div>
-          <label>
-            用户名
-            <input
-              type="text"
-              value={formData.username}
-              onChange={(e) =>
-                setFormData({ ...formData, username: e.target.value })
-              }
-            />
-          </label>
-          {JSON.stringify(errors)}
-          {errors && errors?.username?.length > 0 && (
-            <div>{errors.username.join(",")}</div>
-          )}
-        </div>
-        <div>
-          <label>
-            密码
-            <input
-              type="password"
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-            />
-          </label>
-          {errors && errors?.password?.length > 0 && (
-            <div>{errors.password.join(",")}</div>
-          )}
-        </div>
-        <div>
-          <button type={"submit"}>登录</button>
-        </div>
-      </form>
+      <Form
+        fields={[
+          {
+            label: "name",
+            type: "text",
+            value: formData.username,
+            errors: errors.username,
+            onChange: (e) => onChanged("username", e.target.value),
+          },
+          {
+            label: "pass",
+            type: "password",
+            value: formData.password,
+            errors: errors.password,
+            onChange: (e) => onChanged("password", e.target.value),
+          },
+        ]}
+        onSubmit={onSubmit}
+        buttons={<button type="submit">submit</button>}
+      ></Form>
     </>
   );
 };
