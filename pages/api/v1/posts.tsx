@@ -15,7 +15,13 @@ const Posts = withSession(
       post.title = title;
       post.content = content;
       const connection = await getDatabaseConnection();
-      post.author = req.session?.get("currentUser");
+      const user = req.session?.get("currentUser");
+      if (!user) {
+        res.statusCode = 401;
+        res.end("unauthorized");
+        return;
+      }
+      post.author = user;
       // 保存你所新建的post到数据库
       await connection.manager.save(post);
 

@@ -29,7 +29,7 @@ const signUpPage: NextPage = () => {
     buttons: <button type="submit">register</button>,
     submit: {
       request: (formData) => axios.post(`/api/v1/users`, formData),
-      message: "注册成功",
+      success: () => window.alert("注册成功"),
     },
   });
   return (

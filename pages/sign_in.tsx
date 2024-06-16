@@ -3,6 +3,7 @@ import axios from "axios";
 import { withSession } from "../lib/withSession";
 import { User } from "../src/entity/User";
 import { useForm } from "../hooks/useForm";
+import { customNextApiRequest } from "../next-env";
 
 const signInPage: NextPage<{ user: User }> = (props) => {
   const { form, setErrors } = useForm({
@@ -25,7 +26,14 @@ const signInPage: NextPage<{ user: User }> = (props) => {
     buttons: <button type="submit">submit</button>,
     submit: {
       request: (formData) => axios.post(`/api/v1/sessions`, formData),
-      message: "登录成功",
+      success: () => {
+        window.alert("登录成功");
+        const queryStr = window.location.search;
+        const returnUrl = new URLSearchParams(queryStr).get("return_to");
+        if (returnUrl) {
+          window.location.href = returnUrl;
+        }
+      },
     },
   });
   return (
@@ -40,8 +48,8 @@ export default signInPage;
 
 export const getServerSideProps: GetServerSideProps = withSession(
   async (context: GetServerSidePropsContext) => {
-    // @ts-ignore
-    const user = context.req.session.get("currentUser") ?? "";
+    const user =
+      (context.req as customNextApiRequest).session.get("currentUser") ?? "";
     return {
       props: {
         user,
