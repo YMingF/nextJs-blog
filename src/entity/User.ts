@@ -7,11 +7,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Post } from "./Post";
-import { Comment } from "./Comment";
 import { getDatabaseConnection } from "../../lib/getDatabaseConnection";
 // @ts-ignore
 import { omit } from "lodash";
+import { Post } from "./Post";
 
 @Entity("users")
 export class User {
@@ -25,9 +24,9 @@ export class User {
   createdAt: Date;
   @UpdateDateColumn()
   updatedAt: Date;
-  @OneToMany(() => Post, (post) => post.author)
+  @OneToMany("Post", "author")
   posts: Post[];
-  @OneToMany(() => Comment, (comment) => comment.user)
+  @OneToMany("Comment", "user")
   comments: Comment;
   errors = {
     username: [] as string[],

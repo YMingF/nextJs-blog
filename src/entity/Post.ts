@@ -8,7 +8,6 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { User } from "./User";
-import { Comment } from "./Comment";
 
 @Entity("posts")
 export class Post {
@@ -23,9 +22,8 @@ export class Post {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.posts)
+  @ManyToOne("User", "posts")
   author: User;
-
-  @OneToMany(() => Comment, (comment) => comment.post)
+  @OneToMany("Comment", "post")
   comments: Comment[];
 }
