@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getDatabaseConnection } from "../../lib/getDatabaseConnection";
 import { Post } from "../../src/entity/Post";
 import qs from "querystring";
+import { usePager } from "../../hooks/userPager";
 
 type Props = {
   posts: Post[];
@@ -13,7 +14,10 @@ type Props = {
 };
 const PostsIndex: NextPage<Props> = (props) => {
   const { posts } = props;
-  console.log(`posts1 `, posts);
+  const { pager } = usePager({
+    page: props.page,
+    totalPage: props.totalPage,
+  });
 
   return (
     <main>
@@ -25,15 +29,7 @@ const PostsIndex: NextPage<Props> = (props) => {
           </Link>
         </div>
       ))}
-      <footer>
-        共{props.count}篇文章，当前为第{props.page}页/ {props.totalPage}页
-        {props.page !== 1 && (
-          <Link href={`?page=${props.page - 1}`}>上一页</Link>
-        )}
-        {props.page < props.totalPage && (
-          <Link href={`?page=${props.page + 1}`}>下一页</Link>
-        )}
-      </footer>
+      <footer>{pager}</footer>
     </main>
   );
 };
@@ -44,7 +40,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const search = context.req.url.substr(index + 1);
   const query = qs.parse(search);
   const page = +query.page || 1;
-  const perPage = 2;
+  const perPage = 1;
   // 拿到连接，从连接中去获取数据。
   const connection = await getDatabaseConnection();
   // totalNum表示数据库数据总数
