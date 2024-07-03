@@ -2,7 +2,6 @@ import "reflect-metadata";
 import { createConnection } from "typeorm";
 import { User } from "./entity/User";
 import { Post } from "./entity/Post";
-import { Comment } from "./entity/Comment";
 
 createConnection()
   .then(async (connection) => {
@@ -17,12 +16,7 @@ createConnection()
     p1.content = "简单的内容";
     p1.author = u1;
     await manager.save(p1);
-    //
-    const c1 = new Comment();
-    c1.content = "content111";
-    c1.user = u1;
-    c1.post = p1;
-    await manager.save(c1);
+
     connection.close();
   })
   .catch((error) => console.log(error));
