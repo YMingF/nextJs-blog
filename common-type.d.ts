@@ -1,5 +1,9 @@
 type Post = {
-    id: string;
+  id: string;
 
-    content: string;
+  content: string;
+};
+
+type User = {
+  id: string;
 };

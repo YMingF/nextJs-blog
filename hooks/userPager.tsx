@@ -35,11 +35,11 @@ export const usePager = (options: Options) => {
           <a>上一页</a>
         </Link>
       )}
-      {pageNumbers.map((n) =>
+      {pageNumbers.map((n, index) =>
         n === -1 ? (
-          <span>...</span>
+          <span key={index}>...</span>
         ) : (
-          <Link href={urlMaker(n)}>
+          <Link key={index} href={urlMaker(n)}>
             <a>{n}</a>
           </Link>
         )

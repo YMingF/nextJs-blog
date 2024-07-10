@@ -3,7 +3,7 @@
    "version": "0.1.0",
    "private": true,
    "scripts": {
-      "dev": "concurrently \"cross-env NODE_OPTIONS='--openssl-legacy-provider' next dev\" \"babel -w ./src --out-dir dist --extensions .ts,.tsx\"",
+      "dev": "concurrently \" next dev\" \"babel -w ./src --out-dir dist --extensions .ts,.tsx\"",
       "build": "cross-env BROWSERSLIST_IGNORE_OLD_DATA=1 next build",
       "start": "next start",
       "m:create": "typeorm migration:create -n",
