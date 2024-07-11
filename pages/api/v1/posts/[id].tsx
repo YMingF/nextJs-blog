@@ -25,6 +25,21 @@ const Posts = withSession(
       }
       await connection.manager.save(post);
       res.json(post);
+    } else if (req.method === "DELETE") {
+      const id = req.query.id;
+      const connection = await getDatabaseConnection();
+      const post = await connection.manager.findOne<Post>(
+        "Post",
+        id.toString()
+      );
+      const user = req.session.get("currentUser");
+      if (!user) {
+        res.statusCode = 401;
+        res.end();
+        return;
+      }
+      await connection.manager.remove(post);
+      res.end();
     }
   }
 );

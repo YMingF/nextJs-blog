@@ -5,21 +5,40 @@ import marked from "marked";
 import Link from "next/link";
 import { withSession } from "../../lib/withSession";
 import { customNextApiRequest } from "../../next-env";
+import { useCallback } from "react";
+import axios from "axios";
+import { useRouter } from "next/router";
 
 type Props = {
   post: Post;
+  id: number;
   currentUser: User | null;
 };
 const postsShow: NextPage<Props> = (props) => {
-  const { post, currentUser } = props;
+  const { post, currentUser, id } = props;
+  const router = useRouter();
+  const handleDel = useCallback(() => {
+    axios.delete(`/api/v1/posts/${id}`).then(
+      () => {
+        window.alert("删除成功");
+        router.push("/posts");
+      },
+      () => {
+        window.alert("删除失败");
+      }
+    );
+  }, [id]);
   return (
     <div>
       <h1>{post.title}</h1>
       <section>
         {currentUser && (
-          <Link href="/posts/[id]/edit" as={`/posts/${post.id}/edit`}>
-            编辑
-          </Link>
+          <>
+            <Link href="/posts/[id]/edit" as={`/posts/${post.id}/edit`}>
+              编辑
+            </Link>
+            <button onClick={handleDel}>删除</button>
+          </>
         )}
       </section>
 
@@ -44,6 +63,7 @@ export const getServerSideProps: GetServerSideProps = withSession(
     return {
       props: {
         currentUser,
+        id: parseInt(id.toString()),
         post: JSON.parse(JSON.stringify(post)),
       },
     };
