@@ -31,7 +31,7 @@ const PostEdit: NextPage<Props> = (props) => {
     buttons: <button type="submit">submit</button>,
     submit: {
       request: (finalFormData) =>
-        axios.patch(`/api/v1/posts/{id}`, finalFormData),
+        axios.patch(`/api/v1/posts/${id}`, { ...finalFormData }),
       success: () => {
         window.alert("提交成功");
         window.location.href = "/posts";

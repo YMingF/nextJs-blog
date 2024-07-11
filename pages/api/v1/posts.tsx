@@ -6,9 +6,6 @@ import { customNextApiRequest } from "../../../next-env";
 
 const Posts = withSession(
   async (req: customNextApiRequest, res: NextApiResponse) => {
-    // const fileData = await getPosts();
-    //
-
     if (req.method === "POST") {
       const { title, content } = req.body;
       const post = new Post();
