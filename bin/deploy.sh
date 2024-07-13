@@ -4,5 +4,6 @@ git pull &&
 npm install --production=false &&
 npm run build &&
 docker build -t alex/node-web-app . &&
+docker rm -f app &&
 docker run --name app --network=host -p 3000:3000 -d alex/node-web-app &&
 echo 'OK'
