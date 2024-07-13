@@ -58,3 +58,9 @@ npm run dev
 yarn build
 yarn start
 ```
+
+# 自动部署
+```bash
+ssh blog@dev1m "sh /home/blog/app/bin/deploy.sh"
+
+```
