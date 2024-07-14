@@ -3,7 +3,7 @@ cd /home/blog/app &&
 git pull &&
 npm install --production=false &&
 npm run build &&
-git apply migration.patch &&
+git apply --reject --whitespace=fix migration.patch &&
 npm run compile &&
 npm run m:run &&
 git reset --hard HEAD &&
