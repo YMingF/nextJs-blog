@@ -7,8 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-// import { getDatabaseConnection } from "../../lib/getDatabaseConnection";
-// @ts-ignore
+import { getDatabaseConnection } from "../../lib/getDatabaseConnection";
 import { omit } from "lodash";
 import { Post } from "./Post";
 
@@ -42,14 +41,14 @@ export class User {
     if (!/[a-zA-Z0-9]/.test(this.username.trim())) {
       this.errors.username.push("格式不对");
     }
-    // const found = await (
-    //   await getDatabaseConnection()
-    // ).manager.find(User, {
-    //   username: this.username,
-    // });
-    // if (found?.length > 0) {
-    //   this.errors.username.push("不能重复创建");
-    // }
+    const found = await (
+      await getDatabaseConnection()
+    ).manager.find(User, {
+      username: this.username,
+    });
+    if (found?.length > 0) {
+      this.errors.username.push("不能重复创建");
+    }
     if (this.password === "") {
       this.errors.passwordConfirmation.push("不能为空");
     }
