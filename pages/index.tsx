@@ -7,7 +7,7 @@ const Home: NextPage = () => {
       <div className="cover">
         <img src="/logo.png" alt="" />
         <p>
-          <a href="/posts">查看文章</a>
+          <a href="/posts">你点击看看?</a>
         </p>
       </div>
       <style jsx>{`
