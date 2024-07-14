@@ -2,9 +2,9 @@ docker start 05a7f7609990 &&
 cd /home/blog/app &&
 git pull &&
 npm install --production=false &&
-git apply migration.patch &&
 npm run build &&
-npm run compoile &&
+git apply migration.patch &&
+npm run compile &&
 npm run m:run &&
 git reset --hard HEAD &&
 docker build -t alex/node-web-app . &&
