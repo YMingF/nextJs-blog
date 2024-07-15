@@ -4,8 +4,10 @@ import { withSession } from "../lib/withSession";
 import { User } from "../src/entity/User";
 import { useForm } from "../hooks/useForm";
 import { customNextApiRequest } from "../next-env";
+import { useRouter } from "next/router";
 
 const signInPage: NextPage<{ user: User }> = (props) => {
+  const router = useRouter();
   const { form, setErrors } = useForm({
     initFormData: {
       username: "",
@@ -32,6 +34,8 @@ const signInPage: NextPage<{ user: User }> = (props) => {
         const returnUrl = new URLSearchParams(queryStr).get("return_to");
         if (returnUrl) {
           window.location.href = returnUrl;
+        } else {
+          router.push("/posts");
         }
       },
     },

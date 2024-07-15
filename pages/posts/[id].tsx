@@ -41,7 +41,6 @@ const postsShow: NextPage<Props> = (props) => {
           </>
         )}
       </section>
-
       <article
         dangerouslySetInnerHTML={{ __html: marked(post.content) }}
       ></article>
