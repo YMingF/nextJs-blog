@@ -24,7 +24,6 @@ const PostNew: NextPage = () => {
     submit: {
       request: (finalFormData) => axios.post(`/api/v1/posts`, finalFormData),
       success: () => {
-        window.alert("提交成功");
         window.location.href = "/posts";
       },
     },
