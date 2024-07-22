@@ -3,6 +3,7 @@ import type { AppProps } from "next/app";
 import { useCallback } from "react";
 import { useRouter } from "next/router";
 import { Form, Input, Modal } from "antd";
+import axios from "axios";
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -12,11 +13,58 @@ export default function App({ Component, pageProps }: AppProps) {
     },
     [router]
   );
-  const openModal = useCallback((modalType) => {
-    Modal.info({
-      title: "登录",
+  const [form] = Form.useForm();
+  const openModal = useCallback((modalType: "sign_in" | "sign_up") => {
+    const titleMap = {
+      sign_in: "登录",
+      sign_up: "注册",
+    };
+    Modal.confirm({
+      title: titleMap[modalType],
+      closable: true,
+      centered: true,
+      okText: titleMap[modalType],
+      cancelText: null,
+      onCancel() {
+        form.resetFields();
+      },
+      onOk: () => {
+        return new Promise((resolve, reject) => {
+          let shouldClose = true;
+          form
+            .validateFields()
+            .then(
+              () => {
+                const formData = form.getFieldsValue();
+                axios.post(`/api/v1/users`, formData).then(
+                  () => {
+                    window.alert("注册成功");
+                    shouldClose = true;
+
+                    resolve(true);
+                  },
+                  (err) => {
+                    window.alert("注册失败");
+                    shouldClose = false;
+                    reject();
+                  }
+                );
+              },
+              (err) => {
+                shouldClose = false;
+                reject();
+              }
+            )
+            .finally(() => {
+              if (shouldClose) {
+                form.resetFields();
+              }
+            });
+        });
+      },
       content: (
         <Form
+          form={form}
           name="basic"
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
@@ -39,6 +87,15 @@ export default function App({ Component, pageProps }: AppProps) {
           >
             <Input.Password />
           </Form.Item>
+          {modalType === "sign_up" && (
+            <Form.Item
+              label="确认密码"
+              name="passwordConfirmation"
+              rules={[{ required: true, message: "请确认密码!" }]}
+            >
+              <Input.Password />
+            </Form.Item>
+          )}
         </Form>
       ),
     });
