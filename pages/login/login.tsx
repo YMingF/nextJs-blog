@@ -1,6 +1,6 @@
 import { NextPage } from "next";
-import { Form, Input, Modal } from "antd";
-import { useCallback, useEffect, useState } from "react";
+import { Form, Input, message, Modal } from "antd";
+import { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { NamePath, StoreValue } from "rc-field-form/lib/interface";
 import { get } from "lodash";
@@ -14,9 +14,18 @@ const App_Login: NextPage = (props: any) => {
   const [serverErrors, setServerErrors] = useState(
     {} as { [key: string]: string[] }
   );
-  const handleErrors = (errors: any) => {
-    setServerErrors(errors);
-  };
+
+  const [messageApi, contextHolder] = message.useMessage();
+  const fieldRefs = useRef<any>({});
+  const focusErrorField = useCallback(() => {
+    const errors = form.getFieldsError();
+    const firstError = errors?.find((err) => err.errors.length > 0);
+    if (firstError) {
+      const fieldName = firstError.name;
+      const errorField = fieldRefs.current[fieldName.toString()];
+      errorField && errorField.focus();
+    }
+  }, [form]);
   useEffect(() => {
     if (Object.keys(serverErrors)?.length > 0) {
       const fields = Object.keys(serverErrors).map((key) => ({
@@ -47,6 +56,7 @@ const App_Login: NextPage = (props: any) => {
       cancelText: null,
       content: (
         <>
+          {contextHolder}
           <Form
             form={form}
             name="basic"
@@ -61,7 +71,11 @@ const App_Login: NextPage = (props: any) => {
               name="username"
               rules={[{ required: true, message: "不能为空" }]}
             >
-              <Input />
+              <Input
+                ref={(el) => {
+                  fieldRefs.current["username"] = el;
+                }}
+              />
             </Form.Item>
 
             <Form.Item
@@ -69,7 +83,11 @@ const App_Login: NextPage = (props: any) => {
               name="password"
               rules={[{ required: true, message: "不能为空" }]}
             >
-              <Input.Password />
+              <Input.Password
+                ref={(el) => {
+                  fieldRefs.current["password"] = el;
+                }}
+              />
             </Form.Item>
             {modalType === "sign_up" && (
               <Form.Item
@@ -81,7 +99,11 @@ const App_Login: NextPage = (props: any) => {
                   validateConfirmPass,
                 ]}
               >
-                <Input.Password />
+                <Input.Password
+                  ref={(el) => {
+                    fieldRefs.current["passwordConfirmation"] = el;
+                  }}
+                />
               </Form.Item>
             )}
           </Form>
@@ -92,22 +114,49 @@ const App_Login: NextPage = (props: any) => {
       },
       onOk: () => {
         return new Promise((resolve, reject) => {
-          form.validateFields().then(() => {
-            const formData = form.getFieldsValue();
-            axios
-              .post(`/api/v1/users`, formData)
-              .then(() => {
-                window.alert("注册成功");
-                form.resetFields();
-                setServerErrors({});
-                resolve(true);
-              })
-              .catch((errors) => {
-                const { response } = errors || {};
-                setServerErrors(get(response, "data", {}));
-                reject(false);
-              });
-          });
+          form
+            .validateFields()
+            .then((vals) => {
+              const formData = form.getFieldsValue();
+              const api = modalType === "sign_in" ? "sessions" : "users";
+              axios
+                .post(`/api/v1/${api}`, formData)
+                .then(async () => {
+                  if (modalType === "sign_in") {
+                    messageApi.open({
+                      type: "success",
+                      content: "登录成功",
+                      duration: 1,
+                      onClose: () => {
+                        resolve(true);
+                        setServerErrors({});
+                        form.resetFields();
+                      },
+                    });
+                  } else {
+                    messageApi.open({
+                      type: "success",
+                      content: "注册成功，即将跳转到登录界面",
+                      duration: 2,
+                      onClose: () => {
+                        resolve(false);
+                        openModal("sign_in");
+                        setServerErrors({});
+                        form.resetFields();
+                      },
+                    });
+                  }
+                })
+                .catch((errors) => {
+                  const { response } = errors || {};
+                  setServerErrors(get(response, "data", {}));
+                  reject(false);
+                });
+            })
+            .catch((errs) => {
+              focusErrorField();
+              reject(false);
+            });
         });
       },
     });
