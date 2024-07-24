@@ -1,26 +1,11 @@
-import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
-import { withSession } from "../../lib/withSession";
-import { customNextApiRequest } from "../../next-env";
+import { NextPage } from "next";
+import { useGlobalState } from "../../context/globalStateContext";
 
-interface App_Avatar_Props {
-  userInfo: any;
-}
+interface App_Avatar_Props {}
+
 const App_Avatar: NextPage<App_Avatar_Props> = (props) => {
-  console.log(`App_Avatar props`, props);
-  const { userInfo } = props;
+  const { user: userInfo } = useGlobalState();
+
   return <div className={"avatar-box"}>{userInfo.username}</div>;
 };
 export default App_Avatar;
-
-export const getServerSideProps: GetServerSideProps = withSession(
-  async (context: GetServerSidePropsContext) => {
-    const user =
-      (context.req as customNextApiRequest).session.get("currentUser") ?? "";
-    console.log(`user`, user);
-    return {
-      props: {
-        user,
-      },
-    };
-  }
-);

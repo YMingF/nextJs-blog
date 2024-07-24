@@ -4,13 +4,17 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { NamePath, StoreValue } from "rc-field-form/lib/interface";
 import { get } from "lodash";
+import { useGlobalState } from "../../context/globalStateContext";
 
 interface App_LoginProps {
   onLogin: (value: boolean) => void;
-  updateUserInfo: (value: any) => void;
 }
 const App_Login: NextPage<App_LoginProps> = (props: any) => {
-  const { onLogin, updateUserInfo } = props;
+  const { onLogin } = props;
+  const { user, storeUser } = useGlobalState();
+  if (user) {
+    onLogin(true);
+  }
   const [form] = Form.useForm();
   const titleMap = {
     sign_in: "登录",
@@ -130,12 +134,12 @@ const App_Login: NextPage<App_LoginProps> = (props: any) => {
                   console.log(`successData`, successData);
 
                   if (modalType === "sign_in") {
-                    updateUserInfo(successData.data);
                     messageApi.open({
                       type: "success",
                       content: "登录成功",
                       duration: 1,
                       onClose: () => {
+                        storeUser(get(successData, "data"));
                         resolve(true);
                         setServerErrors({});
                         form.resetFields();
