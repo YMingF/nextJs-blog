@@ -5,7 +5,12 @@ import axios from "axios";
 import { NamePath, StoreValue } from "rc-field-form/lib/interface";
 import { get } from "lodash";
 
-const App_Login: NextPage = (props: any) => {
+interface App_LoginProps {
+  onLogin: (value: boolean) => void;
+  updateUserInfo: (value: any) => void;
+}
+const App_Login: NextPage<App_LoginProps> = (props: any) => {
+  const { onLogin, updateUserInfo } = props;
   const [form] = Form.useForm();
   const titleMap = {
     sign_in: "登录",
@@ -121,8 +126,11 @@ const App_Login: NextPage = (props: any) => {
               const api = modalType === "sign_in" ? "sessions" : "users";
               axios
                 .post(`/api/v1/${api}`, formData)
-                .then(async () => {
+                .then(async (successData) => {
+                  console.log(`successData`, successData);
+
                   if (modalType === "sign_in") {
+                    updateUserInfo(successData.data);
                     messageApi.open({
                       type: "success",
                       content: "登录成功",
@@ -131,6 +139,7 @@ const App_Login: NextPage = (props: any) => {
                         resolve(true);
                         setServerErrors({});
                         form.resetFields();
+                        onLogin(true);
                       },
                     });
                   } else {

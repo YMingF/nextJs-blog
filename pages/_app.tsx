@@ -1,20 +1,32 @@
 import "styles/output.css";
 import type { AppProps } from "next/app";
-import { useCallback } from "react";
-import { useRouter } from "next/router";
+import { useCallback, useState } from "react";
 import App_Login from "./login/login";
+import App_Avatar from "./avatar/avatar";
 
 export default function App({ Component, pageProps }: AppProps) {
-  const router = useRouter();
-  const navigate = useCallback(
-    (path: string) => {
-      router.push(path);
+  const [isLogin, setIsLogin] = useState(false);
+  const [userInfo, setUserInfo] = useState(false);
+  const handleLogin = useCallback(
+    (value: boolean) => {
+      setIsLogin(value);
     },
-    [router]
+    [isLogin]
   );
+  const updateUserInfo = useCallback(
+    (val: any) => {
+      setUserInfo(val);
+    },
+    [userInfo]
+  );
+
   return (
     <>
-      <App_Login></App_Login>
+      <App_Login
+        onLogin={handleLogin}
+        updateUserInfo={updateUserInfo}
+      ></App_Login>
+      {isLogin && <App_Avatar userInfo={userInfo}></App_Avatar>}
       <Component {...pageProps} />;
     </>
   );
