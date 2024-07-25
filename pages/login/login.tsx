@@ -16,7 +16,7 @@ import { useGlobalState } from "../../context/globalStateContext";
 
 interface App_LoginProps {}
 
-function generateFocusErrorField(
+export function generateFocusErrorField(
   form: FormInstance<any>,
   fieldRefs: React.MutableRefObject<any>
 ) {
@@ -147,11 +147,11 @@ const App_Login: NextPage<App_LoginProps> = (props: any) => {
                     });
                   } else {
                     messageApi.success({
-                      content: "注册成功，即将跳转到登录界面",
+                      content: "注册成功，即将自动登录",
                       duration: 2,
                       onClose: () => {
-                        resolve(false);
-                        openModal("sign_in");
+                        resolve(true);
+                        storeUser(get(successData, "data"));
                         setServerErrors({});
                         form.resetFields();
                       },
@@ -184,7 +184,7 @@ const App_Login: NextPage<App_LoginProps> = (props: any) => {
   );
 };
 export default App_Login;
-function updateErrors(
+export function updateErrors(
   serverErrors: { [p: string]: string[] },
   form: FormInstance<any>
 ) {
