@@ -26,7 +26,7 @@ const App_Avatar: NextPage<App_Avatar_Props> = (props) => {
     </Card>
   );
   return (
-    <div className={"avatar-box tw-pr-20"}>
+    <div className={"avatar-box "}>
       <Popover content={content} trigger="click">
         <Avatar
           className={"tw-cursor-pointer"}
