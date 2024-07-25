@@ -16,6 +16,7 @@
       "dist": "node dist/seed.js"
    },
    "dependencies": {
+      "@ant-design/cssinjs": "^1.21.0",
       "@babel/cli": "^7.10.1",
       "antd": "^5.19.2",
       "axios": "^0.19.2",
