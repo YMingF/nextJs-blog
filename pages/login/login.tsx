@@ -1,5 +1,13 @@
 import { NextPage } from "next";
-import { Form, Input, message, Modal } from "antd";
+import {
+  Button,
+  Divider,
+  Form,
+  FormInstance,
+  Input,
+  message,
+  Modal,
+} from "antd";
 import { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { NamePath, StoreValue } from "rc-field-form/lib/interface";
@@ -7,21 +15,12 @@ import { get } from "lodash";
 import { useGlobalState } from "../../context/globalStateContext";
 
 interface App_LoginProps {}
-const App_Login: NextPage<App_LoginProps> = (props: any) => {
-  const { user, storeUser } = useGlobalState();
 
-  const [form] = Form.useForm();
-  const titleMap = {
-    sign_in: "登录",
-    sign_up: "注册",
-  };
-  const [serverErrors, setServerErrors] = useState(
-    {} as { [key: string]: string[] }
-  );
-
-  const [messageApi, contextHolder] = message.useMessage();
-  const fieldRefs = useRef<any>({});
-  const focusErrorField = useCallback(() => {
+function generateFocusErrorField(
+  form: FormInstance<any>,
+  fieldRefs: React.MutableRefObject<any>
+) {
+  return useCallback(() => {
     const errors = form.getFieldsError();
     const firstError = errors?.find((err) => err.errors.length > 0);
     if (firstError) {
@@ -30,15 +29,24 @@ const App_Login: NextPage<App_LoginProps> = (props: any) => {
       errorField && errorField.focus();
     }
   }, [form]);
-  useEffect(() => {
-    if (Object.keys(serverErrors)?.length > 0) {
-      const fields = Object.keys(serverErrors).map((key) => ({
-        name: key,
-        errors: serverErrors[key],
-      }));
-      form.setFields(fields);
-    }
-  }, [serverErrors, form]);
+}
+
+const App_Login: NextPage<App_LoginProps> = (props: any) => {
+  const { user, storeUser } = useGlobalState();
+  const fieldRefs = useRef<any>({});
+  const [form] = Form.useForm();
+  const [serverErrors, setServerErrors] = useState(
+    {} as { [key: string]: string[] }
+  );
+  updateErrors(serverErrors, form);
+
+  const titleMap = {
+    sign_in: "登录",
+    sign_up: "注册",
+  };
+
+  const [messageApi, contextHolder] = message.useMessage();
+  const focusErrorField = generateFocusErrorField(form, fieldRefs);
   const validateConfirmPass = ({
     getFieldValue,
   }: {
@@ -120,17 +128,14 @@ const App_Login: NextPage<App_LoginProps> = (props: any) => {
         return new Promise((resolve, reject) => {
           form
             .validateFields()
-            .then((vals) => {
+            .then(() => {
               const formData = form.getFieldsValue();
               const api = modalType === "sign_in" ? "sessions" : "users";
               axios
                 .post(`/api/v1/${api}`, formData)
                 .then(async (successData) => {
-                  console.log(`successData`, successData);
-
                   if (modalType === "sign_in") {
-                    messageApi.open({
-                      type: "success",
+                    messageApi.success({
                       content: "登录成功",
                       duration: 1,
                       onClose: () => {
@@ -141,8 +146,7 @@ const App_Login: NextPage<App_LoginProps> = (props: any) => {
                       },
                     });
                   } else {
-                    messageApi.open({
-                      type: "success",
+                    messageApi.success({
                       content: "注册成功，即将跳转到登录界面",
                       duration: 2,
                       onClose: () => {
@@ -157,12 +161,12 @@ const App_Login: NextPage<App_LoginProps> = (props: any) => {
                 .catch((errors) => {
                   const { response } = errors || {};
                   setServerErrors(get(response, "data", {}));
-                  reject(false);
+                  reject(true);
                 });
             })
             .catch((errs) => {
               focusErrorField();
-              reject(false);
+              reject(true);
             });
         });
       },
@@ -171,9 +175,26 @@ const App_Login: NextPage<App_LoginProps> = (props: any) => {
 
   return (
     <div className={"tw-flex tw-justify-between tw-items-center"}>
-      <button onClick={() => openModal("sign_in")}>登录|</button>
-      <button onClick={() => openModal("sign_up")}> 注册</button>
+      <Button type="primary" onClick={() => openModal("sign_in")}>
+        登录
+      </Button>
+      <Divider type="vertical" />
+      <Button onClick={() => openModal("sign_up")}> 注册</Button>
     </div>
   );
 };
 export default App_Login;
+function updateErrors(
+  serverErrors: { [p: string]: string[] },
+  form: FormInstance<any>
+) {
+  useEffect(() => {
+    if (Object.keys(serverErrors)?.length > 0) {
+      const fields = Object.keys(serverErrors).map((key) => ({
+        name: key,
+        errors: serverErrors[key],
+      }));
+      form.setFields(fields);
+    }
+  }, [serverErrors, form]);
+}
