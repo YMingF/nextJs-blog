@@ -17,7 +17,7 @@ export const GlobalStateProvider: React.FC<UserProviderProps> = ({
   children,
 }) => {
   const [messageApi, contextHolder] = message.useMessage();
-  const [user, storeUser] = useState({});
+  const [user, storeUser] = useState(null);
   getUserInfo(storeUser, messageApi);
   return (
     <>

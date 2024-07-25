@@ -6,15 +6,10 @@ import { NamePath, StoreValue } from "rc-field-form/lib/interface";
 import { get } from "lodash";
 import { useGlobalState } from "../../context/globalStateContext";
 
-interface App_LoginProps {
-  onLogin: (value: boolean) => void;
-}
+interface App_LoginProps {}
 const App_Login: NextPage<App_LoginProps> = (props: any) => {
-  const { onLogin } = props;
   const { user, storeUser } = useGlobalState();
-  if (user) {
-    onLogin(true);
-  }
+
   const [form] = Form.useForm();
   const titleMap = {
     sign_in: "登录",
@@ -143,7 +138,6 @@ const App_Login: NextPage<App_LoginProps> = (props: any) => {
                         resolve(true);
                         setServerErrors({});
                         form.resetFields();
-                        onLogin(true);
                       },
                     });
                   } else {
@@ -176,12 +170,9 @@ const App_Login: NextPage<App_LoginProps> = (props: any) => {
   }, []);
 
   return (
-    <div className={"tw-flex tw-justify-between"}>
-      <p>博客</p>
-      <div>
-        <button onClick={() => openModal("sign_in")}>登录|</button>
-        <button onClick={() => openModal("sign_up")}> 注册</button>
-      </div>
+    <div className={"tw-flex tw-justify-between tw-items-center"}>
+      <button onClick={() => openModal("sign_in")}>登录|</button>
+      <button onClick={() => openModal("sign_up")}> 注册</button>
     </div>
   );
 };
