@@ -4,10 +4,10 @@ import { Post } from "../../src/entity/Post";
 import marked from "marked";
 import Link from "next/link";
 import { withSession } from "../../lib/withSession";
-import { customNextApiRequest } from "../../next-env";
 import { useCallback } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { customNextApiRequest, User } from "../../common-type";
 
 type Props = {
   post: Post;

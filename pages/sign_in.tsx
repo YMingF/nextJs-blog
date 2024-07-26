@@ -3,8 +3,8 @@ import axios from "axios";
 import { withSession } from "../lib/withSession";
 import { User } from "../src/entity/User";
 import { useForm } from "../hooks/useForm";
-import { customNextApiRequest } from "../next-env";
 import { useRouter } from "next/router";
+import { customNextApiRequest } from "../common-type";
 
 const signInPage: NextPage<{ user: User }> = (props) => {
   const router = useRouter();

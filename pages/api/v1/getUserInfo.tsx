@@ -1,6 +1,6 @@
 import { NextApiResponse } from "next";
 import { withSession } from "../../../lib/withSession";
-import { customNextApiRequest } from "../../../next-env";
+import { customNextApiRequest } from "../../../common-type";
 
 const GetUserInfo = withSession(
   async (req: customNextApiRequest, res: NextApiResponse) => {

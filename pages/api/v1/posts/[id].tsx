@@ -1,8 +1,8 @@
 import { NextApiResponse } from "next";
 import { getDatabaseConnection } from "../../../../lib/getDatabaseConnection";
-import { customNextApiRequest } from "../../../../next-env";
 import { withSession } from "../../../../lib/withSession";
 import { Post } from "../../../../src/entity/Post";
+import { customNextApiRequest } from "../../../../common-type";
 
 const Posts = withSession(
   async (req: customNextApiRequest, res: NextApiResponse) => {

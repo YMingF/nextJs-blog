@@ -6,14 +6,14 @@ import { Post } from "../../src/entity/Post";
 import qs from "querystring";
 import { usePager } from "../../hooks/userPager";
 import { withSession } from "../../lib/withSession";
-import { customNextApiRequest } from "../../next-env";
+import { customNextApiRequest, User } from "../../common-type";
 
 type Props = {
-  posts: Post[];
-  count: number;
-  page: number;
-  currentUser: User | null;
-  totalPage: number;
+  posts?: Post[];
+  count?: number;
+  page?: number;
+  currentUser?: User | null;
+  totalPage?: number;
 };
 const PostsIndex: NextPage<Props> = (props) => {
   const { posts, currentUser } = props;
@@ -21,7 +21,6 @@ const PostsIndex: NextPage<Props> = (props) => {
     page: props.page,
     totalPage: props.totalPage,
   });
-  console.log(`currentUser`, currentUser);
   return (
     <main>
       <section>
@@ -30,9 +29,7 @@ const PostsIndex: NextPage<Props> = (props) => {
       </section>
       {posts.map((post, index) => (
         <div key={index}>
-          <Link key={post.id} href={`/posts/${post.id}`}>
-            <a>{post.title}</a>
-          </Link>
+          <Link key={post.id} href={`/posts/${post.id}`}></Link>
         </div>
       ))}
       <footer>{pager}</footer>

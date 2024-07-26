@@ -1,7 +1,7 @@
 import { SignIn } from "../../../src/model/SignIn";
 import { withSession } from "../../../lib/withSession";
 import { NextApiResponse } from "next";
-import { customNextApiRequest } from "../../../next-env";
+import { customNextApiRequest } from "../../../common-type";
 
 const Sessions = async (req: customNextApiRequest, res: NextApiResponse) => {
   const { username, password, passwordConfirmation } = req.body;
