@@ -35,7 +35,7 @@ const Home: NextPage = (props: any) => {
       })}
       {posts?.length === 0 && (
         <div className={`${styles.emptyWrapper}`}>
-          <Empty />
+          <Empty description={"无数据"} />
         </div>
       )}
     </div>
