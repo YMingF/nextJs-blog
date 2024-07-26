@@ -5,8 +5,11 @@ import App_Avatar from "../../pages/avatar/avatar";
 import { useGlobalState } from "../../context/globalStateContext";
 import { useCallback } from "react";
 import { useRouter } from "next/router";
-import { Input } from "antd";
+import { Button, Input } from "antd";
 import HeaderNav from "./header-nav/header-nav";
+import axios from "axios";
+import eventEmitter from "../../emitter/eventEmitter";
+import { FormOutlined } from "@ant-design/icons";
 
 const MainHeader: NextPage = () => {
   const { Search } = Input;
@@ -16,8 +19,12 @@ const MainHeader: NextPage = () => {
     router.push("/");
   }, []);
 
-  const onSearch = (value: any, _e: any, info: { source: any }) =>
-    console.log(info?.source, value);
+  const onSearch = (value: any, _e: any, info: { source: any }) => {
+    console.log(`value`, value);
+    axios.post(`/api/v1/search_api/search?content=${value}`).then((data) => {
+      eventEmitter.emit("searchFilterDataChanged", data);
+    });
+  };
   return (
     <>
       <div className={`${styles.mainHeaderBox} tw-flex tw-justify-center `}>
@@ -43,6 +50,11 @@ const MainHeader: NextPage = () => {
                   width: 200,
                 }}
               />
+            </div>
+            <div className={"write-btn"}>
+              <Button type="primary" icon={<FormOutlined />}>
+                写文章
+              </Button>
             </div>
             <div className="user-btn">
               {user && <App_Avatar></App_Avatar>}
