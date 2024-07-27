@@ -8,7 +8,6 @@ import UAParser from "ua-parser-js";
 
 export const fetchArticles = withSession(
   async (context: GetServerSidePropsContext) => {
-    console.log("开始了嘛");
     const ua = context.req.headers["user-agent"];
     const index = context.req.url.indexOf("?");
     const search = context.req.url.substr(index + 1);
