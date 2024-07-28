@@ -15,6 +15,7 @@ const MainHeader: NextPage = () => {
   const { Search } = Input;
   const { user, storeUser } = useGlobalState();
   const router = useRouter();
+  const [prevScrollTop, setPreviousScrollTop] = useState(0);
   const backToHome = useCallback(() => {
     router.push("/");
   }, []);
@@ -27,9 +28,31 @@ const MainHeader: NextPage = () => {
       eventEmitter.emit("searchFilterDataChanged", data);
     });
   };
+  // todo 监听滚动效果的笔记
+  useEffect(() => {
+    window.onscroll = function () {
+      let navbar = document.querySelector(".home-header-box") as HTMLElement;
+      if (!navbar) {
+        return;
+      }
+      const scrollTop =
+        document.body.scrollTop || document.documentElement.scrollTop;
+      console.log(`scrollTop,prevScrollTop`, scrollTop, prevScrollTop);
+      if (scrollTop < prevScrollTop) {
+        navbar.style.top = "0";
+      } else if (scrollTop > 80) {
+        navbar.style.top = "-100px";
+      }
+
+      setPreviousScrollTop(scrollTop);
+    };
+  }, [prevScrollTop]);
+
   return (
     <>
-      <div className={`${styles.mainHeaderBox} tw-flex tw-justify-center `}>
+      <div
+        className={`${styles.mainHeaderBox} home-header-box tw-flex tw-justify-center `}
+      >
         <div
           className={`${styles.innerWrapper} tw-flex tw-justify-between tw-items-center tw-w-3/4`}
         >
@@ -95,7 +118,7 @@ function subscribeRouterChange(router: NextRouter) {
     // 初始化时设置
     handleRouteChange(router.pathname);
 
-    // 添加路由变化事件监听 todo: 记录路由事件笔记，https://chatgpt.com/c/ca27cd6b-4381-4ede-8682-78640582748e
+    // 添加路由变化事件监听
     router.events.on("routeChangeComplete", handleRouteChange);
 
     // 清理事件监听器

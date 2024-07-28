@@ -7,7 +7,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <GlobalStateProvider>
       <MainHeader></MainHeader>
-      <main className={"main-container tw-top-20 tw-relative"}>
+      <main className={"home-content-container tw-top-20 tw-relative"}>
         <Component {...pageProps} />;
       </main>
     </GlobalStateProvider>

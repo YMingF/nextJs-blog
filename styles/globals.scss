@@ -15,11 +15,21 @@
     --background-end-rgb: 0, 0, 0;
   }
 }
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
 
+
+
+#__next {
+  height: 100%;
+  background: #ebeeee;
+}
 body {
   padding: 0;
-  margin: 0;
-  height: 100vh;
+  height: 100%;
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
@@ -33,4 +43,7 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+}
+.home-content-container{
+  background: #ebeeee;
 }
