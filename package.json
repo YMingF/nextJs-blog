@@ -24,6 +24,7 @@
       "gray-matter": "^4.0.2",
       "lodash": "^4.7.4",
       "marked": "^1.1.0",
+      "nanoid": "^5.0.7",
       "next": "14.2.1",
       "next-iron-session": "^4.2.0",
       "pg": "^8.2.1",

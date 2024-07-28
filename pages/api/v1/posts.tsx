@@ -3,6 +3,7 @@ import { Post } from "../../../src/entity/Post";
 import { getDatabaseConnection } from "../../../lib/getDatabaseConnection";
 import { withSession } from "../../../lib/withSession";
 import { customNextApiRequest } from "../../../common-type";
+import { generateUid } from "../../../lib/uid";
 
 const Posts = withSession(
   async (req: customNextApiRequest, res: NextApiResponse) => {
@@ -11,6 +12,7 @@ const Posts = withSession(
       const post = new Post();
       post.title = title;
       post.content = content;
+      post.uuid = generateUid();
       const connection = await getDatabaseConnection();
       const user = req.session?.get("currentUser");
       if (!user) {

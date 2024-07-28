@@ -17,6 +17,8 @@ export class Post {
   title: string;
   @Column("text")
   content: string;
+  @Column("varchar")
+  uuid: string;
   @CreateDateColumn()
   createdAt: Date;
   @UpdateDateColumn()

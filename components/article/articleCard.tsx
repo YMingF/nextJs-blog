@@ -4,17 +4,23 @@ import { NextPage } from "next";
 import { useGlobalState } from "../../context/globalStateContext";
 import { Avatar } from "antd";
 import { UserOutlined } from "@ant-design/icons";
+import { KeyValString } from "../../common-type";
+import { NextRouter, useRouter } from "next/router";
 
 interface ArticleCardProps {
-  title: string;
-  content: string;
+  articleData: KeyValString;
 }
 
 const ArticleCard: NextPage<ArticleCardProps> = (props: ArticleCardProps) => {
-  const { title, content } = props;
+  const { articleData } = props || {};
+  const { title, content, uuid } = articleData || {};
   const { user, storeUser } = useGlobalState();
+  const router = useRouter();
   return (
-    <div className={"article-card-box tw-bg-white tw-rounded"}>
+    <div
+      className={"article-card-box tw-bg-white tw-rounded tw-cursor-pointer"}
+      onClick={() => navToDetail(router, uuid)}
+    >
       <div className="content-main tw-p-4">
         <div className="article-title-img tw-min-w-48"></div>
         <div className="article-info">
@@ -40,3 +46,7 @@ const ArticleCard: NextPage<ArticleCardProps> = (props: ArticleCardProps) => {
   );
 };
 export default ArticleCard;
+
+function navToDetail(router: NextRouter, uuid: string) {
+  router.push(`/posts/${uuid.toString()}`);
+}

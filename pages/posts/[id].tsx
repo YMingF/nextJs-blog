@@ -58,7 +58,8 @@ export const getServerSideProps: GetServerSideProps = withSession(
       (context.req as customNextApiRequest).session.get("currentUser") || null;
     //  用context.params.id去获取你路由跳转时传过来的id值
     // @ts-ignore
-    const post = (await connection.manager.findOne(Post, id)) || "''";
+    const post =
+      (await connection.manager.findOne(Post, { where: { uuid: id } })) || "''";
     return {
       props: {
         currentUser,

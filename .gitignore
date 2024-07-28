@@ -6,3 +6,5 @@ tmp/
 temp/
 .env.local
 ormconfig.json
+/dist/
+/blog-data/
