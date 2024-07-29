@@ -5,7 +5,7 @@ import App_Avatar from "../../pages/avatar/avatar";
 import { useGlobalState } from "../../context/globalStateContext";
 import { useCallback, useEffect, useState } from "react";
 import { NextRouter, useRouter } from "next/router";
-import { Button, Input } from "antd";
+import { Button, Input, message } from "antd";
 import HeaderNav from "./header-nav/header-nav";
 import axios from "axios";
 import eventEmitter from "../../emitter/eventEmitter";
@@ -16,11 +16,17 @@ const MainHeader: NextPage = () => {
   const { user, storeUser } = useGlobalState();
   const router = useRouter();
   const [prevScrollTop, setPreviousScrollTop] = useState(0);
+  const [messageApi, contextHolder] = message.useMessage();
+
   const backToHome = useCallback(() => {
     router.push("/");
   }, []);
   const jumpToWrite = useCallback(() => {
-    router.push("/posts/create");
+    if (user) {
+      router.push("/posts/create");
+    } else {
+      messageApi.error("请先登录!");
+    }
   }, []);
   let isCreateRoute = subscribeRouterChange(router);
   const onSearch = (value: any, _e: any, info: { source: any }) => {
@@ -28,7 +34,6 @@ const MainHeader: NextPage = () => {
       eventEmitter.emit("searchFilterDataChanged", data);
     });
   };
-  // todo 监听滚动效果的笔记
   useEffect(() => {
     window.onscroll = function () {
       let navbar = document.querySelector(".home-header-box") as HTMLElement;
@@ -50,6 +55,7 @@ const MainHeader: NextPage = () => {
 
   return (
     <>
+      {contextHolder}
       <div
         className={`${styles.mainHeaderBox} home-header-box tw-flex tw-justify-center `}
       >
