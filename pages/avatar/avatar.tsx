@@ -1,10 +1,10 @@
 import { NextPage } from "next";
 import { useGlobalState } from "../../context/globalStateContext";
-import { Avatar, Button, Card, notification, Popover, Space } from "antd";
-import { UserOutlined } from "@ant-design/icons";
+import { Button, Card, notification, Popover, Space } from "antd";
 import { useCallback } from "react";
 import { useSignIn } from "../../hooks/useSignIn";
 import axios from "axios";
+import BoringAvatars from "boring-avatars";
 
 interface App_Avatar_Props {}
 
@@ -55,12 +55,14 @@ const App_Avatar: NextPage<App_Avatar_Props> = (props) => {
   return (
     <div className={"avatar-box "}>
       {contextHolder}
-      <Popover content={content} trigger="click">
-        <Avatar
-          className={"tw-cursor-pointer"}
-          style={{ backgroundColor: "#87d068" }}
-          icon={<UserOutlined />}
-        />
+      <Popover
+        content={content}
+        trigger="click"
+        className={"tw-cursor-pointer"}
+      >
+        <div>
+          <BoringAvatars size={40} name={userInfo?.username}></BoringAvatars>
+        </div>
       </Popover>
     </div>
   );

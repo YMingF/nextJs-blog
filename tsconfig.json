@@ -4,6 +4,9 @@
     "experimentalDecorators": true,
     "noImplicitAny": true,
     "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    },
     "target": "es5",
     "module": "esnext",
     "strict": false,
