@@ -22,8 +22,10 @@ const Posts = withSession(
       }
       post.author = user;
       // 保存你所新建的post到数据库
-      await connection.manager.save(post);
 
+      await connection.manager.save(post);
+      res.statusCode = 200;
+      res.setHeader("Content-Type", "application/json");
       res.json(post);
     }
   }

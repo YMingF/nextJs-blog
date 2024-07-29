@@ -13,6 +13,7 @@ import axios from "axios";
 import { NamePath, StoreValue } from "rc-field-form/lib/interface";
 import { get } from "lodash";
 import { useGlobalState } from "../../context/globalStateContext";
+import { KeyValString } from "../../common-type";
 
 interface App_LoginProps {}
 
@@ -149,9 +150,13 @@ const App_Login: NextPage<App_LoginProps> = (props: any) => {
                     messageApi.success({
                       content: "注册成功，即将自动登录",
                       duration: 2,
-                      onClose: () => {
+                      onClose: async () => {
                         resolve(true);
                         storeUser(get(successData, "data"));
+                        await handleSignIn({
+                          username: formData.username,
+                          password: formData.password,
+                        });
                         setServerErrors({});
                         form.resetFields();
                       },
@@ -197,4 +202,8 @@ export function updateErrors(
       form.setFields(fields);
     }
   }, [serverErrors, form]);
+}
+
+function handleSignIn(userData: KeyValString) {
+  return axios.post("/api/v1/sessions", userData);
 }

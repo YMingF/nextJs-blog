@@ -10,7 +10,6 @@ type Props = {
 };
 const PostEdit: NextPage<Props> = (props) => {
   const { id, post } = props;
-  console.log(`post`, post);
   const { form, setErrors } = useForm({
     initFormData: {
       title: post.title,

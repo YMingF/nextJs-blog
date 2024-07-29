@@ -1,7 +1,6 @@
 // 用来完成展示文章梗概的卡片
 
 import { NextPage } from "next";
-import { useGlobalState } from "../../context/globalStateContext";
 import { Avatar } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { KeyValString } from "../../common-type";
@@ -13,8 +12,7 @@ interface ArticleCardProps {
 
 const ArticleCard: NextPage<ArticleCardProps> = (props: ArticleCardProps) => {
   const { articleData } = props || {};
-  const { title, content, uuid } = articleData || {};
-  const { user, storeUser } = useGlobalState();
+  const { title, content, uuid, author } = articleData || {};
   const router = useRouter();
   return (
     <div
@@ -36,7 +34,7 @@ const ArticleCard: NextPage<ArticleCardProps> = (props: ArticleCardProps) => {
             <div className="article-meta-user tw-flex tw-items-center tw-gap-4">
               <Avatar className={"tw-w-6 tw-h-6"} icon={<UserOutlined />} />
               <span className={"tw-text-xs tw-text-slate-300"}>
-                {user?.username}
+                {author?.username}
               </span>
             </div>
           </div>

@@ -7,7 +7,6 @@ import { customNextApiRequest } from "../../../../common-type";
 const Posts = withSession(
   async (req: customNextApiRequest, res: NextApiResponse) => {
     if (req.method === "PATCH") {
-      console.log(`req`, req);
       const id = req.query.id;
       const { title, content } = req.body;
       const connection = await getDatabaseConnection();

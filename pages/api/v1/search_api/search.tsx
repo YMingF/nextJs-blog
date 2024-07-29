@@ -18,7 +18,6 @@ const Search = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
   }
-  console.log(`searchRes`, searchRes);
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
   res.write(JSON.stringify(searchRes));

@@ -20,8 +20,9 @@ export const fetchArticles = withSession(
     // 拿到连接，从连接中去获取数据。
     const connection = await getDatabaseConnection();
     // totalNum表示数据库数据总数
-    const [posts, totalNum] = await connection.manager.findAndCount(Post, {});
-
+    const [posts, totalNum] = await connection.manager.findAndCount(Post, {
+      relations: ["author"],
+    });
     const result = new UAParser(ua).getResult();
     return {
       props: {

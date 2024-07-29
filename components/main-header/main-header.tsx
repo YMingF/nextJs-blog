@@ -21,19 +21,23 @@ const MainHeader: NextPage = () => {
   const backToHome = useCallback(() => {
     router.push("/");
   }, []);
+
   const jumpToWrite = useCallback(() => {
     if (user) {
       router.push("/posts/create");
     } else {
       messageApi.error("请先登录!");
     }
-  }, []);
+  }, [user]);
+
   let isCreateRoute = subscribeRouterChange(router);
+
   const onSearch = (value: any, _e: any, info: { source: any }) => {
     axios.post(`/api/v1/search_api/search?content=${value}`).then((data) => {
       eventEmitter.emit("searchFilterDataChanged", data);
     });
   };
+
   useEffect(() => {
     window.onscroll = function () {
       let navbar = document.querySelector(".home-header-box") as HTMLElement;
@@ -42,7 +46,6 @@ const MainHeader: NextPage = () => {
       }
       const scrollTop =
         document.body.scrollTop || document.documentElement.scrollTop;
-      console.log(`scrollTop,prevScrollTop`, scrollTop, prevScrollTop);
       if (scrollTop < prevScrollTop) {
         navbar.style.top = "0";
       } else if (scrollTop > 80) {

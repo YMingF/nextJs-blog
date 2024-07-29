@@ -64,3 +64,6 @@ yarn start
 ssh blog@dev1m "sh /home/blog/app/bin/deploy.sh"
 
 ```
+docker exec -it 5390 bash
+psql -U blog
+\c blog_development
