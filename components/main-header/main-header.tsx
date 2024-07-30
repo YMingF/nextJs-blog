@@ -9,7 +9,7 @@ import { Button, Input, message } from "antd";
 import HeaderNav from "./header-nav/header-nav";
 import axios from "axios";
 import eventEmitter from "../../emitter/eventEmitter";
-import { FormOutlined } from "@ant-design/icons";
+import { FormOutlined, SearchOutlined } from "@ant-design/icons";
 
 const MainHeader: NextPage = () => {
   const { Search } = Input;
@@ -72,16 +72,12 @@ const MainHeader: NextPage = () => {
             <div>{!isCreateRoute && <HeaderNav></HeaderNav>}</div>
           </div>
           <div className="header-btns tw-flex tw-items-center tw-gap-5">
-            <div className="search-btn">
+            <div className={`${styles.searchBtn}`}>
               {!isCreateRoute && (
-                <Search
-                  placeholder="input search text"
-                  allowClear
-                  enterButton
-                  onSearch={onSearch}
-                  style={{
-                    width: 200,
-                  }}
+                <Input
+                  size="middle"
+                  placeholder="Search"
+                  prefix={<SearchOutlined />}
                 />
               )}
             </div>

@@ -1,7 +1,6 @@
 import { NextPage } from "next";
 import { Menu, MenuProps } from "antd";
 import Link from "next/link";
-import { MailOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import styles from "./header-nav.module.scss";
 
@@ -15,7 +14,6 @@ const HeaderNav: NextPage = () => {
     {
       label: <Link href={"/"}>首页</Link>,
       key: "home",
-      icon: <MailOutlined />,
     },
   ];
   return (

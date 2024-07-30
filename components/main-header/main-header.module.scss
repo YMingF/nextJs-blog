@@ -14,4 +14,7 @@
       
     }
   }
+  .searchBtn :global(.ant-input-affix-wrapper:focus-within){
+    box-shadow: none;
+  }
 }

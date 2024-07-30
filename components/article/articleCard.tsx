@@ -23,6 +23,7 @@ const ArticleCard: NextPage<ArticleCardProps> = (props: ArticleCardProps) => {
             className={`${styles.articleTitleImg} tw-min-w-48 tw-cursor-pointer`}
             onClick={() => navToDetail(router, uuid)}
           >
+            <div className={`${styles.articleTitleImgCover}`}></div>
             <img src="/assets/pic/default_blog_pic.png" alt="" />
           </div>
           {/*纯分隔符*/}
@@ -35,13 +36,13 @@ const ArticleCard: NextPage<ArticleCardProps> = (props: ArticleCardProps) => {
               onClick={() => navToDetail(router, uuid)}
             >
               <h3
-                className={
-                  "article-title tw-text-lg tw-m-0 tw-p-0  tw-font-bold"
-                }
+                className={`${styles.articleTitle} tw-text-lg tw-m-0 tw-p-0  tw-font-bold`}
               >
                 {title}
               </h3>
-              <div className="article-abstract  tw-mt-2 tw-mb-2.5 tw-overflow-ellipsis tw-whitespace-nowrap tw-overflow-hidden">
+              <div
+                className={`${styles.articleAbstract}  tw-mt-2 tw-mb-2.5 tw-overflow-ellipsis tw-whitespace-nowrap tw-overflow-hidden`}
+              >
                 {content}
               </div>
             </div>

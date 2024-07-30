@@ -1,28 +1,22 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 import MarkdownEditor from "../../components/MarkdownEditor";
-import axios from "axios";
 import eventEmitter from "../../emitter/eventEmitter";
-import { Input, message } from "antd";
-import { KeyValString } from "../../common-type";
+import { Form, Input, message } from "antd";
 import { useRouter } from "next/router";
+import { KeyValString } from "@/common-type";
+import axios from "axios";
 
 const Home = () => {
-  const [markdownData, setMarkdownData] = useState({ title: "", content: "" });
-  const markdownDataRef = useRef(markdownData);
-  useEffect(() => {
-    markdownDataRef.current = markdownData;
-  }, [markdownData]);
   const router = useRouter();
+  const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
   const handleMarkdownChange = (data: any) => {
-    setMarkdownData((prevState) => ({
-      ...prevState,
-      content: data,
-    }));
+    form.setFieldValue("content", data);
   };
   const saveMarkdown = () => {
+    console.log(`form.getFieldsValue`, form.getFieldsValue());
     axios
-      .post("/api/v1/posts", markdownDataRef.current)
+      .post("/api/v1/posts", form.getFieldsValue())
       .then(({ data }: KeyValString) => {
         messageApi.success("发布成功");
         router.replace(`/posts/${data.uuid}`);
@@ -33,23 +27,24 @@ const Home = () => {
     return () => {
       eventEmitter.off("publishMarkdownEvt", saveMarkdown);
     };
-  }, [markdownDataRef]);
+  }, [form]);
 
   return (
     <div>
       {contextHolder}
-      <Input
-        placeholder="请输入标题"
-        required
-        value={markdownData["title"]}
-        onChange={(e) =>
-          setMarkdownData((prevState) => ({
-            ...prevState,
-            title: e.target.value,
-          }))
-        }
-      />
-      <MarkdownEditor onMarkdownChange={handleMarkdownChange} />
+      <Form form={form}>
+        <Form.Item name="title" rules={[{ required: true }]}>
+          <Input
+            placeholder="请输入标题"
+            onChange={(e) => {
+              form.setFieldValue("title", e.target.value);
+            }}
+          />
+        </Form.Item>
+        <Form.Item name="content" rules={[{ required: true }]}>
+          <MarkdownEditor onMarkdownChange={handleMarkdownChange} />
+        </Form.Item>
+      </Form>
     </div>
   );
 };
