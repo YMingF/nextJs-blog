@@ -1,0 +1,29 @@
+.articleTitleImg {
+  position: relative;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  aspect-ratio: 1200 / 630;
+  img {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    inset: 0px;
+    color: transparent;
+    object-fit: cover;
+    object-position: top;
+  }
+  
+}
+
+.articleTitle:hover {
+  color: #0a85d1;
+}
+
+.spacer {
+  min-height: 8px;
+}
+
+.articleAbstract {
+  color: #0009;
+  text-decoration: none;
+}

@@ -4,6 +4,7 @@ import { NextPage } from "next";
 import { KeyValString } from "../../common-type";
 import { NextRouter, useRouter } from "next/router";
 import BoringAvatars from "boring-avatars";
+import styles from "./articleCard.module.scss";
 
 interface ArticleCardProps {
   articleData: KeyValString;
@@ -15,28 +16,36 @@ const ArticleCard: NextPage<ArticleCardProps> = (props: ArticleCardProps) => {
   const router = useRouter();
   return (
     <>
-      <div
-        className={"article-card-box tw-bg-white tw-rounded tw-cursor-pointer"}
-        onClick={() => navToDetail(router, uuid)}
-      >
-        <div className="content-main tw-p-4 tw-flex tw-flex-col">
-          <div className="article-title-img tw-min-w-48">
+      <div className={`article-card-box tw-bg-white tw-rounded `}>
+        <div className="contentMain tw-p-4 tw-flex tw-flex-col">
+          {/*题图*/}
+          <div
+            className={`${styles.articleTitleImg} tw-min-w-48 tw-cursor-pointer`}
+            onClick={() => navToDetail(router, uuid)}
+          >
             <img src="/assets/pic/default_blog_pic.png" alt="" />
           </div>
-          <div className={"spacer"}></div>
+          {/*纯分隔符*/}
+          <div className={`${styles.spacer}`}></div>
           <div className="article-info">
-            <div className="article-category"></div>
-            <h3
-              className={
-                "article-title tw-text-lg tw-m-0 tw-p-0  tw-font-bold "
-              }
+            <div className={`${styles.articleCategory}`}></div>
+            {/*标题和简介*/}
+            <div
+              className={"tw-cursor-pointer"}
+              onClick={() => navToDetail(router, uuid)}
             >
-              {title}
-            </h3>
-            <div className="article-abstract  tw-mt-2 tw-mb-2.5 tw-overflow-ellipsis tw-whitespace-nowrap tw-overflow-hidden">
-              {content}
+              <h3
+                className={
+                  "article-title tw-text-lg tw-m-0 tw-p-0  tw-font-bold"
+                }
+              >
+                {title}
+              </h3>
+              <div className="article-abstract  tw-mt-2 tw-mb-2.5 tw-overflow-ellipsis tw-whitespace-nowrap tw-overflow-hidden">
+                {content}
+              </div>
             </div>
-            {/*  附加信息*/}
+            {/*  作者附加信息*/}
             <div className={"article-meta tw-mt-auto tw-mt-5"}>
               <div className="article-meta-user tw-flex tw-items-center tw-gap-2.5">
                 <BoringAvatars
@@ -51,35 +60,6 @@ const ArticleCard: NextPage<ArticleCardProps> = (props: ArticleCardProps) => {
           </div>
         </div>
       </div>
-      <style jsx>
-        {`
-          .article-title-img {
-            position: relative;
-            border-radius: 0.375rem;
-            overflow: hidden;
-            aspect-ratio: 1200 / 630;
-          }
-          .article-title-img img {
-            position: absolute;
-            height: 100%;
-            width: 100%;
-            inset: 0px;
-            color: transparent;
-            object-fit: cover;
-            object-position: top;
-          }
-          .article-title:hover {
-            color: #0a85d1;
-          }
-          .spacer {
-            min-height: 8px;
-          }
-          .article-abstract {
-            color: #0009;
-            text-decoration: none;
-          }
-        `}
-      </style>
     </>
   );
 };
