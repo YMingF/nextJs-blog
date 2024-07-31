@@ -3,6 +3,13 @@
   width: 1184px;
  }
  .headerActions{
+  border-top: 1px solid rgb(242, 242, 242);
+  border-bottom: 1px solid rgb(242, 242, 242);
+  margin: 32px 0px 0px;
+  padding: 10px 0;
+  .comments{
+   
+  }
   .moreAction{
    :global(.ant-btn){
     color: #131313;
