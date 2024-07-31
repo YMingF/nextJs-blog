@@ -25,10 +25,10 @@ const Home: NextPage = (props: any) => {
     <div
       className={`${styles.homeArticleBox}  homeArticleBox tw-flex tw-flex-wrap tw-h-full tw-max-h-full  tw-mt-5 tw-mx-auto tw-relative tw-bg-white tw-rounded`}
     >
-      {posts?.map((post: KeyValString) => {
+      {posts?.map((post: KeyValString, index: number) => {
         return (
           <>
-            <ArticleCard key={post.id} articleData={post}></ArticleCard>
+            <ArticleCard key={index} articleData={post}></ArticleCard>
           </>
         );
       })}

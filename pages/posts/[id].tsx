@@ -2,12 +2,17 @@ import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
 import { getDatabaseConnection } from "../../lib/getDatabaseConnection";
 import { Post } from "../../src/entity/Post";
 import marked from "marked";
-import Link from "next/link";
 import { withSession } from "../../lib/withSession";
 import { useCallback } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { customNextApiRequest, User } from "../../common-type";
+import styles from "./styles/post-detail.module.scss";
+import BoringAvatars from "boring-avatars";
+import { useGlobalState } from "@/context/globalStateContext";
+import { CommentSvg } from "@/lib/customPic";
+import { Button, Popover } from "antd";
+import { MoreOutlined } from "@ant-design/icons";
 
 type Props = {
   post: Post;
@@ -17,6 +22,7 @@ type Props = {
 const postsShow: NextPage<Props> = (props) => {
   const { post, currentUser, id } = props;
   const router = useRouter();
+  const { user } = useGlobalState();
   const handleDel = useCallback(() => {
     axios.delete(`/api/v1/posts/${id}`).then(
       () => {
@@ -28,22 +34,48 @@ const postsShow: NextPage<Props> = (props) => {
       }
     );
   }, [id]);
+
+  const content = (
+    <div className={`tw-flex tw-flex-col tw-items-start`}>
+      <Button type="link">编辑</Button>
+      <Button type="link" danger>
+        删除
+      </Button>
+    </div>
+  );
   return (
-    <div>
-      <h1>{post.title}</h1>
-      <section>
-        {currentUser && (
-          <>
-            <Link href="/posts/[id]/edit" as={`/posts/${post.id}/edit`}>
-              编辑
-            </Link>
-            <button onClick={handleDel}>删除</button>
-          </>
-        )}
-      </section>
-      <article
-        dangerouslySetInnerHTML={{ __html: marked(post.content) }}
-      ></article>
+    <div
+      className={`${styles.postDetailBox} tw-my-0 tw-mx-auto tw-bg-white tw-flex tw-flex-col tw-items-center`}
+    >
+      <div className={`${styles.postDetailInnerBox}`}>
+        <div className="titleLabel">
+          <h1>{post.title}</h1>
+        </div>
+        <div
+          className={`${styles.userBaseInfo} tw-flex tw-gap-2.5 tw-items-center`}
+        >
+          <BoringAvatars size={20} name={user?.username}></BoringAvatars>
+          <span className={"tw-text-xs tw-text-slate-300"}>
+            {user?.username}
+          </span>
+        </div>
+        <div className={`${styles.headerActions} tw-flex tw-items-center `}>
+          <div className="comments">
+            <CommentSvg></CommentSvg>
+            <span className={`commentNum`}></span>
+          </div>
+          <div className={`${styles.moreAction}`}>
+            <Popover content={content} trigger="click" placement={"bottom"}>
+              <Button type="link">
+                <MoreOutlined />
+              </Button>
+            </Popover>
+          </div>
+        </div>
+        <article
+          dangerouslySetInnerHTML={{ __html: marked(post.content) }}
+        ></article>
+      </div>
     </div>
   );
 };

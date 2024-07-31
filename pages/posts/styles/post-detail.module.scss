@@ -1,0 +1,14 @@
+.postDetailBox{
+ .postDetailInnerBox{
+  width: 1184px;
+ }
+ .headerActions{
+  .moreAction{
+   :global(.ant-btn){
+    color: #131313;
+    font-size: 20px;
+   }
+  }
+  
+ }
+}

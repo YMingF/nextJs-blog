@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { KeyValString } from "@/common-type";
 import axios from "axios";
 
-const Home = () => {
+const CreatePost = () => {
   const router = useRouter();
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
@@ -49,4 +49,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default CreatePost;
