@@ -25,7 +25,11 @@ const postsShow: NextPage<Props> = (props) => {
   const router = useRouter();
   const [messageApi, contextHolder] = message.useMessage();
   const { user } = useGlobalState();
-  const [open, setOpen] = useState(false);
+  const [actionPopoverOpen, setActionPopoverOpen] = useState(false);
+  const handleOpenChange = (newOpen: boolean) => {
+    setActionPopoverOpen(newOpen);
+  };
+
   useEffect(() => {
     if (!post) {
       router.push("/");
@@ -47,7 +51,6 @@ const postsShow: NextPage<Props> = (props) => {
           content: "删除失败",
           duration: 500,
         });
-        setOpen(false);
       }
     );
   }, [uuid]);
@@ -55,31 +58,33 @@ const postsShow: NextPage<Props> = (props) => {
   const editPost = useCallback(() => {
     router.push(`/posts/${uuid}/edit`);
   }, []);
+  const [delModalOpen, setDelModalOpen] = useState<boolean>(false);
 
-  const content = (
-    <div className={`tw-flex tw-flex-col tw-items-start`}>
-      <Button type="link" onClick={editPost}>
-        编辑
-      </Button>
-      <Button type="link" danger onClick={() => setOpen(true)}>
-        删除
-      </Button>
-      <Modal
-        title="注意"
-        open={open}
-        onOk={handleDelPost}
-        okText={"确定"}
-        cancelText={"取消"}
-        onCancel={() => setOpen(false)}
-      >
-        删除是不可逆转的，此文章将被完全删除！
-      </Modal>
-    </div>
+  const context = (
+    <>
+      <div className={`tw-flex tw-flex-col tw-items-start`}>
+        <Button type="link" onClick={editPost}>
+          编辑
+        </Button>
+        <Button
+          type="link"
+          danger
+          onClick={() => {
+            setDelModalOpen(true);
+            setTimeout(() => {
+              setActionPopoverOpen(false);
+            }, 100);
+          }}
+        >
+          删除
+        </Button>
+      </div>
+    </>
   );
+
   return (
     <>
       {contextHolder}
-
       <div
         className={`${styles.postDetailBox} tw-my-0 tw-mx-auto tw-bg-white tw-flex tw-flex-col tw-items-center`}
       >
@@ -101,7 +106,13 @@ const postsShow: NextPage<Props> = (props) => {
               <span className={`commentNum`}></span>
             </div>
             <div className={`${styles.moreAction}`}>
-              <Popover content={content} trigger="click" placement={"bottom"}>
+              <Popover
+                open={actionPopoverOpen}
+                onOpenChange={handleOpenChange}
+                content={context}
+                trigger="click"
+                placement={"bottom"}
+              >
                 <Button type="link">
                   <MoreOutlined />
                 </Button>
@@ -113,6 +124,19 @@ const postsShow: NextPage<Props> = (props) => {
           ></article>
         </div>
       </div>
+      <Modal
+        title="注意"
+        open={delModalOpen}
+        onCancel={() => {
+          setDelModalOpen(false);
+        }}
+        onOk={handleDelPost}
+        closable={false}
+        okText={"确定"}
+        cancelText={"取消"}
+      >
+        删除是不可逆转的，此文章将被完全删除！
+      </Modal>
     </>
   );
 };
