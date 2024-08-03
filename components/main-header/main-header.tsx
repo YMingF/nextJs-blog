@@ -9,7 +9,7 @@ import { Button, Input, message } from "antd";
 import HeaderNav from "./header-nav/header-nav";
 import axios from "axios";
 import eventEmitter from "../../emitter/eventEmitter";
-import { FormOutlined, SearchOutlined } from "@ant-design/icons";
+import { FormOutlined } from "@ant-design/icons";
 import { usePathname } from "next/navigation";
 
 const MainHeader: NextPage = () => {
@@ -53,6 +53,7 @@ const MainHeader: NextPage = () => {
   }, [pathname]);
 
   const onSearch = (value: any, _e: any, info: { source: any }) => {
+    console.log(`value`, value);
     axios.post(`/api/v1/search_api/search?content=${value}`).then((data) => {
       eventEmitter.emit("searchFilterDataChanged", data);
     });
@@ -94,10 +95,12 @@ const MainHeader: NextPage = () => {
           <div className="header-btns tw-flex tw-items-center tw-gap-5">
             <div className={`${styles.searchBtn}`}>
               {!isEditMode(routeStatus) && (
-                <Input
+                <Search
+                  placeholder="请输入搜索内容"
                   size="middle"
-                  placeholder="Search"
-                  prefix={<SearchOutlined />}
+                  allowClear
+                  onSearch={onSearch}
+                  enterButton
                 />
               )}
             </div>
