@@ -1,26 +1,24 @@
-import React, { useEffect } from "react";
-import MarkdownEditor from "../../components/MarkdownEditor";
+import React, { useEffect, useState } from "react";
 import eventEmitter from "../../emitter/eventEmitter";
-import { Form, Input, message } from "antd";
+import { message } from "antd";
 import { useRouter } from "next/router";
 import { KeyValString } from "@/common-type";
 import axios from "axios";
+import { UseMarkdown } from "@/hooks/useMarkdown";
 
 const CreatePost = () => {
   const router = useRouter();
-  const [form] = Form.useForm();
+  const [form, setForm] = useState({});
+
   const [messageApi, contextHolder] = message.useMessage();
-  const handleMarkdownChange = (data: any) => {
-    form.setFieldValue("content", data);
+  const syncForm = (data: any) => {
+    setForm(data);
   };
   const saveMarkdown = () => {
-    console.log(`form.getFieldsValue`, form.getFieldsValue());
-    axios
-      .post("/api/v1/posts", form.getFieldsValue())
-      .then(({ data }: KeyValString) => {
-        messageApi.success("发布成功");
-        router.replace(`/posts/${data.uuid}`);
-      });
+    axios.post("/api/v1/posts", form).then(async ({ data }: KeyValString) => {
+      await messageApi.success({ content: "发布成功", duration: 0.8 });
+      router.replace(`/posts/${data.uuid}`);
+    });
   };
   useEffect(() => {
     eventEmitter.on("publishPostEvt", saveMarkdown);
@@ -32,19 +30,9 @@ const CreatePost = () => {
   return (
     <div>
       {contextHolder}
-      <Form form={form}>
-        <Form.Item name="title" rules={[{ required: true }]}>
-          <Input
-            placeholder="请输入标题"
-            onChange={(e) => {
-              form.setFieldValue("title", e.target.value);
-            }}
-          />
-        </Form.Item>
-        <Form.Item name="content" rules={[{ required: true }]}>
-          <MarkdownEditor onMarkdownChange={handleMarkdownChange} />
-        </Form.Item>
-      </Form>
+      {UseMarkdown({
+        onFormChange: syncForm,
+      })}
     </div>
   );
 };

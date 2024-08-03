@@ -14,7 +14,7 @@ import { usePathname } from "next/navigation";
 
 const MainHeader: NextPage = () => {
   const { Search } = Input;
-  const { user, storeUser } = useGlobalState();
+  const { user } = useGlobalState();
   const router = useRouter();
   const [prevScrollTop, setPreviousScrollTop] = useState(0);
   const [routeStatus, setRouteStatus] = useState("");
@@ -39,10 +39,13 @@ const MainHeader: NextPage = () => {
     // 监听路由变化
     const handleRouteChange = (url: string) => {
       const editPostRegx = /\/posts\/[\s\S]+\/edit/;
+      const detailPostRegx = /\/posts\/[^\/]+$/;
       if (url.includes("posts/create")) {
         setRouteStatus("addPost");
       } else if (editPostRegx.test(url)) {
         setRouteStatus("editPost");
+      } else if (detailPostRegx.test(url)) {
+        setRouteStatus("detailPost");
       } else {
         setRouteStatus("");
       }
@@ -94,7 +97,7 @@ const MainHeader: NextPage = () => {
           </div>
           <div className="header-btns tw-flex tw-items-center tw-gap-5">
             <div className={`${styles.searchBtn}`}>
-              {!isEditMode(routeStatus) && (
+              {!isEditMode(routeStatus) && routeStatus !== "detailPost" && (
                 <Search
                   placeholder="请输入搜索内容"
                   size="middle"

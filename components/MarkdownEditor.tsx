@@ -9,11 +9,13 @@ import { NextPage } from "next"; // 将Markdown转换为HTML
 
 interface MarkdownEditorProps {
   onMarkdownChange: (data: any) => void;
+  initialValue?: string;
 }
 const MarkdownEditor: NextPage<MarkdownEditorProps> = ({
   onMarkdownChange,
+  initialValue,
 }) => {
-  const [markdown, setMarkdown] = useState("# 标题\n\n这里是一些Markdown内容");
+  const [markdown, setMarkdown] = useState(initialValue);
 
   const handleChange = (event: any) => {
     setMarkdown(event.target.value);

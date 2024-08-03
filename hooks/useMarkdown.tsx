@@ -36,7 +36,10 @@ export function UseMarkdown<T extends UseMarkdownProps>(props?: T) {
           />
         </Form.Item>
         <Form.Item name="content" rules={[{ required: true }]}>
-          <MarkdownEditor onMarkdownChange={handleMarkdownChange} />
+          <MarkdownEditor
+            initialValue={props.content}
+            onMarkdownChange={handleMarkdownChange}
+          />
         </Form.Item>
       </Form>
     </>
