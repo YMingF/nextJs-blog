@@ -4,18 +4,21 @@ import styles from "./main-header.module.scss";
 import App_Avatar from "../../pages/avatar/avatar";
 import { useGlobalState } from "../../context/globalStateContext";
 import { useCallback, useEffect, useState } from "react";
-import { NextRouter, useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { Button, Input, message } from "antd";
 import HeaderNav from "./header-nav/header-nav";
 import axios from "axios";
 import eventEmitter from "../../emitter/eventEmitter";
 import { FormOutlined, SearchOutlined } from "@ant-design/icons";
+import { usePathname } from "next/navigation";
 
 const MainHeader: NextPage = () => {
   const { Search } = Input;
   const { user, storeUser } = useGlobalState();
   const router = useRouter();
   const [prevScrollTop, setPreviousScrollTop] = useState(0);
+  const [routeStatus, setRouteStatus] = useState("");
+
   const [messageApi, contextHolder] = message.useMessage();
 
   const backToHome = useCallback(() => {
@@ -30,7 +33,24 @@ const MainHeader: NextPage = () => {
     }
   }, [user]);
 
-  let isCreateRoute = subscribeRouterChange(router);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    // 监听路由变化
+    const handleRouteChange = (url: string) => {
+      const editPostRegx = /\/posts\/[\s\S]+\/edit/;
+      if (url.includes("posts/create")) {
+        setRouteStatus("addPost");
+      } else if (editPostRegx.test(url)) {
+        setRouteStatus("editPost");
+      } else {
+        setRouteStatus("");
+      }
+    };
+
+    // 初始化时设置
+    handleRouteChange(pathname);
+  }, [pathname]);
 
   const onSearch = (value: any, _e: any, info: { source: any }) => {
     axios.post(`/api/v1/search_api/search?content=${value}`).then((data) => {
@@ -69,11 +89,11 @@ const MainHeader: NextPage = () => {
             <p className={"tw-cursor-pointer"} onClick={backToHome}>
               vvv
             </p>
-            <div>{!isCreateRoute && <HeaderNav></HeaderNav>}</div>
+            <div>{!isEditMode(routeStatus) && <HeaderNav></HeaderNav>}</div>
           </div>
           <div className="header-btns tw-flex tw-items-center tw-gap-5">
             <div className={`${styles.searchBtn}`}>
-              {!isCreateRoute && (
+              {!isEditMode(routeStatus) && (
                 <Input
                   size="middle"
                   placeholder="Search"
@@ -82,7 +102,7 @@ const MainHeader: NextPage = () => {
               )}
             </div>
             <div className={"write-btn"}>
-              {!isCreateRoute && (
+              {!isEditMode(routeStatus) && (
                 <Button
                   type="primary"
                   icon={<FormOutlined />}
@@ -91,9 +111,14 @@ const MainHeader: NextPage = () => {
                   写文章
                 </Button>
               )}
-              {isCreateRoute && (
+              {routeStatus === "addPost" && (
                 <Button type="primary" onClick={savePost}>
                   发布
+                </Button>
+              )}
+              {routeStatus === "editPost" && (
+                <Button type="primary" onClick={updatePost}>
+                  更新
                 </Button>
               )}
             </div>
@@ -109,27 +134,12 @@ const MainHeader: NextPage = () => {
 };
 export default MainHeader;
 function savePost() {
-  eventEmitter.emit("publishMarkdownEvt", null);
+  eventEmitter.emit("publishPostEvt", null);
 }
-function subscribeRouterChange(router: NextRouter) {
-  const [isCreateRoute, setIsCreateRoute] = useState(false);
+function updatePost() {
+  eventEmitter.emit("updatePostEvt", null);
+}
 
-  useEffect(() => {
-    // 监听路由变化
-    const handleRouteChange = (url: string) => {
-      setIsCreateRoute(url.includes("posts/create"));
-    };
-
-    // 初始化时设置
-    handleRouteChange(router.pathname);
-
-    // 添加路由变化事件监听
-    router.events.on("routeChangeComplete", handleRouteChange);
-
-    // 清理事件监听器
-    return () => {
-      router.events.off("routeChangeComplete", handleRouteChange);
-    };
-  }, [router.events]);
-  return isCreateRoute;
+function isEditMode(routeStatus: string | undefined) {
+  return ["addPost", "editPost"].includes(routeStatus);
 }

@@ -7,13 +7,13 @@ import { customNextApiRequest } from "../../../../common-type";
 const Posts = withSession(
   async (req: customNextApiRequest, res: NextApiResponse) => {
     if (req.method === "PATCH") {
-      const id = req.query.id;
+      console.log(`req.query`, req.query);
+      const { uuid } = req.query || {};
       const { title, content } = req.body;
       const connection = await getDatabaseConnection();
-      const post = await connection.manager.findOne<Post>(
-        "Post",
-        id.toString()
-      );
+      const post = await connection.manager.findOne<Post>("Post", {
+        where: { uuid },
+      });
       post.title = title;
       post.content = content;
       const user = req.session.get("currentUser");

@@ -23,9 +23,9 @@ const CreatePost = () => {
       });
   };
   useEffect(() => {
-    eventEmitter.on("publishMarkdownEvt", saveMarkdown);
+    eventEmitter.on("publishPostEvt", saveMarkdown);
     return () => {
-      eventEmitter.off("publishMarkdownEvt", saveMarkdown);
+      eventEmitter.off("publishPostEvt", saveMarkdown);
     };
   }, [form]);
 
