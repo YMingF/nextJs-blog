@@ -30,9 +30,11 @@ const CreatePost = () => {
   return (
     <div>
       {contextHolder}
-      {UseMarkdown({
-        onFormChange: syncForm,
-      })}
+      <div className={"tw-mt-2"}>
+        {UseMarkdown({
+          onFormChange: syncForm,
+        })}
+      </div>
     </div>
   );
 };

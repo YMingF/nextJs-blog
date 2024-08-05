@@ -6,6 +6,7 @@ import remarkHtml from "remark-html";
 import remarkBreaks from "remark-breaks";
 import rehypePrism from "rehype-prism";
 import { NextPage } from "next"; // 将Markdown转换为HTML
+import styles from "./markdownEditor.module.scss";
 
 interface MarkdownEditorProps {
   onMarkdownChange: (data: any) => void;
@@ -35,7 +36,9 @@ const MarkdownEditor: NextPage<MarkdownEditorProps> = ({
         value={markdown}
         onChange={handleChange}
       />
-      <div className={"tw-flex-1 tw-bg-white tw-p-5"}>
+      <div
+        className={`tw-flex-1 tw-bg-white tw-p-5 ${styles.displayMarkdownArea}`}
+      >
         <ReactMarkdown
           children={markdown}
           remarkPlugins={[remarkGfm, remarkHtml, remarkBreaks]}

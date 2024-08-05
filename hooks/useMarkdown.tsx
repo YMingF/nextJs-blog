@@ -1,5 +1,5 @@
 import { Form, Input } from "antd";
-import MarkdownEditor from "@/components/MarkdownEditor";
+import MarkdownEditor from "@/components/markdownEditor/MarkdownEditor";
 import React, { useCallback } from "react";
 
 interface UseMarkdownProps {
@@ -30,6 +30,8 @@ export function UseMarkdown<T extends UseMarkdownProps>(props?: T) {
         <Form.Item name="title" rules={[{ required: true }]}>
           <Input
             placeholder="请输入标题"
+            style={{ width: "40%" }}
+            required
             onChange={(e) => {
               form.setFieldValue("title", e.target.value);
             }}
