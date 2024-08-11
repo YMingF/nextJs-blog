@@ -19,6 +19,8 @@ export class Post {
   content: string;
   @Column("varchar")
   uuid: string;
+  @Column("varchar")
+  authorId: string;
   @CreateDateColumn()
   createdAt: Date;
   @UpdateDateColumn()

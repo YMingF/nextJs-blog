@@ -170,6 +170,7 @@ export const getServerSideProps: GetServerSideProps = withSession(
     // @ts-ignore
     const post =
       (await connection.manager.findOne(Post, { where: { uuid } })) || "''";
+    console.log(`post`, post);
     return {
       props: {
         currentUser,
