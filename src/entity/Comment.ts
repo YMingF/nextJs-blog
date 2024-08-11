@@ -16,6 +16,10 @@ export class Comment {
 
   @Column("text")
   content: string;
+  @Column("varchar")
+  postId: string;
+  @Column("varchar")
+  userId: string;
   @CreateDateColumn()
   createdAt: Date;
   @UpdateDateColumn()

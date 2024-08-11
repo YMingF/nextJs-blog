@@ -23,7 +23,7 @@ const CreateComment = withSession(
     comment.user = user;
     // store post info
     const post = await connection.manager.findOne(Post, {
-      where: { uuid: postId },
+      where: { id: postId },
     });
     if (!post) {
       res.statusCode = 401;

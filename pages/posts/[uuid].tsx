@@ -14,11 +14,13 @@ import { CommentSvg } from "@/lib/customPic";
 import { Button, Drawer, message, Modal, Popover } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import AppComment from "@/pages/comment";
+import { Comment } from "@/src/entity/Comment";
 
 type Props = {
   post: Post;
   uuid: string;
   currentUser: User | null;
+  comments: Comment[] | null;
 };
 const postsShow: NextPage<Props> = (props) => {
   const { post, currentUser, uuid } = props;
@@ -152,7 +154,11 @@ const postsShow: NextPage<Props> = (props) => {
         onClose={() => toggleComment(false)}
         open={commentDrawerOpen}
       >
-        <AppComment postId={uuid} userId={user?.id}></AppComment>
+        <AppComment
+          postId={post.id}
+          userId={user?.id}
+          commentData={props.comments}
+        ></AppComment>
       </Drawer>
     </>
   );
@@ -168,13 +174,15 @@ export const getServerSideProps: GetServerSideProps = withSession(
       (context.req as customNextApiRequest).session.get("currentUser") || null;
     //  用context.params.id去获取你路由跳转时传过来的id值
     // @ts-ignore
-    const post =
-      (await connection.manager.findOne(Post, { where: { uuid } })) || "''";
-    console.log(`post`, post);
+    const post = await connection.manager.findOne(Post, { where: { uuid } });
+    const comments = await connection.manager.find(Comment, {
+      where: { postId: post.id },
+    });
     return {
       props: {
         currentUser,
         uuid,
+        comments: JSON.parse(JSON.stringify(comments)),
         post: JSON.parse(JSON.stringify(post)),
       },
     };
