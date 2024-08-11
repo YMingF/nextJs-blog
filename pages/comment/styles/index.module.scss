@@ -1,0 +1,9 @@
+.commentContainer {
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 2px 8px;
+  .inputBox {
+    :global(textarea) {
+      border: none;
+      box-shadow: none;
+    }
+  }
+}

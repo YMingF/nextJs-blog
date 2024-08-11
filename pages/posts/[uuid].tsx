@@ -11,8 +11,9 @@ import styles from "./styles/post-detail.module.scss";
 import BoringAvatars from "boring-avatars";
 import { useGlobalState } from "@/context/globalStateContext";
 import { CommentSvg } from "@/lib/customPic";
-import { Button, message, Modal, Popover } from "antd";
+import { Button, Drawer, message, Modal, Popover } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
+import AppComment from "@/pages/comment";
 
 type Props = {
   post: Post;
@@ -26,6 +27,8 @@ const postsShow: NextPage<Props> = (props) => {
   const [messageApi, contextHolder] = message.useMessage();
   const { user } = useGlobalState();
   const [actionPopoverOpen, setActionPopoverOpen] = useState(false);
+  const [commentDrawerOpen, setCommentDrawerOpen] = useState(false);
+
   const handleOpenChange = (newOpen: boolean) => {
     setActionPopoverOpen(newOpen);
   };
@@ -82,6 +85,9 @@ const postsShow: NextPage<Props> = (props) => {
     </>
   );
 
+  const toggleComment = useCallback((val: boolean) => {
+    setCommentDrawerOpen(val);
+  }, []);
   return (
     <>
       {contextHolder}
@@ -101,7 +107,10 @@ const postsShow: NextPage<Props> = (props) => {
             </span>
           </div>
           <div className={`${styles.headerActions} tw-flex tw-items-center `}>
-            <div className={`tw-flex tw-items-center ${styles.comments}`}>
+            <div
+              className={`tw-flex tw-items-center tw-cursor-pointer ${styles.comments}`}
+              onClick={() => toggleComment(true)}
+            >
               <CommentSvg></CommentSvg>
               <span className={`commentNum`}></span>
             </div>
@@ -137,6 +146,14 @@ const postsShow: NextPage<Props> = (props) => {
       >
         删除是不可逆转的，此文章将被完全删除！
       </Modal>
+      {/*  展示评论内容*/}
+      <Drawer
+        title="评论"
+        onClose={() => toggleComment(false)}
+        open={commentDrawerOpen}
+      >
+        <AppComment postId={uuid} userId={user?.id}></AppComment>
+      </Drawer>
     </>
   );
 };
