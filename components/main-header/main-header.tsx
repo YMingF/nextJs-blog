@@ -29,7 +29,7 @@ const MainHeader: NextPage = () => {
     if (user) {
       router.push("/posts/create");
     } else {
-      messageApi.error("请先登录!");
+      messageApi.error("请先登录");
     }
   }, [user]);
 

@@ -29,28 +29,32 @@ const AppComment: NextPage<CommentProps> = (props) => {
         if (response.status === 200) {
           await message.success("评论成功");
           form.resetFields();
-          const response = await axios.get(
-            `/api/v1/comments/fetch?postId=${postId}`
-          );
-          setCommentData(response.data);
+          await reFetchComments();
         } else {
           await message.error("评论失败");
         }
       });
   }, []);
 
-  const content = (
-    <Card className={`${styles.commentActionCard}`} bordered={false}>
-      <div className={"tw-flex tw-flex-col tw-gap-2.5"}>
-        <Button type="text" className={"tw-w-full"}>
-          修改
-        </Button>
-        <Button danger type="text">
-          删除
-        </Button>
-      </div>
-    </Card>
-  );
+  const reFetchComments = useCallback(async () => {
+    const response = await axios.get(`/api/v1/comments/fetch?postId=${postId}`);
+    setCommentData(response.data);
+  }, []);
+
+  const removeComment = useCallback((comment: any) => {
+    console.log(`comment`, comment);
+    axios
+      .delete(`/api/v1/comments/delete/${comment.id}`)
+      .then(async (response) => {
+        if (response.status === 200) {
+          await message.success("删除成功");
+          await reFetchComments();
+        } else {
+          await message.error("删除失败");
+        }
+      });
+  }, []);
+
   return (
     <div className={`${styles.commentContainer} tw-p-2.5`}>
       <div className="commentBox tw-flex tw-flex-col tw-px-2.5">
@@ -62,15 +66,7 @@ const AppComment: NextPage<CommentProps> = (props) => {
         </div>
         <div className={`${styles.inputBox} tw-flex-1`}>
           <Form form={form}>
-            <Form.Item
-              name="content"
-              rules={[
-                {
-                  required: true,
-                  message: "please enter url description",
-                },
-              ]}
-            >
+            <Form.Item name="content">
               <Input.TextArea autoSize placeholder="说点什么" />
             </Form.Item>
           </Form>
@@ -82,9 +78,25 @@ const AppComment: NextPage<CommentProps> = (props) => {
         </div>
       </div>
       <div className="commentList tw-mt-5 tw-flex tw-flex-col tw-gap-2.5">
-        {commentData.map((comment) => {
+        {commentData.map((comment, index) => {
+          const content = (
+            <Card className={`${styles.commentActionCard}`} bordered={false}>
+              <div className={"tw-flex tw-flex-col tw-gap-2.5"}>
+                <Button type="text" className={"tw-w-full"}>
+                  修改
+                </Button>
+                <Button
+                  danger
+                  type="text"
+                  onClick={() => removeComment(comment)}
+                >
+                  删除
+                </Button>
+              </div>
+            </Card>
+          );
           return (
-            <div className={"inner tw-flex tw-flex-col tw-gap-2.5"}>
+            <div className={"inner tw-flex tw-flex-col tw-gap-2.5"} key={index}>
               <div className="userBox tw-flex tw-justify-between tw-pr-2.5">
                 <div className="avatar">
                   <BoringAvatars

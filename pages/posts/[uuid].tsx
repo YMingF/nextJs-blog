@@ -32,6 +32,10 @@ const postsShow: NextPage<Props> = (props) => {
   const [commentDrawerOpen, setCommentDrawerOpen] = useState(false);
 
   const handleOpenChange = (newOpen: boolean) => {
+    if (newOpen && !user) {
+      messageApi.error("请先登录");
+      return;
+    }
     setActionPopoverOpen(newOpen);
   };
 
@@ -87,7 +91,11 @@ const postsShow: NextPage<Props> = (props) => {
     </>
   );
 
-  const toggleComment = useCallback((val: boolean) => {
+  const toggleComment = useCallback((val: boolean, user: any) => {
+    if (val && !user) {
+      messageApi.error("请先登录");
+      return;
+    }
     setCommentDrawerOpen(val);
   }, []);
   return (
@@ -111,7 +119,7 @@ const postsShow: NextPage<Props> = (props) => {
           <div className={`${styles.headerActions} tw-flex tw-items-center `}>
             <div
               className={`tw-flex tw-items-center tw-cursor-pointer ${styles.comments}`}
-              onClick={() => toggleComment(true)}
+              onClick={() => toggleComment(true, user)}
             >
               <CommentSvg></CommentSvg>
               <span className={`commentNum`}></span>
@@ -151,7 +159,7 @@ const postsShow: NextPage<Props> = (props) => {
       {/*  展示评论内容*/}
       <Drawer
         title="评论"
-        onClose={() => toggleComment(false)}
+        onClose={() => toggleComment(false, user)}
         open={commentDrawerOpen}
       >
         <AppComment
