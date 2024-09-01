@@ -4,6 +4,7 @@ import { customNextApiRequest } from "@/common-type";
 import { Comment } from "@/src/entity/Comment";
 import { getDatabaseConnection } from "@/lib/getDatabaseConnection";
 import { Post } from "@/src/entity/Post";
+import { generateUid } from "@/lib/uid";
 
 const CreateComment = withSession(
   async (req: customNextApiRequest, res: NextApiResponse) => {
@@ -32,6 +33,7 @@ const CreateComment = withSession(
     }
 
     comment.post = post;
+    comment.uuid = generateUid();
     await connection.manager.save(comment);
     res.statusCode = 200;
     res.setHeader("Content-Type", "application/json");

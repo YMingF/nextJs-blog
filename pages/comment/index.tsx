@@ -27,7 +27,7 @@ const AppComment: NextPage<CommentProps> = (props) => {
       .post("/api/v1/comments/create", { content, userId, postId })
       .then(async (response) => {
         if (response.status === 200) {
-          await message.success("评论成功");
+          await message.success("评论成功", 0.3);
           form.resetFields();
           await reFetchComments();
         } else {
@@ -42,12 +42,11 @@ const AppComment: NextPage<CommentProps> = (props) => {
   }, []);
 
   const removeComment = useCallback((comment: any) => {
-    console.log(`comment`, comment);
     axios
-      .delete(`/api/v1/comments/delete/${comment.id}`)
+      .post(`/api/v1/comments/delete`, { uuid: comment.uuid })
       .then(async (response) => {
         if (response.status === 200) {
-          await message.success("删除成功");
+          await message.success("删除成功", 0.5);
           await reFetchComments();
         } else {
           await message.error("删除失败");
@@ -60,7 +59,10 @@ const AppComment: NextPage<CommentProps> = (props) => {
       <div className="commentBox tw-flex tw-flex-col tw-px-2.5">
         <div className="userInfo tw-flex tw-gap-3.5 tw-items-center">
           <div>
-            <BoringAvatars size={20} name={user?.username}></BoringAvatars>
+            <BoringAvatars
+              size={20}
+              name={user?.id?.toString()}
+            ></BoringAvatars>
           </div>
           <p>{user?.username}</p>
         </div>

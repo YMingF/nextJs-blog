@@ -111,7 +111,10 @@ const postsShow: NextPage<Props> = (props) => {
           <div
             className={`${styles.userBaseInfo} tw-flex tw-gap-2.5 tw-items-center`}
           >
-            <BoringAvatars size={20} name={user?.username}></BoringAvatars>
+            <BoringAvatars
+              size={20}
+              name={user?.id?.toString()}
+            ></BoringAvatars>
             <span className={"tw-text-xs tw-text-slate-300"}>
               {user?.username}
             </span>

@@ -8,8 +8,8 @@ export class RenameColumn1716813959572 implements MigrationInterface {
       "passwordDigest"
     );
     await queryRunner.renameColumn("posts", "author_id", "authorId");
-    await queryRunner.renameColumn("comments", "user_id", "userId");
-    await queryRunner.renameColumn("comments", "post_id", "postId");
+    // await queryRunner.renameColumn("comments", "user_id", "userId");
+    // await queryRunner.renameColumn("comments", "post_id", "postId");
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
@@ -19,7 +19,7 @@ export class RenameColumn1716813959572 implements MigrationInterface {
       "password_digest"
     );
     await queryRunner.renameColumn("posts", "authorId", "author_id");
-    await queryRunner.renameColumn("comments", "userId", "user_id");
-    await queryRunner.renameColumn("comments", "postId", "post_id");
+    // await queryRunner.renameColumn("comments", "userId", "user_id");
+    // await queryRunner.renameColumn("comments", "postId", "post_id");
   }
 }

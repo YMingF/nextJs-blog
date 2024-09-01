@@ -12,7 +12,8 @@ interface ArticleCardProps {
 
 const ArticleCard: NextPage<ArticleCardProps> = (props: ArticleCardProps) => {
   const { articleData } = props || {};
-  const { title, content, uuid, author } = articleData || {};
+  const { title, content, uuid, author, authorId } = articleData || {};
+
   const router = useRouter();
   return (
     <>
@@ -51,7 +52,7 @@ const ArticleCard: NextPage<ArticleCardProps> = (props: ArticleCardProps) => {
               <div className="article-meta-user tw-flex tw-items-center tw-gap-2.5">
                 <BoringAvatars
                   size={20}
-                  name={author?.username}
+                  name={authorId.toString()}
                 ></BoringAvatars>
                 <span className={"tw-text-xs tw-text-slate-300"}>
                   {author?.username}

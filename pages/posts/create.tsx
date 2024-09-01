@@ -15,10 +15,12 @@ const CreatePost = () => {
     setForm(data);
   };
   const saveMarkdown = () => {
-    axios.post("/api/v1/posts", form).then(async ({ data }: KeyValString) => {
-      await messageApi.success({ content: "发布成功", duration: 0.8 });
-      router.replace(`/posts/${data.uuid}`);
-    });
+    axios
+      .post("/api/v1/posts/create", form)
+      .then(async ({ data }: KeyValString) => {
+        await messageApi.success({ content: "发布成功", duration: 0.8 });
+        router.replace(`/posts/${data.uuid}`);
+      });
   };
   useEffect(() => {
     eventEmitter.on("publishPostEvt", saveMarkdown);

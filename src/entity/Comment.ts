@@ -20,12 +20,14 @@ export class Comment {
   postId: string;
   @Column("varchar")
   userId: string;
+  @Column("varchar")
+  uuid: string;
   @CreateDateColumn()
   createdAt: Date;
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne("User", "comments")
+  @ManyToOne("User", "comments", { onDelete: "CASCADE" })
   user: User;
 
   @ManyToOne("Post", "comments")

@@ -1,6 +1,7 @@
 import { Form, Input } from "antd";
 import MarkdownEditor from "@/components/markdownEditor/MarkdownEditor";
 import React, { useCallback } from "react";
+import styles from "./markdown.module.scss";
 
 interface UseMarkdownProps {
   title?: string;
@@ -27,16 +28,23 @@ export function UseMarkdown<T extends UseMarkdownProps>(props?: T) {
         initialValues={{ title: props?.title, content: props.content }}
         onValuesChange={handleFormChange}
       >
-        <Form.Item name="title" rules={[{ required: true }]}>
-          <Input
-            placeholder="请输入标题"
-            style={{ width: "40%" }}
-            required
-            onChange={(e) => {
-              form.setFieldValue("title", e.target.value);
-            }}
-          />
-        </Form.Item>
+        <div className={`${styles.inputItem}`}>
+          <Form.Item
+            name="title"
+            className={"tw-flex tw-items-center"}
+            rules={[{ required: true }]}
+          >
+            <Input
+              className={"tw-border-0"}
+              placeholder="请输入标题"
+              required
+              onChange={(e) => {
+                form.setFieldValue("title", e.target.value);
+              }}
+            />
+          </Form.Item>
+        </div>
+
         <Form.Item name="content" rules={[{ required: true }]}>
           <MarkdownEditor
             initialValue={props.content}

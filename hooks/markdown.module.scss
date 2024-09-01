@@ -1,0 +1,17 @@
+.inputItem {
+  :global(.ant-form-item){
+    margin: 0;
+   
+  }
+  
+}
+.inputItem :global(.ant-row) {
+  flex: 1;
+  input{
+    outline: none;
+    border: none transparent;
+    box-shadow: none;
+  }
+}
+.inputItem :global(.ant-form-item .ant-form-item-row)  {
+}

@@ -26,11 +26,7 @@ const Home: NextPage = (props: any) => {
       className={`${styles.homeArticleBox}  homeArticleBox tw-flex tw-flex-wrap tw-h-full tw-max-h-full  tw-mt-5 tw-mx-auto tw-relative tw-bg-white tw-rounded`}
     >
       {posts?.map((post: KeyValString, index: number) => {
-        return (
-          <>
-            <ArticleCard key={index} articleData={post}></ArticleCard>
-          </>
-        );
+        return <ArticleCard key={index} articleData={post}></ArticleCard>;
       })}
       {posts?.length === 0 && (
         <div className={`${styles.emptyWrapper}`}>

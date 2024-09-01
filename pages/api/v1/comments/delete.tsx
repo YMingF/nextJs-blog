@@ -2,19 +2,23 @@ import { NextApiResponse } from "next";
 import { withSession } from "@/lib/withSession";
 import { customNextApiRequest } from "@/common-type";
 import { getDatabaseConnection } from "@/lib/getDatabaseConnection";
+import { Comment } from "@/src/entity/Comment";
 
 const DeleteComment = withSession(
   async (req: customNextApiRequest, res: NextApiResponse) => {
-    console.log(`req`, req);
-    const { id } = req.query;
+    const { uuid } = req.body;
     try {
       const connection = await getDatabaseConnection();
-      // await connection
-      //   .createQueryBuilder()
-      //   .delete()
-      //   .from(Comment)
-      //   .where("id = :id", { id })
-      //   .execute();
+      const comment = await connection.manager.findOne<Comment>("Comment", {
+        where: { uuid },
+      });
+      const user = req.session.get("currentUser");
+      if (!user) {
+        res.statusCode = 401;
+        res.end();
+        return;
+      }
+      await connection.manager.remove(comment);
       res.status(200);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch comments" });

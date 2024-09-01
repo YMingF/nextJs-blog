@@ -27,6 +27,10 @@ export class CreateComments1716618898624 implements MigrationInterface {
             name: "postId",
             type: "varchar",
           },
+          {
+            name: "uuid",
+            type: "varchar",
+          },
         ],
       })
     );

@@ -61,7 +61,10 @@ const App_Avatar: NextPage<App_Avatar_Props> = (props) => {
         className={"tw-cursor-pointer"}
       >
         <div>
-          <BoringAvatars size={40} name={userInfo?.username}></BoringAvatars>
+          <BoringAvatars
+            size={40}
+            name={userInfo?.id?.toString()}
+          ></BoringAvatars>
         </div>
       </Popover>
     </div>

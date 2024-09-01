@@ -1,11 +1,11 @@
 import { NextApiResponse } from "next";
-import { Post } from "../../../src/entity/Post";
-import { getDatabaseConnection } from "../../../lib/getDatabaseConnection";
-import { withSession } from "../../../lib/withSession";
-import { customNextApiRequest } from "../../../common-type";
-import { generateUid } from "../../../lib/uid";
+import { Post } from "../../../../src/entity/Post";
+import { getDatabaseConnection } from "../../../../lib/getDatabaseConnection";
+import { withSession } from "../../../../lib/withSession";
+import { customNextApiRequest } from "../../../../common-type";
+import { generateUid } from "../../../../lib/uid";
 
-const Posts = withSession(
+const CreatePost = withSession(
   async (req: customNextApiRequest, res: NextApiResponse) => {
     if (req.method === "POST") {
       const { title, content } = req.body;
@@ -30,4 +30,4 @@ const Posts = withSession(
     }
   }
 );
-export default Posts;
+export default CreatePost;
