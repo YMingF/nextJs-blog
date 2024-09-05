@@ -13,14 +13,20 @@ interface CommentProps {
   postId: number;
   commentData: KeyValMap[] | null;
 }
-
+const processCommentData = (dataArr: KeyValMap[]) => {
+  dataArr.forEach((data: KeyValMap) => {
+    data.isVisible = false;
+  });
+  return dataArr;
+};
 const AppComment: NextPage<CommentProps> = (props) => {
   let { userId, postId, commentData: initialCommentData } = props;
   const { user } = useGlobalState();
   const [form] = Form.useForm();
   const [commentData, setCommentData] = useState<KeyValMap[]>(
-    initialCommentData || []
+    processCommentData(initialCommentData) || []
   );
+
   const createComment = useCallback(() => {
     const content = form.getFieldsValue().content;
     axios
@@ -38,6 +44,9 @@ const AppComment: NextPage<CommentProps> = (props) => {
 
   const reFetchComments = useCallback(async () => {
     const response = await axios.get(`/api/v1/comments/fetch?postId=${postId}`);
+    response.data?.forEach((item: KeyValMap) => {
+      item.isVisible = false;
+    });
     setCommentData(response.data);
   }, []);
 
@@ -53,7 +62,31 @@ const AppComment: NextPage<CommentProps> = (props) => {
         }
       });
   }, []);
+  const updateComment = useCallback((index: number, comment: KeyValMap) => {
+    axios
+      .patch("/api/v1/comments/update", { comment })
+      .then(async (response) => {
+        if (response.status === 200) {
+          updateCommentVal(index, {
+            isVisible: false,
+            content: comment.newContent,
+          });
+        }
+      });
+  }, []);
 
+  const [inputValue, setInputValue] = useState("");
+
+  const handleInputChange = (event: any) => {
+    setInputValue(event.target.value);
+  };
+
+  const updateCommentVal = (index: number, newVal: KeyValMap) => {
+    const updatedComments = commentData.map((comment, i) =>
+      i === index ? { ...comment, ...newVal } : comment
+    );
+    setCommentData(updatedComments);
+  };
   return (
     <div className={`${styles.commentContainer} tw-p-2.5`}>
       <div className="commentBox tw-flex tw-flex-col tw-px-2.5">
@@ -84,7 +117,11 @@ const AppComment: NextPage<CommentProps> = (props) => {
           const content = (
             <Card className={`${styles.commentActionCard}`} bordered={false}>
               <div className={"tw-flex tw-flex-col tw-gap-2.5"}>
-                <Button type="text" className={"tw-w-full"}>
+                <Button
+                  type="text"
+                  className={"tw-w-full"}
+                  onClick={() => updateCommentVal(index, { isVisible: true })}
+                >
                   修改
                 </Button>
                 <Button
@@ -116,7 +153,34 @@ const AppComment: NextPage<CommentProps> = (props) => {
                   </Popover>
                 </div>
               </div>
-              <div className="comment">{comment.content}</div>
+              {comment.isVisible ? (
+                <div className={"tw-flex tw-flex-col "}>
+                  <Input
+                    placeholder="Basic usage"
+                    onChange={(e) =>
+                      updateCommentVal(index, { newContent: e.target.value })
+                    }
+                  />
+                  <div className={"tw-flex tw-gap-2.5 tw-justify-end"}>
+                    <Button
+                      type="text"
+                      onClick={() =>
+                        updateCommentVal(index, { isVisible: false })
+                      }
+                    >
+                      取消
+                    </Button>
+                    <Button
+                      type="text"
+                      onClick={() => updateComment(index, comment)}
+                    >
+                      确定
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="comment">{comment.content}</div>
+              )}
             </div>
           );
         })}
