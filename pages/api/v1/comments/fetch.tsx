@@ -12,6 +12,7 @@ const FetchComments = withSession(
       const comments = await connection.manager.find(Comment, {
         where: { postId },
       });
+      comments.sort((a, b) => a.id - b.id);
       res.status(200).json(comments);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch comments" });

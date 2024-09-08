@@ -14,6 +14,7 @@ interface CommentProps {
   commentData: KeyValMap[] | null;
 }
 const processCommentData = (dataArr: KeyValMap[]) => {
+  dataArr.sort((a, b) => a.id - b.id);
   dataArr.forEach((data: KeyValMap) => {
     data.isVisible = false;
   });
@@ -67,19 +68,13 @@ const AppComment: NextPage<CommentProps> = (props) => {
       .patch("/api/v1/comments/update", { comment })
       .then(async (response) => {
         if (response.status === 200) {
-          updateCommentVal(index, {
-            isVisible: false,
-            content: comment.newContent,
-          });
+          const response = await axios.get(
+            `/api/v1/comments/fetch?postId=${postId}`
+          );
+          setCommentData(processCommentData(response.data));
         }
       });
   }, []);
-
-  const [inputValue, setInputValue] = useState("");
-
-  const handleInputChange = (event: any) => {
-    setInputValue(event.target.value);
-  };
 
   const updateCommentVal = (index: number, newVal: KeyValMap) => {
     const updatedComments = commentData.map((comment, i) =>
@@ -156,7 +151,6 @@ const AppComment: NextPage<CommentProps> = (props) => {
               {comment.isVisible ? (
                 <div className={"tw-flex tw-flex-col "}>
                   <Input
-                    placeholder="Basic usage"
                     onChange={(e) =>
                       updateCommentVal(index, { newContent: e.target.value })
                     }
