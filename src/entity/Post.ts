@@ -22,7 +22,10 @@ export class Post {
   @Column("varchar")
   authorId: string;
   @Column("varchar", { array: true, nullable: true })
-  likesUserId: string[];
+  likesUserId: string[] = []; // 初始化为一个空数组
+  @Column("int", { nullable: true })
+  likesAmt: number;
+
   @CreateDateColumn()
   createdAt: Date;
   @UpdateDateColumn()
@@ -32,4 +35,8 @@ export class Post {
   author: User;
   @OneToMany("Comment", "posts")
   comments: Comment[];
+
+  updateLikesAmt() {
+    this.likesAmt = this.likesUserId.length; // 自动设置 likesAmt 为 likesUserId 的长度
+  }
 }

@@ -36,6 +36,11 @@ export class CreatePosts1716618643582 implements MigrationInterface {
             isArray: true,
             isNullable: true,
           },
+          {
+            name: "likesAmt",
+            type: "int",
+            isNullable: true,
+          },
         ],
       })
     );

@@ -1,3 +1,4 @@
+import { KeyValMap } from "@/constants/common-type";
 import { useGlobalState } from "@/context/globalStateContext";
 import AppComment from "@/pages/comment";
 import { Comment } from "@/src/entity/Comment";
@@ -10,10 +11,11 @@ import marked from "marked";
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
-import { customNextApiRequest, User } from "../../common-type";
+import { customNextApiRequest } from "../../common-type";
 import { getDatabaseConnection } from "../../lib/getDatabaseConnection";
 import { withSession } from "../../lib/withSession";
 import { Post } from "../../src/entity/Post";
+import { User } from "../../src/entity/User";
 import styles from "./styles/post-detail.module.scss";
 
 type Props = {
@@ -24,7 +26,7 @@ type Props = {
 };
 const postsShow: NextPage<Props> = (props) => {
   const { postData, currentUser, uuid } = props;
-  const [post, setPost] = useState<Post>(postData);
+  const [post, setPost] = useState<KeyValMap>(postData);
   const [commentData, setCommentData] = useState<Comment[]>(props.comments);
   const router = useRouter();
   const [messageApi, contextHolder] = message.useMessage();
@@ -100,20 +102,14 @@ const postsShow: NextPage<Props> = (props) => {
     }
     setCommentDrawerOpen(val);
   }, []);
-  const handleLike = (post: Post, userId: string) => {
-    if (post.likesUserId?.includes(userId)) {
-      axios
-        .post(`/api/v1/posts/like/cancel?uuid=${post.uuid}&userId=${userId}`)
-        .then((res) => {
-          setPost({ ...post, likesUserId: res.data.likesUserId });
+  const handleLike = (post: KeyValMap, userId: string) => {
+    axios
+      .post(`/api/v1/posts/toggleLike?uuid=${post.uuid}&userId=${userId}`)
+      .then((res) => {
+        setPost({
+          ...res.data.post,
         });
-    } else {
-      axios
-        .post(`/api/v1/posts/like/save?uuid=${post.uuid}&userId=${userId}`)
-        .then((res) => {
-          setPost({ ...post, likesUserId: res.data.likesUserId });
-        });
-    }
+      });
   };
 
   return (
@@ -123,15 +119,20 @@ const postsShow: NextPage<Props> = (props) => {
         className={`${styles.postDetailBox} tw-my-0 tw-mx-auto tw-bg-white tw-flex tw-flex-col tw-items-center`}
       >
         <div className={`${styles.postDetailInnerBox}`}>
+          {/* 文章标题 */}
           <div className="titleLabel">
             <h1>{post.title}</h1>
           </div>
+          {/* 文章作者信息 */}
           <div
             className={`${styles.userBaseInfo} tw-flex tw-gap-2.5 tw-items-center`}
           >
-            <BoringAvatars size={20} name={userId}></BoringAvatars>
+            <BoringAvatars
+              size={20}
+              name={post.author.username}
+            ></BoringAvatars>
             <p className="tw-text-slate-500 tw-flex tw-gap-2.5 tw-items-center">
-              <span className="tw-text-sm">{user?.username}</span>
+              <span className="tw-text-sm">{post.author.username}</span>
               <span className="tw-text-sm">{formatDate(post?.updatedAt)}</span>
             </p>
           </div>
@@ -149,9 +150,7 @@ const postsShow: NextPage<Props> = (props) => {
                 onClick={() => handleLike(post, userId)}
               >
                 <LikeFilled />
-                <span className={`tw-text-sm tw-ml-1`}>
-                  {post.likesUserId?.length}
-                </span>
+                <span className={`tw-text-sm tw-ml-1`}>{post.likesAmt}</span>
               </div>
             </div>
             {/* 评论按钮 */}
@@ -223,6 +222,9 @@ export const getServerSideProps: GetServerSideProps = withSession(
     //  用context.params.id去获取你路由跳转时传过来的id值
     // @ts-ignore
     const post = await connection.manager.findOne(Post, { where: { uuid } });
+    const author = await connection.manager.findOne(User, {
+      where: { id: post?.authorId },
+    });
     const comments = await connection.manager.find(Comment, {
       where: { postId: post.id },
     });
@@ -231,7 +233,7 @@ export const getServerSideProps: GetServerSideProps = withSession(
         currentUser,
         uuid,
         comments: JSON.parse(JSON.stringify(comments)),
-        postData: JSON.parse(JSON.stringify(post)),
+        postData: JSON.parse(JSON.stringify({ ...post, author })),
       },
     };
   }
