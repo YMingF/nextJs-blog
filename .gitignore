@@ -9,3 +9,4 @@ ormconfig.json
 /dist/
 /blog-data/
 .next
+.env
