@@ -1,10 +1,12 @@
-import { withSession } from "./withSession";
+import { KeyValMap } from "@/constants/common-type";
+import { User } from "@/src/entity/User";
 import { GetServerSidePropsContext } from "next";
-import { customNextApiRequest } from "../common-type";
 import qs from "querystring";
-import { getDatabaseConnection } from "./getDatabaseConnection";
-import { Post } from "../src/entity/Post";
 import UAParser from "ua-parser-js";
+import { customNextApiRequest } from "../common-type";
+import { Post } from "../src/entity/Post";
+import { getDatabaseConnection } from "./getDatabaseConnection";
+import { withSession } from "./withSession";
 
 export const fetchArticles = withSession(
   async (context: GetServerSidePropsContext) => {
@@ -19,6 +21,7 @@ export const fetchArticles = withSession(
     const perPage = 1;
     // 拿到连接，从连接中去获取数据。
     const connection = await getDatabaseConnection();
+    const userInfoMapping = await generateUserInfoMapping(connection);
     // totalNum表示数据库数据总数
     const [posts, totalNum] = await connection.manager.findAndCount(Post, {
       relations: ["author"],
@@ -32,7 +35,16 @@ export const fetchArticles = withSession(
         count: totalNum,
         page,
         totalPage: Math.ceil(totalNum / perPage),
+        userInfoMapping,
       },
     };
   }
 );
+async function generateUserInfoMapping(connection: any) {
+  const users = await connection.manager.find(User);
+  const userInfoMapping = users.reduce((acc: KeyValMap, user: KeyValMap) => {
+    acc[user.id.toString()] = JSON.parse(JSON.stringify(user));
+    return acc;
+  }, {});
+  return userInfoMapping;
+}

@@ -1,13 +1,13 @@
+import { KeyValMap } from "@/constants/common-type";
+import eventEmitter from "@/emitter/eventEmitter";
+import { UseMarkdown } from "@/hooks/useMarkdown";
+import { message } from "antd";
+import axios from "axios";
 import { GetServerSideProps, NextPage } from "next";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { getDatabaseConnection } from "../../../lib/getDatabaseConnection";
 import { Post } from "../../../src/entity/Post";
-import { UseMarkdown } from "@/hooks/useMarkdown";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { KeyValString } from "@/common-type";
-import eventEmitter from "@/emitter/eventEmitter";
-import { message } from "antd";
-import { useRouter } from "next/router";
 
 type Props = {
   uuid: number;
@@ -23,7 +23,7 @@ const PostEdit: NextPage<Props> = (props) => {
   };
   const updateMarkdown = () => {
     axios.patch(`/api/v1/posts/${uuid}`, form).then(
-      async ({ data }: KeyValString) => {
+      async ({ data }: KeyValMap) => {
         await messageApi.success("更新成功");
         router.push(`/posts/${data.uuid}`);
       },

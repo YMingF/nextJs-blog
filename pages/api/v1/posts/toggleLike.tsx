@@ -33,7 +33,7 @@ const toggleLike = withSession(
     post.updateLikesAmt();
 
     await connection.manager.save(post);
-    res.json({ post });
+    res.json({ post: JSON.parse(JSON.stringify(post)) });
   }
 );
 export default toggleLike;

@@ -1,19 +1,20 @@
 // 用来完成展示文章梗概的卡片
 
-import { NextPage } from "next";
-import { KeyValString } from "../../common-type";
-import { NextRouter, useRouter } from "next/router";
+import { KeyValMap } from "@/constants/common-type";
+import { LikeFilled } from "@ant-design/icons";
 import BoringAvatars from "boring-avatars";
+import { NextPage } from "next";
+import { NextRouter, useRouter } from "next/router";
 import styles from "./articleCard.module.scss";
 
 interface ArticleCardProps {
-  articleData: KeyValString;
+  articleData: KeyValMap;
 }
 
 const ArticleCard: NextPage<ArticleCardProps> = (props: ArticleCardProps) => {
   const { articleData } = props || {};
-  const { title, content, uuid, author, authorId } = articleData || {};
-
+  const { title, content, uuid, userInfo, authorId, likesAmt } =
+    articleData || {};
   const router = useRouter();
   return (
     <>
@@ -48,15 +49,17 @@ const ArticleCard: NextPage<ArticleCardProps> = (props: ArticleCardProps) => {
               </div>
             </div>
             {/*  作者附加信息*/}
-            <div className={"article-meta tw-mt-auto tw-mt-5"}>
-              <div className="article-meta-user tw-flex tw-items-center tw-gap-2.5">
+            <div className={"article-meta  tw-mt-5"}>
+              <div className="article-meta-user tw-flex tw-items-center tw-gap-2.5 tw-text-xs  tw-text-slate-500">
                 <BoringAvatars
                   size={20}
-                  name={authorId.toString()}
+                  name={userInfo?.[authorId]?.username}
                 ></BoringAvatars>
-                <span className={"tw-text-xs tw-text-slate-300"}>
-                  {author?.username}
-                </span>
+                <span>{userInfo?.[authorId]?.username}</span>
+                <p className="tw-flex tw-items-center tw-gap-1">
+                  <LikeFilled />
+                  <span>{likesAmt}</span>
+                </p>
               </div>
             </div>
           </div>

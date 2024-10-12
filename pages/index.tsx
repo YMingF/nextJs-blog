@@ -1,13 +1,13 @@
-import { NextPage } from "next";
-import { fetchArticles } from "../lib/fetchArticles";
-import ArticleCard from "../components/article/articleCard";
-import { KeyValString } from "../common-type";
-import styles from "../styles/index.module.scss";
-import { useEffect, useState } from "react";
-import eventEmitter from "../emitter/eventEmitter";
-import { get } from "lodash";
+import { KeyValMap } from "@/constants/common-type";
 import { Empty } from "antd";
+import { get } from "lodash";
+import { NextPage } from "next";
+import { useEffect, useState } from "react";
+import ArticleCard from "../components/article/articleCard";
+import eventEmitter from "../emitter/eventEmitter";
+import { fetchArticles } from "../lib/fetchArticles";
 import "../styles/index.module.scss";
+import styles from "../styles/index.module.scss";
 
 const Home: NextPage = (props: any) => {
   const [posts, setPosts] = useState(props.posts || []);
@@ -25,8 +25,13 @@ const Home: NextPage = (props: any) => {
     <div
       className={`${styles.homeArticleBox}  homeArticleBox tw-flex tw-flex-wrap tw-h-full tw-max-h-full  tw-mt-5 tw-mx-auto tw-relative tw-bg-white tw-rounded`}
     >
-      {posts?.map((post: KeyValString, index: number) => {
-        return <ArticleCard key={index} articleData={post}></ArticleCard>;
+      {posts?.map((post: KeyValMap, index: number) => {
+        return (
+          <ArticleCard
+            key={index}
+            articleData={{ ...post, userInfo: props.userInfoMapping }}
+          ></ArticleCard>
+        );
       })}
       {posts?.length === 0 && (
         <div className={`${styles.emptyWrapper}`}>

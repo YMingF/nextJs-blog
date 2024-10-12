@@ -1,9 +1,9 @@
 import { NextApiResponse } from "next";
-import { Post } from "../../../../src/entity/Post";
-import { getDatabaseConnection } from "../../../../lib/getDatabaseConnection";
-import { withSession } from "../../../../lib/withSession";
 import { customNextApiRequest } from "../../../../common-type";
+import { getDatabaseConnection } from "../../../../lib/getDatabaseConnection";
 import { generateUid } from "../../../../lib/uid";
+import { withSession } from "../../../../lib/withSession";
+import { Post } from "../../../../src/entity/Post";
 
 const CreatePost = withSession(
   async (req: customNextApiRequest, res: NextApiResponse) => {
@@ -20,7 +20,7 @@ const CreatePost = withSession(
         res.end("unauthorized");
         return;
       }
-      post.author = user;
+      post.authorId = user.id;
       // 保存你所新建的post到数据库
 
       await connection.manager.save(post);

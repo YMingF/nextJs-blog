@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import eventEmitter from "../../emitter/eventEmitter";
-import { message } from "antd";
-import { useRouter } from "next/router";
-import { KeyValString } from "@/common-type";
-import axios from "axios";
+import { KeyValMap } from "@/constants/common-type";
 import { UseMarkdown } from "@/hooks/useMarkdown";
+import { message } from "antd";
+import axios from "axios";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import eventEmitter from "../../emitter/eventEmitter";
 
 const CreatePost = () => {
   const router = useRouter();
@@ -17,7 +17,7 @@ const CreatePost = () => {
   const saveMarkdown = () => {
     axios
       .post("/api/v1/posts/create", form)
-      .then(async ({ data }: KeyValString) => {
+      .then(async ({ data }: KeyValMap) => {
         await messageApi.success({ content: "发布成功", duration: 0.8 });
         router.replace(`/posts/${data.uuid}`);
       });

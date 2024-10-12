@@ -1,4 +1,4 @@
-import { NextPage } from "next";
+import { KeyValMap } from "@/constants/common-type";
 import {
   Button,
   Divider,
@@ -8,12 +8,12 @@ import {
   message,
   Modal,
 } from "antd";
-import { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { NamePath, StoreValue } from "rc-field-form/lib/interface";
 import { get } from "lodash";
+import { NextPage } from "next";
+import { NamePath, StoreValue } from "rc-field-form/lib/interface";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useGlobalState } from "../../context/globalStateContext";
-import { KeyValString } from "../../common-type";
 
 interface App_LoginProps {}
 
@@ -204,6 +204,6 @@ export function updateErrors(
   }, [serverErrors, form]);
 }
 
-function handleSignIn(userData: KeyValString) {
+function handleSignIn(userData: KeyValMap) {
   return axios.post("/api/v1/sessions", userData);
 }

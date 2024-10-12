@@ -21,11 +21,12 @@ import styles from "./styles/post-detail.module.scss";
 type Props = {
   postData: Post;
   uuid: string;
+  postAuthorInfo: KeyValMap;
   currentUser: User | null;
   comments: Comment[] | null;
 };
 const postsShow: NextPage<Props> = (props) => {
-  const { postData, currentUser, uuid } = props;
+  const { postData, postAuthorInfo, uuid } = props;
   const [post, setPost] = useState<KeyValMap>(postData);
   const [commentData, setCommentData] = useState<Comment[]>(props.comments);
   const router = useRouter();
@@ -129,10 +130,10 @@ const postsShow: NextPage<Props> = (props) => {
           >
             <BoringAvatars
               size={20}
-              name={post.author.username}
+              name={postAuthorInfo?.username}
             ></BoringAvatars>
             <p className="tw-text-slate-500 tw-flex tw-gap-2.5 tw-items-center">
-              <span className="tw-text-sm">{post.author.username}</span>
+              <span className="tw-text-sm">{postAuthorInfo?.username}</span>
               <span className="tw-text-sm">{formatDate(post?.updatedAt)}</span>
             </p>
           </div>
@@ -233,7 +234,8 @@ export const getServerSideProps: GetServerSideProps = withSession(
         currentUser,
         uuid,
         comments: JSON.parse(JSON.stringify(comments)),
-        postData: JSON.parse(JSON.stringify({ ...post, author })),
+        postData: JSON.parse(JSON.stringify({ ...post })),
+        postAuthorInfo: JSON.parse(JSON.stringify(author)),
       },
     };
   }
