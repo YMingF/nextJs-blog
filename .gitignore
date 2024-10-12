@@ -8,3 +8,4 @@ temp/
 ormconfig.json
 /dist/
 /blog-data/
+.next

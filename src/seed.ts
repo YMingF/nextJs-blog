@@ -1,3 +1,4 @@
+import { PostLikes } from "./entity/PostLikes";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
 import { User } from "./entity/User";
@@ -17,6 +18,7 @@ createConnection()
     p1.content = "简单的内容";
     p1.author = u1;
     p1.uuid = "dwqq2";
+    p1.likesUserId = [];
     await manager.save(p1);
 
     connection.close();

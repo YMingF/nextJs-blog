@@ -1,33 +1,35 @@
-import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
-import { getDatabaseConnection } from "../../lib/getDatabaseConnection";
-import { Post } from "../../src/entity/Post";
-import marked from "marked";
-import { withSession } from "../../lib/withSession";
-import { useCallback, useEffect, useState } from "react";
-import axios from "axios";
-import { useRouter } from "next/router";
-import { customNextApiRequest, User } from "../../common-type";
-import styles from "./styles/post-detail.module.scss";
-import BoringAvatars from "boring-avatars";
 import { useGlobalState } from "@/context/globalStateContext";
-import { CommentSvg } from "@/lib/customPic";
-import { Button, Drawer, message, Modal, Popover } from "antd";
-import { MoreOutlined } from "@ant-design/icons";
 import AppComment from "@/pages/comment";
 import { Comment } from "@/src/entity/Comment";
+import { formatDate } from "@/utils/date.utils";
+import { LikeFilled, MessageFilled, MoreOutlined } from "@ant-design/icons";
+import { Button, Drawer, message, Modal, Popover } from "antd";
+import axios from "axios";
+import BoringAvatars from "boring-avatars";
+import marked from "marked";
+import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
+import { useRouter } from "next/router";
+import { useCallback, useEffect, useState } from "react";
+import { customNextApiRequest, User } from "../../common-type";
+import { getDatabaseConnection } from "../../lib/getDatabaseConnection";
+import { withSession } from "../../lib/withSession";
+import { Post } from "../../src/entity/Post";
+import styles from "./styles/post-detail.module.scss";
 
 type Props = {
-  post: Post;
+  postData: Post;
   uuid: string;
   currentUser: User | null;
   comments: Comment[] | null;
 };
 const postsShow: NextPage<Props> = (props) => {
-  const { post, currentUser, uuid } = props;
-
+  const { postData, currentUser, uuid } = props;
+  const [post, setPost] = useState<Post>(postData);
+  const [commentData, setCommentData] = useState<Comment[]>(props.comments);
   const router = useRouter();
   const [messageApi, contextHolder] = message.useMessage();
   const { user } = useGlobalState();
+  const userId = user?.id?.toString();
   const [actionPopoverOpen, setActionPopoverOpen] = useState(false);
   const [commentDrawerOpen, setCommentDrawerOpen] = useState(false);
 
@@ -98,6 +100,22 @@ const postsShow: NextPage<Props> = (props) => {
     }
     setCommentDrawerOpen(val);
   }, []);
+  const handleLike = (post: Post, userId: string) => {
+    if (post.likesUserId?.includes(userId)) {
+      axios
+        .post(`/api/v1/posts/like/cancel?uuid=${post.uuid}&userId=${userId}`)
+        .then((res) => {
+          setPost({ ...post, likesUserId: res.data.likesUserId });
+        });
+    } else {
+      axios
+        .post(`/api/v1/posts/like/save?uuid=${post.uuid}&userId=${userId}`)
+        .then((res) => {
+          setPost({ ...post, likesUserId: res.data.likesUserId });
+        });
+    }
+  };
+
   return (
     <>
       {contextHolder}
@@ -111,23 +129,43 @@ const postsShow: NextPage<Props> = (props) => {
           <div
             className={`${styles.userBaseInfo} tw-flex tw-gap-2.5 tw-items-center`}
           >
-            <BoringAvatars
-              size={20}
-              name={user?.id?.toString()}
-            ></BoringAvatars>
-            <span className={"tw-text-xs tw-text-slate-300"}>
-              {user?.username}
-            </span>
+            <BoringAvatars size={20} name={userId}></BoringAvatars>
+            <p className="tw-text-slate-500 tw-flex tw-gap-2.5 tw-items-center">
+              <span className="tw-text-sm">{user?.username}</span>
+              <span className="tw-text-sm">{formatDate(post?.updatedAt)}</span>
+            </p>
           </div>
-          <div className={`${styles.headerActions} tw-flex tw-items-center `}>
+          <div
+            className={`${styles.headerActions} tw-flex tw-items-center tw-gap-4  `}
+          >
+            {/* 点赞按钮 */}
             <div
-              className={`tw-flex tw-items-center tw-cursor-pointer ${styles.comments}`}
+              className={`tw-flex tw-items-center  tw-cursor-pointer ${
+                post.likesUserId?.includes(userId) ? styles.isLiked : ""
+              }`}
+            >
+              <div
+                className="tw-flex tw-items-center tw-cursor-pointer"
+                onClick={() => handleLike(post, userId)}
+              >
+                <LikeFilled />
+                <span className={`tw-text-sm tw-ml-1`}>
+                  {post.likesUserId?.length}
+                </span>
+              </div>
+            </div>
+            {/* 评论按钮 */}
+            <div
+              className={`tw-flex tw-items-center tw-gap-1 tw-cursor-pointer ${styles.comments}`}
               onClick={() => toggleComment(true, user)}
             >
-              <CommentSvg></CommentSvg>
-              <span className={`commentNum`}></span>
+              <MessageFilled />
+              <span className={`commentNum ${styles.commentCount}`}>
+                {commentData?.length}
+              </span>
             </div>
-            <div className={`${styles.moreAction}`}>
+            {/* 更多操作按钮 */}
+            <div>
               <Popover
                 open={actionPopoverOpen}
                 onOpenChange={handleOpenChange}
@@ -135,9 +173,7 @@ const postsShow: NextPage<Props> = (props) => {
                 trigger="click"
                 placement={"bottom"}
               >
-                <Button type="link">
-                  <MoreOutlined />
-                </Button>
+                <MoreOutlined />
               </Popover>
             </div>
           </div>
@@ -167,8 +203,9 @@ const postsShow: NextPage<Props> = (props) => {
       >
         <AppComment
           postId={post.id}
-          userId={user?.id}
-          commentData={props.comments}
+          userId={userId}
+          commentData={commentData}
+          syncCommentData={setCommentData}
         ></AppComment>
       </Drawer>
     </>
@@ -194,7 +231,7 @@ export const getServerSideProps: GetServerSideProps = withSession(
         currentUser,
         uuid,
         comments: JSON.parse(JSON.stringify(comments)),
-        post: JSON.parse(JSON.stringify(post)),
+        postData: JSON.parse(JSON.stringify(post)),
       },
     };
   }

@@ -17,11 +17,13 @@
    },
    "dependencies": {
       "@ant-design/cssinjs": "^1.21.0",
+      "@ant-design/icons": "^5.5.1",
       "@babel/cli": "^7.10.1",
       "antd": "^5.19.2",
       "axios": "^0.19.2",
       "boring-avatars": "^1.10.2",
       "cross-env": "^7.0.3",
+      "dayjs": "^1.11.13",
       "gray-matter": "^4.0.2",
       "lodash": "^4.7.4",
       "marked": "^1.1.0",

@@ -1,21 +1,24 @@
-.postDetailBox{
- .postDetailInnerBox{
-  width: 1184px;
- }
- .headerActions{
-  border-top: 1px solid rgb(242, 242, 242);
-  border-bottom: 1px solid rgb(242, 242, 242);
-  margin: 32px 0px 0px;
-  padding: 10px 0;
-  .comments{
-   
+.postDetailBox {
+  .postDetailInnerBox {
+    width: 1184px;
   }
-  .moreAction{
-   :global(.ant-btn){
-    color: #131313;
-    font-size: 20px;
-   }
+  .headerActions {
+    border-top: 1px solid rgb(242, 242, 242);
+    border-bottom: 1px solid rgb(242, 242, 242);
+    margin: 32px 0px 0px;
+    padding: 10px 0;
+    .isLiked {
+      :global(.anticon) {
+        color: #3f7ef7;
+      }
+    }
+    :global(.anticon) {
+      color: #131313;
+      font-size: 18px;
+    }
+    .commentCount {
+      font-size: 14px;
+      color: #6b6b6b;
+    }
   }
-  
- }
 }

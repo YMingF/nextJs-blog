@@ -21,6 +21,8 @@ export class Post {
   uuid: string;
   @Column("varchar")
   authorId: string;
+  @Column("varchar", { array: true, nullable: true })
+  likesUserId: string[];
   @CreateDateColumn()
   createdAt: Date;
   @UpdateDateColumn()
@@ -28,6 +30,6 @@ export class Post {
 
   @ManyToOne("User", "posts")
   author: User;
-  @OneToMany("Comment", "post")
+  @OneToMany("Comment", "posts")
   comments: Comment[];
 }

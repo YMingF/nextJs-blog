@@ -30,6 +30,12 @@ export class CreatePosts1716618643582 implements MigrationInterface {
             name: "author_id",
             type: "int",
           },
+          {
+            name: "likesUserId",
+            type: "varchar",
+            isArray: true,
+            isNullable: true,
+          },
         ],
       })
     );

@@ -1,17 +1,19 @@
-import { NextPage } from "next";
+import { KeyValMap } from "@/constants/common-type";
+import { useGlobalState } from "@/context/globalStateContext";
+import { Comment } from "@/src/entity/Comment";
+import { SmallDashOutlined } from "@ant-design/icons";
 import { Button, Card, Form, Input, message, Popover } from "antd";
-import styles from "./styles/index.module.scss";
-import React, { useCallback, useState } from "react";
 import axios from "axios";
 import BoringAvatars from "boring-avatars";
-import { useGlobalState } from "@/context/globalStateContext";
-import { KeyValMap } from "@/constants/common-type";
-import { SmallDashOutlined } from "@ant-design/icons";
+import { NextPage } from "next";
+import { useCallback, useState } from "react";
+import styles from "./styles/index.module.scss";
 
 interface CommentProps {
   userId: number;
   postId: number;
   commentData: KeyValMap[] | null;
+  syncCommentData: (data: Comment[]) => void;
 }
 const processCommentData = (dataArr: KeyValMap[]) => {
   dataArr.sort((a, b) => a.id - b.id);
@@ -21,7 +23,12 @@ const processCommentData = (dataArr: KeyValMap[]) => {
   return dataArr;
 };
 const AppComment: NextPage<CommentProps> = (props) => {
-  let { userId, postId, commentData: initialCommentData } = props;
+  let {
+    userId,
+    postId,
+    commentData: initialCommentData,
+    syncCommentData,
+  } = props;
   const { user } = useGlobalState();
   const [form] = Form.useForm();
   const [commentData, setCommentData] = useState<KeyValMap[]>(
@@ -49,6 +56,7 @@ const AppComment: NextPage<CommentProps> = (props) => {
       item.isVisible = false;
     });
     setCommentData(response.data);
+    syncCommentData(response.data);
   }, []);
 
   const removeComment = useCallback((comment: any) => {

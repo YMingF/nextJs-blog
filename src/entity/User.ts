@@ -26,7 +26,7 @@ export class User {
   @OneToMany("Post", "author")
   posts: Post[];
   @OneToMany("Comment", "user")
-  comments: Comment;
+  comments: Comment[];
   errors = {
     username: [] as string[],
     password: [] as string[],
