@@ -13,7 +13,7 @@ interface ArticleCardProps {
 
 const ArticleCard: NextPage<ArticleCardProps> = (props: ArticleCardProps) => {
   const { articleData } = props || {};
-  const { title, content, uuid, userInfo, authorId, likesAmt } =
+  const { title, content, uuid, userInfo, authorId, likesAmt, userId } =
     articleData || {};
   const router = useRouter();
   return (
@@ -53,9 +53,9 @@ const ArticleCard: NextPage<ArticleCardProps> = (props: ArticleCardProps) => {
               <div className="article-meta-user tw-flex tw-items-center tw-gap-2.5 tw-text-xs  tw-text-slate-500">
                 <BoringAvatars
                   size={20}
-                  name={userInfo?.[authorId]?.username}
+                  name={userId?.toString()}
                 ></BoringAvatars>
-                <span>{userInfo?.[authorId]?.username}</span>
+                <span>{userInfo?.[userId]?.username}</span>
                 <p className="tw-flex tw-items-center tw-gap-1">
                   <LikeFilled />
                   <span>{likesAmt}</span>
@@ -71,5 +71,5 @@ const ArticleCard: NextPage<ArticleCardProps> = (props: ArticleCardProps) => {
 export default ArticleCard;
 
 function navToDetail(router: NextRouter, uuid: string) {
-  router.push(`/posts/${uuid.toString()}`);
+  router.push(`/posts/${uuid}`);
 }

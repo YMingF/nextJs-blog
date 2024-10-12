@@ -1,44 +1,42 @@
-import { NextApiResponse } from "next";
-import { withSession } from "@/lib/withSession";
 import { customNextApiRequest } from "@/common-type";
-import { Comment } from "@/src/entity/Comment";
-import { getDatabaseConnection } from "@/lib/getDatabaseConnection";
-import { Post } from "@/src/entity/Post";
-import { generateUid } from "@/lib/uid";
+import { withSession } from "@/lib/withSession";
+import { globalPrisma } from "@/utils/prisma.utils";
+import { NextApiResponse } from "next";
 
 const CreateComment = withSession(
   async (req: customNextApiRequest, res: NextApiResponse) => {
-    const { content, userId, postId } = req.body;
-    const comment = new Comment();
-    const connection = await getDatabaseConnection();
-
-    comment.content = content;
+    const { content, postId } = req.body;
 
     // store user info
     const user = req.session?.get("currentUser");
     if (!user) {
-      res.statusCode = 401;
-      res.end("unauthorized");
-      return;
-    }
-    comment.user = user;
-    // store post info
-    const post = await connection.manager.findOne(Post, {
-      where: { id: postId },
-    });
-    if (!post) {
-      res.statusCode = 401;
-      res.end("无对应文章");
+      res.status(401).json({ error: "Unauthorized" });
       return;
     }
 
-    comment.post = post;
-    comment.uuid = generateUid();
-    await connection.manager.save(comment);
-    res.statusCode = 200;
-    res.setHeader("Content-Type", "application/json");
-    res.write(JSON.stringify(comment));
-    res.end();
+    try {
+      const comment = await globalPrisma.comment.create({
+        data: {
+          content,
+          user: { connect: { id: user.id } },
+          post: { connect: { id: postId } },
+        },
+        include: {
+          user: true,
+          post: true,
+        },
+      });
+
+      res.status(200).json(comment);
+    } catch (error) {
+      if (error.code === "P2025") {
+        res.status(404).json({ error: "无对应文章" });
+      } else {
+        res.status(500).json({ error: "Internal Server Error" });
+      }
+    } finally {
+      await globalPrisma.$disconnect();
+    }
   }
 );
 

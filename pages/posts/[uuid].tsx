@@ -3,6 +3,7 @@ import { useGlobalState } from "@/context/globalStateContext";
 import AppComment from "@/pages/comment";
 import { Comment } from "@/src/entity/Comment";
 import { formatDate } from "@/utils/date.utils";
+import { globalPrisma } from "@/utils/prisma.utils";
 import { LikeFilled, MessageFilled, MoreOutlined } from "@ant-design/icons";
 import { Button, Drawer, message, Modal, Popover } from "antd";
 import axios from "axios";
@@ -12,7 +13,6 @@ import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { customNextApiRequest } from "../../common-type";
-import { getDatabaseConnection } from "../../lib/getDatabaseConnection";
 import { withSession } from "../../lib/withSession";
 import { Post } from "../../src/entity/Post";
 import { User } from "../../src/entity/User";
@@ -215,18 +215,17 @@ export default postsShow;
 
 export const getServerSideProps: GetServerSideProps = withSession(
   async (context: GetServerSidePropsContext) => {
-    // 拿到连接，从连接中去获取数据。
-    const connection = await getDatabaseConnection();
     const { uuid = "" } = context.params;
     const currentUser =
       (context.req as customNextApiRequest).session.get("currentUser") || null;
     //  用context.params.id去获取你路由跳转时传过来的id值
-    // @ts-ignore
-    const post = await connection.manager.findOne(Post, { where: { uuid } });
-    const author = await connection.manager.findOne(User, {
-      where: { id: post?.authorId },
+    const post = await globalPrisma.post.findUnique({
+      where: { uuid: uuid as string },
     });
-    const comments = await connection.manager.find(Comment, {
+    const author = await globalPrisma.user.findUnique({
+      where: { id: Number(post?.userId) },
+    });
+    const comments = await globalPrisma.comment.findMany({
       where: { postId: post.id },
     });
     return {

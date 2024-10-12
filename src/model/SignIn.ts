@@ -1,5 +1,5 @@
-import { getDatabaseConnection } from "../../lib/getDatabaseConnection";
-import { User } from "../entity/User";
+import { globalPrisma } from "@/utils/prisma.utils";
+import { User } from "@prisma/client";
 
 export class SignIn {
   constructor(private username: string, private password: string) {}
@@ -13,13 +13,12 @@ export class SignIn {
     if (this.username.trim() === "") {
       this.errors.username.push("请填写用户名");
     }
-    const connection = await getDatabaseConnection();
-    const user = await connection.manager.findOne(User, {
+    const user = await globalPrisma.user.findFirst({
       where: { username: this.username.trim() },
     });
     this.user = user;
     if (user) {
-      if (user.passwordDigest !== this.password) {
+      if (user.password !== this.password) {
         this.errors.password.push("密码不匹配");
       }
     } else {

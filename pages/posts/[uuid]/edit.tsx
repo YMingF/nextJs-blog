@@ -1,12 +1,12 @@
 import { KeyValMap } from "@/constants/common-type";
 import eventEmitter from "@/emitter/eventEmitter";
 import { UseMarkdown } from "@/hooks/useMarkdown";
+import { globalPrisma } from "@/utils/prisma.utils";
 import { message } from "antd";
 import axios from "axios";
 import { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { getDatabaseConnection } from "../../../lib/getDatabaseConnection";
 import { Post } from "../../../src/entity/Post";
 
 type Props = {
@@ -53,9 +53,9 @@ export default PostEdit;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { uuid } = context.params;
-  const connection = await getDatabaseConnection();
-  const post =
-    (await connection.manager.findOne("Post", { where: { uuid } })) || "''";
+  const post = await globalPrisma.post.findUnique({
+    where: { uuid: uuid as string },
+  });
   return {
     props: {
       uuid: uuid,

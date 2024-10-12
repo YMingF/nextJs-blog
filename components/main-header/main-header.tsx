@@ -1,16 +1,16 @@
-import { NextPage } from "next";
-import App_Login from "../../pages/login/login";
-import styles from "./main-header.module.scss";
-import App_Avatar from "../../pages/avatar/avatar";
-import { useGlobalState } from "../../context/globalStateContext";
-import { useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { Button, Input, message } from "antd";
-import HeaderNav from "./header-nav/header-nav";
-import axios from "axios";
-import eventEmitter from "../../emitter/eventEmitter";
 import { FormOutlined } from "@ant-design/icons";
+import { Button, Input, message } from "antd";
+import axios from "axios";
+import { NextPage } from "next";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/router";
+import { useCallback, useEffect, useState } from "react";
+import { useGlobalState } from "../../context/globalStateContext";
+import eventEmitter from "../../emitter/eventEmitter";
+import App_Avatar from "../../pages/avatar/avatar";
+import App_Login from "../../pages/login/login";
+import HeaderNav from "./header-nav/header-nav";
+import styles from "./main-header.module.scss";
 
 const MainHeader: NextPage = () => {
   const { Search } = Input;
@@ -128,6 +128,7 @@ const MainHeader: NextPage = () => {
                 </Button>
               )}
             </div>
+            {/* 登录注册 */}
             <div className="user-btn">
               {user && <App_Avatar></App_Avatar>}
               {!user && <App_Login></App_Login>}

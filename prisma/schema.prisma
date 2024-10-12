@@ -16,7 +16,7 @@ datasource db {
 
 model User {
   id             Int       @id @default(autoincrement())
-  username       String
+  username       String    @unique
   password String
   uuid           String    @unique
   createdAt      DateTime  @default(now())
@@ -30,7 +30,6 @@ model Post {
   title       String    @db.VarChar(255)
   content     String
   uuid        String    @unique
-  authorId    String
   likesUserId String[]
   likesAmt    Int
   createdAt   DateTime  @default(now())

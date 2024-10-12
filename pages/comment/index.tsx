@@ -44,6 +44,8 @@ const AppComment: NextPage<CommentProps> = (props) => {
           await message.success("评论成功", 0.3);
           form.resetFields();
           await reFetchComments();
+        } else if (response.status === 401) {
+          await message.error("请先登录");
         } else {
           await message.error("评论失败");
         }
@@ -115,6 +117,7 @@ const AppComment: NextPage<CommentProps> = (props) => {
           </Button>
         </div>
       </div>
+      {/* 已添加的评论 */}
       <div className="commentList tw-mt-5 tw-flex tw-flex-col tw-gap-2.5">
         {commentData.map((comment, index) => {
           const content = (
@@ -143,7 +146,7 @@ const AppComment: NextPage<CommentProps> = (props) => {
                 <div className="avatar">
                   <BoringAvatars
                     size={20}
-                    name={comment?.userId}
+                    name={comment?.userId?.toString()}
                   ></BoringAvatars>
                 </div>
                 <div className={`${styles.commentAction} tw-cursor-pointer`}>

@@ -31,7 +31,7 @@ export function generateFocusErrorField(
     }
   }, [form]);
 }
-
+let activeModelType: "sign_in" | "sign_up" | null = null;
 const App_Login: NextPage<App_LoginProps> = (props: any) => {
   const { user, storeUser } = useGlobalState();
   const fieldRefs = useRef<any>({});
@@ -61,6 +61,7 @@ const App_Login: NextPage<App_LoginProps> = (props: any) => {
     },
   });
   const openModal = useCallback((modalType: "sign_in" | "sign_up") => {
+    activeModelType = modalType;
     Modal.confirm({
       title: titleMap[modalType],
       closable: true,
@@ -82,7 +83,10 @@ const App_Login: NextPage<App_LoginProps> = (props: any) => {
             <Form.Item
               label="Username"
               name="username"
-              rules={[{ required: true, message: "不能为空" }]}
+              rules={[
+                { required: true, message: "不能为空" },
+                validateUsername,
+              ]}
             >
               <Input
                 ref={(el) => {
@@ -207,3 +211,22 @@ export function updateErrors(
 function handleSignIn(userData: KeyValMap) {
   return axios.post("/api/v1/sessions", userData);
 }
+
+const validateUsername = () => ({
+  async validator(_: any, value: any) {
+    if (activeModelType !== "sign_up" || !value) {
+      return Promise.resolve();
+    }
+    try {
+      const response = await axios.get(
+        `/api/v1/user/isDuplicate?username=${value}`
+      );
+      if (JSON.parse(response.data)) {
+        return Promise.reject(new Error("用户名已存在"));
+      }
+    } catch (error) {
+      console.error("Username validation error:", error);
+      return Promise.reject(new Error("验证用户名时出错"));
+    }
+  },
+});

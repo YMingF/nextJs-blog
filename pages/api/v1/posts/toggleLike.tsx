@@ -1,16 +1,14 @@
+import { globalPrisma } from "@/utils/prisma.utils";
 import { NextApiResponse } from "next";
 import { customNextApiRequest } from "../../../../common-type";
-import { getDatabaseConnection } from "../../../../lib/getDatabaseConnection";
 import { withSession } from "../../../../lib/withSession";
-import { Post } from "../../../../src/entity/Post";
 
 const toggleLike = withSession(
   async (req: customNextApiRequest, res: NextApiResponse) => {
     const { uuid, userId } = req.query;
 
-    const connection = await getDatabaseConnection();
-    const post = await connection.manager.findOne<Post>("Post", {
-      where: { uuid },
+    const post = await globalPrisma.post.findUnique({
+      where: { uuid: uuid as string },
     });
     const user = req.session.get("currentUser");
 
@@ -30,9 +28,12 @@ const toggleLike = withSession(
       post.likesUserId.push(userId as string);
     }
     // 更新点赞数
-    post.updateLikesAmt();
+    post.likesAmt = post.likesUserId.length;
 
-    await connection.manager.save(post);
+    await globalPrisma.post.update({
+      where: { uuid: uuid as string },
+      data: post,
+    });
     res.json({ post: JSON.parse(JSON.stringify(post)) });
   }
 );
