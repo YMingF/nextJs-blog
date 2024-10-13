@@ -1,26 +1,31 @@
-import { SignIn } from "../../../src/model/SignIn";
-import { withSession } from "../../../lib/withSession";
+import { PrismaClient } from "@prisma/client";
 import { NextApiResponse } from "next";
 import { customNextApiRequest } from "../../../common-type";
+import { withSession } from "../../../lib/withSession";
+
+const prisma = new PrismaClient();
 
 const Sessions = async (req: customNextApiRequest, res: NextApiResponse) => {
-  const { username, password, passwordConfirmation } = req.body;
-  let statusCode = 200;
-  let response = "";
-  const signIn = new SignIn(username, password);
-  await signIn.validate();
-  if (signIn.hasErrors()) {
-    statusCode = 422;
-    response = JSON.stringify(signIn.errors);
-  } else {
-    req.session.set("currentUser", signIn.user);
+  const { username, password } = req.body;
+
+  try {
+    const user = await prisma.user.findUnique({ where: { username } });
+
+    if (!user || password !== user.password) {
+      res.status(401).json({ error: "用户名或密码不正确" });
+      return;
+    }
+
+    req.session.set("currentUser", { id: user.id, username: user.username });
     await req.session.save();
-    response = JSON.stringify(signIn.user);
+
+    res.status(200).json({ id: user.id, username: user.username });
+  } catch (error) {
+    console.error("登录错误:", error);
+    res.status(500).json({ error: "服务器错误" });
+  } finally {
+    await prisma.$disconnect();
   }
-  res.statusCode = statusCode;
-  res.setHeader("Content-Type", "application/json");
-  res.write(response);
-  res.end();
 };
 
 export default withSession(Sessions);

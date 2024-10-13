@@ -1,6 +1,7 @@
 import { customNextApiRequest } from "@/common-type";
 import { withSession } from "@/lib/withSession";
 import { globalPrisma } from "@/utils/prisma.utils";
+import { nanoid } from "nanoid";
 import { NextApiResponse } from "next";
 
 const CreateComment = withSession(
@@ -17,6 +18,7 @@ const CreateComment = withSession(
     try {
       const comment = await globalPrisma.comment.create({
         data: {
+          uuid: nanoid(),
           content,
           user: { connect: { id: user.id } },
           post: { connect: { id: postId } },

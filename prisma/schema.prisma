@@ -43,6 +43,7 @@ model Comment {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  uuid      String   @unique
   content   String
   postId    Int
   userId    Int

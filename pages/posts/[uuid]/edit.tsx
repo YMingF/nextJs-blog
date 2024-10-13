@@ -7,11 +7,10 @@ import axios from "axios";
 import { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Post } from "../../../src/entity/Post";
 
 type Props = {
   uuid: number;
-  post: Post;
+  post: KeyValMap;
 };
 const PostEdit: NextPage<Props> = (props) => {
   const { uuid, post } = props;
