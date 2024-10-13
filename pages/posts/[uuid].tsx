@@ -1,7 +1,6 @@
 import { KeyValMap } from "@/constants/common-type";
 import { useGlobalState } from "@/context/globalStateContext";
 import AppComment from "@/pages/comment";
-import { Comment } from "@/src/entity/Comment";
 import { formatDate } from "@/utils/date.utils";
 import { globalPrisma } from "@/utils/prisma.utils";
 import { LikeFilled, MessageFilled, MoreOutlined } from "@ant-design/icons";
@@ -14,21 +13,19 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { customNextApiRequest } from "../../common-type";
 import { withSession } from "../../lib/withSession";
-import { Post } from "../../src/entity/Post";
-import { User } from "../../src/entity/User";
 import styles from "./styles/post-detail.module.scss";
 
 type Props = {
-  postData: Post;
+  postData: KeyValMap;
   uuid: string;
   postAuthorInfo: KeyValMap;
-  currentUser: User | null;
-  comments: Comment[] | null;
+  currentUser: KeyValMap | null;
+  comments: KeyValMap[] | null;
 };
 const postsShow: NextPage<Props> = (props) => {
   const { postData, postAuthorInfo, uuid } = props;
   const [post, setPost] = useState<KeyValMap>(postData);
-  const [commentData, setCommentData] = useState<Comment[]>(props.comments);
+  const [commentData, setCommentData] = useState<KeyValMap[]>(props.comments);
   const router = useRouter();
   const [messageApi, contextHolder] = message.useMessage();
   const { user } = useGlobalState();
