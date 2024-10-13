@@ -1,16 +1,20 @@
-import { NextPage } from "next";
-import { useGlobalState } from "../../context/globalStateContext";
+import { KeyValMap } from "@/constants/common-type";
+import { UserOutlined } from "@ant-design/icons";
 import { Button, Card, notification, Popover, Space } from "antd";
-import { useCallback } from "react";
-import { useSignIn } from "../../hooks/useSignIn";
 import axios from "axios";
 import BoringAvatars from "boring-avatars";
+import { NextPage } from "next";
+import { NextRouter, useRouter } from "next/router";
+import { useCallback } from "react";
+import { useGlobalState } from "../../context/globalStateContext";
+import { useSignIn } from "../../hooks/useSignIn";
 
 interface App_Avatar_Props {}
 
 const App_Avatar: NextPage<App_Avatar_Props> = (props) => {
   const { user: userInfo, storeUser } = useGlobalState();
   const { openSignIn } = useSignIn();
+  const router = useRouter();
   const [api, contextHolder] = notification.useNotification();
 
   const logOut = useCallback(() => {
@@ -47,8 +51,19 @@ const App_Avatar: NextPage<App_Avatar_Props> = (props) => {
       className={"tw-px-12"}
     >
       <div className={"tw-flex tw-flex-col tw-gap-5"}>
-        <Button onClick={openSignIn}>切换账户</Button>
-        <Button onClick={openLogoutNotification}>退出账号</Button>
+        <Button
+          type="text"
+          icon={<UserOutlined />}
+          onClick={() => navigateToUser(userInfo, router)}
+        >
+          个人主页
+        </Button>
+        <Button type="text" onClick={openSignIn}>
+          切换账户
+        </Button>
+        <Button type="text" onClick={openLogoutNotification}>
+          退出账号
+        </Button>
       </div>
     </Card>
   );
@@ -71,3 +86,7 @@ const App_Avatar: NextPage<App_Avatar_Props> = (props) => {
   );
 };
 export default App_Avatar;
+
+function navigateToUser(userInfo: KeyValMap, router: NextRouter) {
+  router.push(`/user/${userInfo?.uuid}`);
+}

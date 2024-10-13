@@ -1,21 +1,49 @@
+import ArticleList from "@/components/user/article.list";
+import { KeyValMap } from "@/constants/common-type";
 import { globalPrisma } from "@/utils/prisma.utils";
+import { Tabs } from "antd";
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
 import { withSession } from "../../lib/withSession";
-
-type Props = {};
+import styles from "./styles/userDetail.module.scss";
+type Props = {
+  posts: KeyValMap;
+};
 const userDetailPage: NextPage<Props> = (props) => {
-  return <div>userDetailPage</div>;
+  const { posts } = props;
+  const userDetailTabs = [
+    {
+      key: "posts",
+      label: "文章",
+      children: <ArticleList posts={posts} />,
+    },
+  ];
+  return (
+    <div className={`${styles.userDetailBox} tw-mx-auto`}>
+      <Tabs
+        defaultActiveKey="posts"
+        items={userDetailTabs}
+        onChange={onTabChange}
+      />
+    </div>
+  );
 };
 export default userDetailPage;
 
 export const getServerSideProps: GetServerSideProps = withSession(
   async (context: GetServerSidePropsContext) => {
     const { uuid = "" } = context.params;
-    const user = await globalPrisma.user.findUnique({
-      where: { uuid: uuid as string },
+    const posts = await globalPrisma.post.findMany({
+      where: { User: { uuid: String(uuid) } },
+      include: { User: true },
     });
     return {
-      props: {},
+      props: {
+        posts: JSON.parse(JSON.stringify(posts)),
+      },
     };
   }
 );
+
+const onTabChange = (key: string) => {
+  console.log(key);
+};
