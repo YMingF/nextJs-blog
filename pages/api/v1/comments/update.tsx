@@ -1,25 +1,22 @@
-import { NextApiResponse } from "next";
-import { withSession } from "@/lib/withSession";
 import { customNextApiRequest } from "@/common-type";
-import { getDatabaseConnection } from "@/lib/getDatabaseConnection";
-import { Comment } from "@/src/entity/Comment";
+import { withSession } from "@/lib/withSession";
+import { globalPrisma } from "@/utils/prisma.utils";
+import { NextApiResponse } from "next";
 
 const UpdateComment = withSession(
   async (req: customNextApiRequest, res: NextApiResponse) => {
     const { comment } = req.body;
-    const connection = await getDatabaseConnection();
-    const finedComment = await connection.manager.findOne<Comment>("Comment", {
+    const updatedComment = await globalPrisma.comment.update({
       where: { id: comment.id },
+      data: { content: comment.newContent },
     });
-    finedComment.content = comment.newContent;
     const user = req.session.get("currentUser");
     if (!user) {
       res.statusCode = 401;
       res.end();
       return;
     }
-    await connection.manager.save(finedComment);
-    res.json(finedComment);
+    res.json(updatedComment);
     res.statusCode = 200;
     res.setHeader("Content-Type", "application/json");
     res.write("");

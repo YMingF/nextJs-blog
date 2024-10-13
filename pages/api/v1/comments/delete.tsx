@@ -1,16 +1,14 @@
-import { NextApiResponse } from "next";
-import { withSession } from "@/lib/withSession";
 import { customNextApiRequest } from "@/common-type";
-import { getDatabaseConnection } from "@/lib/getDatabaseConnection";
-import { Comment } from "@/src/entity/Comment";
+import { withSession } from "@/lib/withSession";
+import { globalPrisma } from "@/utils/prisma.utils";
+import { NextApiResponse } from "next";
 
 const DeleteComment = withSession(
   async (req: customNextApiRequest, res: NextApiResponse) => {
-    const { uuid } = req.body;
+    const { id } = req.body;
     try {
-      const connection = await getDatabaseConnection();
-      const comment = await connection.manager.findOne<Comment>("Comment", {
-        where: { uuid },
+      const deletedComment = await globalPrisma.comment.delete({
+        where: { id: Number(id) },
       });
       const user = req.session.get("currentUser");
       if (!user) {
@@ -18,7 +16,7 @@ const DeleteComment = withSession(
         res.end();
         return;
       }
-      await connection.manager.remove(comment);
+      res.json(deletedComment);
       res.status(200);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch comments" });

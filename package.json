@@ -13,8 +13,7 @@
     "m:revert": "typeorm migration:revert",
     "e:create": "typeorm entity:create -n",
     "typeorm:build": "babel -w ./src --out-dir dist --extensions .ts,.tsx",
-    "dist": "node dist/seed.js",
-    "test": "node --loader ts-node/esm test.ts"
+    "dist": "node dist/seed.js"
   },
   "dependencies": {
     "@ant-design/cssinjs": "^1.21.0",

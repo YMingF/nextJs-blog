@@ -63,7 +63,7 @@ const AppComment: NextPage<CommentProps> = (props) => {
 
   const removeComment = useCallback((comment: any) => {
     axios
-      .post(`/api/v1/comments/delete`, { uuid: comment.uuid })
+      .post(`/api/v1/comments/delete`, { id: comment.id })
       .then(async (response) => {
         if (response.status === 200) {
           await message.success("删除成功", 0.5);
