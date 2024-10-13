@@ -8,7 +8,7 @@ const UpdateComment = withSession(
     const { comment } = req.body;
     const updatedComment = await globalPrisma.comment.update({
       where: { id: comment.id },
-      data: { content: comment.newContent },
+      data: { content: comment.content },
     });
     const user = req.session.get("currentUser");
     if (!user) {

@@ -160,9 +160,11 @@ const AppComment: NextPage<CommentProps> = (props) => {
               </div>
               {comment.isVisible ? (
                 <div className={"tw-flex tw-flex-col "}>
+                  {/* 编辑评论的输入框 */}
                   <Input
+                    defaultValue={comment.content} // Use defaultValue to allow editing
                     onChange={(e) =>
-                      updateCommentVal(index, { newContent: e.target.value })
+                      updateCommentVal(index, { content: e.target.value })
                     }
                   />
                   <div className={"tw-flex tw-gap-2.5 tw-justify-end"}>
