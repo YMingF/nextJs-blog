@@ -15,11 +15,11 @@ const ArticleList: NextPage<Props> = (props) => {
     router.push(`/posts/${uuid}`);
   };
   return (
-    <div>
+    <div className="tw-flex tw-flex-col tw-gap-4">
       {postsData.map((post: KeyValMap) => (
         <div
           key={post.id}
-          className={`${styles.postCard} tw-flex tw-flex-col tw-cursor-pointer`}
+          className={`${styles.postCard} tw-flex tw-flex-col tw-cursor-pointer `}
           onClick={() => navToPostDetail(post.uuid)}
         >
           <div className={styles.mainInfo}>

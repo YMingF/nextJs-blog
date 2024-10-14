@@ -16,10 +16,10 @@ const Sessions = async (req: customNextApiRequest, res: NextApiResponse) => {
       return;
     }
 
-    req.session.set("currentUser", { id: user.id, username: user.username });
+    req.session.set("currentUser", { ...user });
     await req.session.save();
 
-    res.status(200).json({ id: user.id, username: user.username });
+    res.status(200).json({ ...user });
   } catch (error) {
     console.error("登录错误:", error);
     res.status(500).json({ error: "服务器错误" });
