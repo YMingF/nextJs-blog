@@ -1,7 +1,8 @@
-import { useCallback, useRef, useState } from "react";
+import eventEmitter from "@/emitter/eventEmitter";
 import { Form, Input, message, Modal } from "antd";
 import axios from "axios";
 import { get } from "lodash";
+import { useCallback, useRef, useState } from "react";
 import { useGlobalState } from "../context/globalStateContext";
 import { generateFocusErrorField, updateErrors } from "../pages/login/login";
 
@@ -71,15 +72,16 @@ export function useSignIn() {
             const formData = form.getFieldsValue();
             axios
               .post(`/api/v1/sessions`, formData)
-              .then(async (successData) => {
+              .then(async ({ data }) => {
                 messageApi.success({
                   content: "登录成功",
                   duration: 1,
                   onClose: () => {
-                    storeUser(get(successData, "data"));
+                    storeUser(data);
                     resolve(true);
                     setServerErrors({});
                     form.resetFields();
+                    eventEmitter.emit("userChanged", data);
                   },
                 });
               })

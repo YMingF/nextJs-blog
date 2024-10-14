@@ -3,13 +3,21 @@ import { KeyValMap } from "@/constants/common-type";
 import { globalPrisma } from "@/utils/prisma.utils";
 import { Tabs } from "antd";
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
+import { useRouter } from "next/router";
 import { withSession } from "../../lib/withSession";
+import { useUserChangeListener } from "./hooks/useUserChangeListener";
 import styles from "./styles/userDetail.module.scss";
+
 type Props = {
   posts: KeyValMap;
 };
+
 const userDetailPage: NextPage<Props> = (props) => {
   const { posts } = props;
+  const router = useRouter();
+
+  useUserChangeListener(router);
+
   const userDetailTabs = [
     {
       key: "posts",
@@ -17,6 +25,7 @@ const userDetailPage: NextPage<Props> = (props) => {
       children: <ArticleList posts={posts} />,
     },
   ];
+
   return (
     <div className={`${styles.userDetailBox} tw-mx-auto`}>
       <Tabs
@@ -27,6 +36,7 @@ const userDetailPage: NextPage<Props> = (props) => {
     </div>
   );
 };
+
 export default userDetailPage;
 
 export const getServerSideProps: GetServerSideProps = withSession(
