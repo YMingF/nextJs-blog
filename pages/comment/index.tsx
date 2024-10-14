@@ -1,7 +1,7 @@
 import { KeyValMap } from "@/constants/common-type";
 import { useGlobalState } from "@/context/globalStateContext";
 import { SmallDashOutlined } from "@ant-design/icons";
-import { Button, Card, Form, Input, message, Popover } from "antd";
+import { Button, Card, Divider, Form, Input, message, Popover } from "antd";
 import axios from "axios";
 import BoringAvatars from "boring-avatars";
 import { NextPage } from "next";
@@ -21,6 +21,7 @@ const processCommentData = (dataArr: KeyValMap[]) => {
   });
   return dataArr;
 };
+
 const AppComment: NextPage<CommentProps> = (props) => {
   let {
     userId,
@@ -28,7 +29,7 @@ const AppComment: NextPage<CommentProps> = (props) => {
     commentData: initialCommentData,
     syncCommentData,
   } = props;
-  const { user } = useGlobalState();
+  const { user, userInfoMap } = useGlobalState();
   const [form] = Form.useForm();
   const [commentData, setCommentData] = useState<KeyValMap[]>(
     processCommentData(initialCommentData) || []
@@ -119,7 +120,7 @@ const AppComment: NextPage<CommentProps> = (props) => {
       {/* 已添加的评论 */}
       <div className="commentList tw-mt-5 tw-flex tw-flex-col tw-gap-2.5">
         {commentData.map((comment, index) => {
-          const content = (
+          const editCommentPopover = (
             <Card className={`${styles.commentActionCard}`} bordered={false}>
               <div className={"tw-flex tw-flex-col tw-gap-2.5"}>
                 <Button
@@ -142,15 +143,19 @@ const AppComment: NextPage<CommentProps> = (props) => {
           return (
             <div className={"inner tw-flex tw-flex-col tw-gap-2.5"} key={index}>
               <div className="userBox tw-flex tw-justify-between tw-pr-2.5">
-                <div className="avatar">
+                <div className="avatar tw-flex tw-items-center tw-gap-2.5">
                   <BoringAvatars
                     size={20}
                     name={comment?.userId?.toString()}
                   ></BoringAvatars>
+                  <span>{userInfoMap?.[comment?.userId]?.username}</span>
                 </div>
-                <div className={`${styles.commentAction} tw-cursor-pointer`}>
+                <div
+                  className={`${styles.commentAction} tw-cursor-pointer`}
+                  hidden={comment?.userId !== user?.id}
+                >
                   <Popover
-                    content={content}
+                    content={editCommentPopover}
                     trigger="click"
                     placement={"bottom"}
                   >
@@ -187,6 +192,8 @@ const AppComment: NextPage<CommentProps> = (props) => {
               ) : (
                 <div className="comment">{comment.content}</div>
               )}
+              {/*  */}
+              <Divider style={{ margin: "5px 0" }} />
             </div>
           );
         })}

@@ -1,4 +1,5 @@
 import { KeyValMap } from "@/constants/common-type";
+import { useGlobalState } from "@/context/globalStateContext";
 import { Empty } from "antd";
 import { get } from "lodash";
 import { NextPage } from "next";
@@ -11,6 +12,8 @@ import styles from "../styles/index.module.scss";
 
 const Home: NextPage = (props: any) => {
   const [posts, setPosts] = useState(props.posts || []);
+  const { storeUserInfoMap } = useGlobalState();
+  storeUserInfoMap(props.userInfoMapping);
   useEffect(() => {
     const handleSearchChanged = (data: any) => {
       const articleData = get(data, "data", []);

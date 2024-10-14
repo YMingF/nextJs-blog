@@ -1,3 +1,5 @@
+import { message } from "antd";
+import type { MessageInstance } from "antd/es/message/interface";
 import {
   createContext,
   Dispatch,
@@ -6,8 +8,6 @@ import {
   useEffect,
   useState,
 } from "react";
-import { message } from "antd";
-import type { MessageInstance } from "antd/es/message/interface";
 
 const GlobalStateContext = createContext(undefined);
 interface UserProviderProps {
@@ -18,11 +18,14 @@ export const GlobalStateProvider: React.FC<UserProviderProps> = ({
 }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [user, storeUser] = useState(null);
+  const [userInfoMap, storeUserInfoMap] = useState(null);
   getUserInfo(storeUser, messageApi);
   return (
     <>
       {contextHolder}
-      <GlobalStateContext.Provider value={{ user, storeUser }}>
+      <GlobalStateContext.Provider
+        value={{ user, storeUser, userInfoMap, storeUserInfoMap }}
+      >
         {children}
       </GlobalStateContext.Provider>
     </>
