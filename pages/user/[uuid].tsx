@@ -46,9 +46,17 @@ export const getServerSideProps: GetServerSideProps = withSession(
       where: { User: { uuid: String(uuid) } },
       include: { User: true },
     });
+    let postData = JSON.parse(JSON.stringify(posts));
+    for (let i = 0; i < postData.length; i++) {
+      const post: KeyValMap = postData[i];
+      const commentsCount = await globalPrisma.comment.count({
+        where: { postId: Number(post.id) },
+      });
+      post.commentsNum = commentsCount;
+    }
     return {
       props: {
-        posts: JSON.parse(JSON.stringify(posts)),
+        posts: postData,
       },
     };
   }

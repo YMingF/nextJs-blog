@@ -34,7 +34,7 @@ const ArticleList: NextPage<Props> = (props) => {
             </p>
             <p className="commentCount tw-m-0">
               <CommentOutlined />
-              {post?.comments?.length}
+              {post?.commentsNum}
             </p>
           </div>
         </div>
