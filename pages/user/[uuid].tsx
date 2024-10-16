@@ -47,8 +47,8 @@ export const getServerSideProps: GetServerSideProps = withSession(
       include: { User: true },
     });
     let postData = JSON.parse(JSON.stringify(posts));
-    for (let i = 0; i < postData.length; i++) {
-      const post: KeyValMap = postData[i];
+    for (const element of postData) {
+      const post: KeyValMap = element;
       const commentsCount = await globalPrisma.comment.count({
         where: { postId: Number(post.id) },
       });
@@ -62,6 +62,4 @@ export const getServerSideProps: GetServerSideProps = withSession(
   }
 );
 
-const onTabChange = (key: string) => {
-  console.log(key);
-};
+const onTabChange = (key: string) => {};

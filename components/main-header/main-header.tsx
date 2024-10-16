@@ -56,7 +56,6 @@ const MainHeader: NextPage = () => {
   }, [pathname]);
 
   const onSearch = (value: any, _e: any, info: { source: any }) => {
-    console.log(`value`, value);
     axios.post(`/api/v1/search_api/search?content=${value}`).then((data) => {
       eventEmitter.emit("searchFilterDataChanged", data);
     });

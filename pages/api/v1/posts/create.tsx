@@ -7,7 +7,7 @@ import { withSession } from "../../../../lib/withSession";
 const CreatePost = withSession(
   async (req: customNextApiRequest, res: NextApiResponse) => {
     if (req.method === "POST") {
-      const { title, content } = req.body;
+      const { title = "", content } = req.body;
       const user = req.session?.get("currentUser");
 
       const post = await globalPrisma.post.create({

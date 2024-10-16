@@ -1,27 +1,33 @@
+import MilkdownEditorWrapper from "@/components/markdownEditor/MilkdownEditor";
 import { KeyValMap } from "@/constants/common-type";
 import eventEmitter from "@/emitter/eventEmitter";
-import { UseMarkdown } from "@/hooks/useMarkdown";
 import { globalPrisma } from "@/utils/prisma.utils";
 import { message } from "antd";
 import axios from "axios";
 import { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-
+import { useCallback, useEffect, useState } from "react";
+import styles from "./styles/edit.post.module.scss";
 type Props = {
   uuid: number;
   post: KeyValMap;
 };
 const PostEdit: NextPage<Props> = (props) => {
   const { uuid, post } = props;
-  const [form, setForm] = useState({});
   const router = useRouter();
   const [messageApi, contextHolder] = message.useMessage();
-  const syncForm = (data: any) => {
-    setForm(data);
-  };
+
+  const [markdownData, setMarkdownData] = useState(post.content);
+  const handleValueChange = useCallback(
+    (newValue: string) => {
+      if (newValue !== post.content) {
+        setMarkdownData(newValue);
+      }
+    },
+    [post.content]
+  );
   const updateMarkdown = () => {
-    axios.patch(`/api/v1/posts/${uuid}`, form).then(
+    axios.patch(`/api/v1/posts/${uuid}`, { content: markdownData }).then(
       async ({ data }: KeyValMap) => {
         await messageApi.success("更新成功");
         router.push(`/posts/${data.uuid}`);
@@ -36,15 +42,14 @@ const PostEdit: NextPage<Props> = (props) => {
     return () => {
       eventEmitter.off("updatePostEvt", updateMarkdown);
     };
-  }, [form]);
+  }, [markdownData]);
   return (
-    <section>
+    <section className={styles.editPostBox}>
       {contextHolder}
-      {UseMarkdown({
-        title: post.title,
-        content: post.content,
-        onFormChange: syncForm,
-      })}
+      <MilkdownEditorWrapper
+        defaultValue={post.content}
+        onValueChange={handleValueChange}
+      />
     </section>
   );
 };
