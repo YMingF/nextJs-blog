@@ -1,4 +1,4 @@
-import MilkdownEditorWrapper from "@/components/markdownEditor/MilkdownEditor";
+import PostEditor from "@/components/post/postEditor/PostEditor";
 import { KeyValMap } from "@/constants/common-type";
 import eventEmitter from "@/emitter/eventEmitter";
 import { globalPrisma } from "@/utils/prisma.utils";
@@ -18,37 +18,52 @@ const PostEdit: NextPage<Props> = (props) => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const [markdownData, setMarkdownData] = useState(post.content);
-  const handleValueChange = useCallback(
-    (newValue: string) => {
-      if (newValue !== post.content) {
-        setMarkdownData(newValue);
-      }
-    },
-    [post.content]
-  );
-  const updateMarkdown = () => {
-    axios.patch(`/api/v1/posts/${uuid}`, { content: markdownData }).then(
-      async ({ data }: KeyValMap) => {
-        await messageApi.success("更新成功");
-        router.push(`/posts/${data.uuid}`);
-      },
-      async () => {
-        await messageApi.error("更新失败");
-      }
-    );
-  };
+  const [postTitle, setTitle] = useState(post.title);
+
+  const updateMarkdown = useCallback(() => {
+    axios
+      .patch(`/api/v1/posts/${uuid}`, {
+        content: markdownData,
+        title: postTitle,
+      })
+      .then(
+        async ({ data }: KeyValMap) => {
+          await messageApi.success("更新成功");
+          router.push(`/posts/${data.uuid}`);
+        },
+        async () => {
+          await messageApi.error("更新失败");
+        }
+      );
+  }, [uuid, markdownData, postTitle, messageApi, router]);
+
   useEffect(() => {
     eventEmitter.on("updatePostEvt", updateMarkdown);
     return () => {
       eventEmitter.off("updatePostEvt", updateMarkdown);
     };
-  }, [markdownData]);
+  }, [updateMarkdown]);
+
+  const handleTitleChange = useCallback(
+    (newTitle: string) => {
+      setTitle(newTitle);
+    },
+    [post.title]
+  );
+  const handleContentChange = useCallback(
+    (newContent: string) => {
+      setMarkdownData(newContent);
+    },
+    [post.content]
+  );
   return (
-    <section className={styles.editPostBox}>
+    <section className={`${styles.editPostBox} tw-w-full`}>
       {contextHolder}
-      <MilkdownEditorWrapper
-        defaultValue={post.content}
-        onValueChange={handleValueChange}
+      <PostEditor
+        initialTitle={post.title}
+        initialContent={post.content}
+        onTitleChange={handleTitleChange}
+        onContentChange={handleContentChange}
       />
     </section>
   );

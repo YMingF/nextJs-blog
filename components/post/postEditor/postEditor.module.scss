@@ -1,0 +1,26 @@
+.postEditorBox {
+  width: 82vw;
+  margin: 0 auto;
+  max-width: 100%;
+  @media (min-width: 768px) {
+    max-width: 720px;
+  }
+  @media (min-width: 1024px) {
+    max-width: 960px;
+  }
+  @media (min-width: 1200px) {
+    max-width: 1200px;
+  }
+  .postTitle {
+    :global {
+      .ant-input {
+        font-size: 28px;
+        font-weight: bold;
+        border: none;
+        outline: none;
+        box-shadow: none;
+        padding: 0;
+      }
+    }
+  }
+}
