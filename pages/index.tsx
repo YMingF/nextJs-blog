@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import ArticleCard from "../components/article/articleCard";
 import eventEmitter from "../emitter/eventEmitter";
 import { fetchArticles } from "../lib/fetchArticles";
-import "../styles/index.module.scss";
 import styles from "../styles/index.module.scss";
 
 const Home: NextPage = (props: any) => {
@@ -31,7 +30,7 @@ const Home: NextPage = (props: any) => {
       {posts?.map((post: KeyValMap, index: number) => {
         return (
           <ArticleCard
-            key={index}
+            key={post.uuid}
             articleData={{ ...post, userInfo: props.userInfoMapping }}
           ></ArticleCard>
         );

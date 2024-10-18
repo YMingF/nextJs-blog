@@ -44,7 +44,7 @@ const PostEditor: React.FC<PostEditorProps> = (props) => {
     onTitleChange?.(newTitle);
   }, []);
   return (
-    <div className={styles.postEditorBox}>
+    <div className={`${styles.postEditorBox} tw-py-5`}>
       <div className={styles.postTitle}>
         <Input
           placeholder="标题"
