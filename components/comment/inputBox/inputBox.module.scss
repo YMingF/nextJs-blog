@@ -1,0 +1,11 @@
+.inputBox {
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 2px 8px;
+  padding: 10px;
+  :global {
+    textarea {
+      padding: 0;
+      border: none;
+      box-shadow: none !important;
+    }
+  }
+}

@@ -1,19 +1,10 @@
+import CommentInputBox from "@/components/comment/inputBox/inputBox";
 import { KeyValMap } from "@/constants/common-type";
 import { useGlobalState } from "@/context/globalStateContext";
-import { SmallDashOutlined, SmileOutlined } from "@ant-design/icons";
-import {
-  Button,
-  Card,
-  Divider,
-  Form,
-  Input,
-  message,
-  Popover,
-  Space,
-} from "antd";
+import { SmallDashOutlined } from "@ant-design/icons";
+import { Button, Card, Divider, message, Popover } from "antd";
 import axios from "axios";
 import BoringAvatars from "boring-avatars";
-import EmojiPicker from "emoji-picker-react";
 import { NextPage } from "next";
 import { useCallback, useState } from "react";
 import styles from "./styles/index.module.scss";
@@ -40,8 +31,7 @@ const AppComment: NextPage<CommentProps> = (props) => {
     syncCommentData,
   } = props;
   const { user, userInfoMap } = useGlobalState();
-  const [form] = Form.useForm();
-  const [isShowEmojiPicker, setIsShowEmojiPicker] = useState(false);
+  const [mainCommentContent, setMainCommentContent] = useState("");
   const [commentData, setCommentData] = useState<KeyValMap[]>(
     processCommentData(initialCommentData) || []
   );
@@ -49,22 +39,24 @@ const AppComment: NextPage<CommentProps> = (props) => {
     [key: number]: boolean;
   }>({});
 
-  const createComment = useCallback(() => {
-    const content = form.getFieldsValue().content;
-    axios
-      .post("/api/v1/comments/create", { content, userId, postId })
-      .then(async (response) => {
-        if (response.status === 200) {
-          await message.success("评论成功", 0.3);
-          form.resetFields();
-          await reFetchComments();
-        } else if (response.status === 401) {
-          await message.error("请先登录");
-        } else {
-          await message.error("评论失败");
-        }
-      });
-  }, []);
+  const createComment = useCallback(
+    (content: string) => {
+      axios
+        .post("/api/v1/comments/create", { content, userId, postId })
+        .then(async (response) => {
+          if (response.status === 200) {
+            await message.success("评论成功", 0.3);
+            setMainCommentContent("");
+            await reFetchComments();
+          } else if (response.status === 401) {
+            await message.error("请先登录");
+          } else {
+            await message.error("评论失败");
+          }
+        });
+    },
+    [mainCommentContent]
+  );
 
   const reFetchComments = useCallback(async () => {
     const response = await axios.get(`/api/v1/comments/fetch?postId=${postId}`);
@@ -93,7 +85,8 @@ const AppComment: NextPage<CommentProps> = (props) => {
         });
       });
   }, []);
-  const updateComment = useCallback((index: number, comment: KeyValMap) => {
+
+  const updateComment = useCallback((comment: KeyValMap) => {
     axios
       .patch("/api/v1/comments/update", { comment })
       .then(async (response) => {
@@ -112,76 +105,32 @@ const AppComment: NextPage<CommentProps> = (props) => {
     );
     setCommentData(updatedComments);
   };
-  const toggleEmojiPicker = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setIsShowEmojiPicker(!isShowEmojiPicker);
-    },
-    [isShowEmojiPicker]
-  );
-
-  const insertEmoji = useCallback(
-    (emoji: string) => {
-      const content = form.getFieldValue("content") || "";
-      const currentCursorPosition =
-        form.getFieldInstance("content").resizableTextArea.textArea
-          .selectionStart;
-
-      const newContent =
-        currentCursorPosition !== null
-          ? content.slice(0, currentCursorPosition) +
-            emoji +
-            content.slice(currentCursorPosition)
-          : content + emoji;
-      form.setFieldsValue({ content: newContent });
-      setIsShowEmojiPicker(false);
-    },
-    [form]
-  );
-
-  const emojiPickerContent = (
-    <EmojiPicker
-      onEmojiClick={(emojiObj) => {
-        insertEmoji(emojiObj.emoji);
-        setIsShowEmojiPicker(false);
-      }}
-    ></EmojiPicker>
-  );
-
+  const openEditComment = (index: number) => {
+    updateCommentVal(index, { isVisible: true });
+    setEditCommentPopoverState({
+      ...editCommentPopoverState,
+      [index]: false,
+    });
+  };
   return (
-    <div className={`${styles.commentContainer} tw-p-2.5`}>
-      <div className="commentBox tw-flex tw-flex-col tw-px-2.5">
-        <div className="userInfo tw-flex tw-gap-3.5 tw-items-center">
-          <div>
-            <BoringAvatars
-              size={20}
-              name={user?.id?.toString()}
-            ></BoringAvatars>
+    <div className={`${styles.commentContainer}`}>
+      <div className="commentBox tw-flex tw-gap-2">
+        <div className="userInfo tw-flex tw-gap-3.5 tw-self-start">
+          <BoringAvatars size={30} name={user?.id?.toString()}></BoringAvatars>
+        </div>
+        <div className="tw-flex-1 tw-flex tw-flex-col tw-gap-2">
+          <CommentInputBox
+            content={mainCommentContent}
+            onContentChange={setMainCommentContent}
+          ></CommentInputBox>
+          <div className="actionBox  tw-flex tw-justify-end">
+            <Button
+              type={"primary"}
+              onClick={() => createComment(mainCommentContent)}
+            >
+              发送
+            </Button>
           </div>
-          <p>{user?.username}</p>
-        </div>
-        <div className={`${styles.inputBox} tw-flex-1`}>
-          <Form form={form}>
-            <Form.Item name="content">
-              <Input.TextArea autoSize placeholder="说点什么" />
-            </Form.Item>
-          </Form>
-
-          <Popover
-            content={emojiPickerContent}
-            trigger="click"
-            open={isShowEmojiPicker}
-          >
-            <Space>
-              <SmileOutlined onClick={toggleEmojiPicker} />
-            </Space>
-          </Popover>
-        </div>
-        <div className="actionBox tw-px-2.5 tw-flex tw-justify-end">
-          <Button type={"primary"} onClick={createComment}>
-            发送
-          </Button>
         </div>
       </div>
       {/* 已添加的评论 */}
@@ -193,7 +142,7 @@ const AppComment: NextPage<CommentProps> = (props) => {
                 <Button
                   type="text"
                   className={"tw-w-full"}
-                  onClick={() => updateCommentVal(index, { isVisible: true })}
+                  onClick={() => openEditComment(index)}
                 >
                   修改
                 </Button>
@@ -240,24 +189,33 @@ const AppComment: NextPage<CommentProps> = (props) => {
               {comment.isVisible ? (
                 <div className={"tw-flex tw-flex-col "}>
                   {/* 编辑评论的输入框 */}
-                  <Input
-                    defaultValue={comment.content} // Use defaultValue to allow editing
-                    onChange={(e) =>
-                      updateCommentVal(index, { content: e.target.value })
-                    }
-                  />
-                  <div className={"tw-flex tw-gap-2.5 tw-justify-end"}>
+
+                  <CommentInputBox
+                    content={comment.content}
+                    onContentChange={(content) => {
+                      updateCommentVal(index, { newContent: content });
+                    }}
+                  ></CommentInputBox>
+                  <div className={"tw-flex tw-gap-2.5 tw-justify-end tw-mt-2"}>
                     <Button
                       type="text"
                       onClick={() =>
-                        updateCommentVal(index, { isVisible: false })
+                        updateCommentVal(index, {
+                          isVisible: false,
+                          newContent: undefined,
+                        })
                       }
                     >
                       取消
                     </Button>
                     <Button
-                      type="text"
-                      onClick={() => updateComment(index, comment)}
+                      type={"primary"}
+                      onClick={() =>
+                        updateComment({
+                          ...comment,
+                          content: comment.newContent,
+                        })
+                      }
                     >
                       确定
                     </Button>

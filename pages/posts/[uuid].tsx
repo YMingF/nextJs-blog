@@ -194,6 +194,7 @@ const postsShow: NextPage<Props> = (props) => {
       </Modal>
       {/*  展示评论内容*/}
       <Drawer
+        width={"35%"}
         title="评论"
         onClose={() => toggleComment(false, user)}
         open={commentDrawerOpen}
