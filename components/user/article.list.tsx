@@ -1,4 +1,5 @@
 import { KeyValMap } from "@/constants/common-type";
+import { sanitizeContent } from "@/lib/img";
 import { formatDate } from "@/utils/date.utils";
 import { CommentOutlined, LikeOutlined } from "@ant-design/icons";
 import { NextPage } from "next";
@@ -24,7 +25,9 @@ const ArticleList: NextPage<Props> = (props) => {
         >
           <div className={styles.mainInfo}>
             <div className={`${styles.postTitle}`}>{post.title}</div>
-            <div className={`${styles.postContent}`}>{post.content}</div>
+            <div className={`${styles.postContent}`}>
+              {sanitizeContent(post.content)}
+            </div>
           </div>
           <div className="subInfo tw-flex tw-items-center tw-gap-4">
             <div className="createdAt">{formatDate(post.createdAt)}</div>
@@ -32,7 +35,7 @@ const ArticleList: NextPage<Props> = (props) => {
               <LikeOutlined />
               {post.likesAmt}
             </p>
-            <p className="commentCount tw-m-0">
+            <p className="commentCount tw-m-0 tw-flex tw-items-center tw-gap-1">
               <CommentOutlined />
               {post?.commentsNum}
             </p>

@@ -1,9 +1,19 @@
 import { KeyValMap } from "@/constants/common-type";
 import { useGlobalState } from "@/context/globalStateContext";
-import { SmallDashOutlined } from "@ant-design/icons";
-import { Button, Card, Divider, Form, Input, message, Popover } from "antd";
+import { SmallDashOutlined, SmileOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Card,
+  Divider,
+  Form,
+  Input,
+  message,
+  Popover,
+  Space,
+} from "antd";
 import axios from "axios";
 import BoringAvatars from "boring-avatars";
+import EmojiPicker from "emoji-picker-react";
 import { NextPage } from "next";
 import { useCallback, useState } from "react";
 import styles from "./styles/index.module.scss";
@@ -31,10 +41,10 @@ const AppComment: NextPage<CommentProps> = (props) => {
   } = props;
   const { user, userInfoMap } = useGlobalState();
   const [form] = Form.useForm();
+  const [isShowEmojiPicker, setIsShowEmojiPicker] = useState(false);
   const [commentData, setCommentData] = useState<KeyValMap[]>(
     processCommentData(initialCommentData) || []
   );
-
   const createComment = useCallback(() => {
     const content = form.getFieldsValue().content;
     axios
@@ -92,6 +102,42 @@ const AppComment: NextPage<CommentProps> = (props) => {
     );
     setCommentData(updatedComments);
   };
+  const toggleEmojiPicker = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsShowEmojiPicker(!isShowEmojiPicker);
+    },
+    [isShowEmojiPicker]
+  );
+
+  const insertEmoji = useCallback(
+    (emoji: string) => {
+      const content = form.getFieldValue("content") || "";
+      const currentCursorPosition =
+        form.getFieldInstance("content").resizableTextArea.textArea
+          .selectionStart;
+
+      const newContent =
+        currentCursorPosition !== null
+          ? content.slice(0, currentCursorPosition) +
+            emoji +
+            content.slice(currentCursorPosition)
+          : content + emoji;
+      form.setFieldsValue({ content: newContent });
+      setIsShowEmojiPicker(false);
+    },
+    [form]
+  );
+
+  const emojiPickerContent = (
+    <EmojiPicker
+      onEmojiClick={(emojiObj) => {
+        insertEmoji(emojiObj.emoji);
+        setIsShowEmojiPicker(false);
+      }}
+    ></EmojiPicker>
+  );
   return (
     <div className={`${styles.commentContainer} tw-p-2.5`}>
       <div className="commentBox tw-flex tw-flex-col tw-px-2.5">
@@ -110,6 +156,16 @@ const AppComment: NextPage<CommentProps> = (props) => {
               <Input.TextArea autoSize placeholder="说点什么" />
             </Form.Item>
           </Form>
+
+          <Popover
+            content={emojiPickerContent}
+            trigger="click"
+            open={isShowEmojiPicker}
+          >
+            <Space>
+              <SmileOutlined onClick={toggleEmojiPicker} />
+            </Space>
+          </Popover>
         </div>
         <div className="actionBox tw-px-2.5 tw-flex tw-justify-end">
           <Button type={"primary"} onClick={createComment}>

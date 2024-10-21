@@ -1,6 +1,7 @@
 // 用来完成展示文章梗概的卡片
 
 import { KeyValMap } from "@/constants/common-type";
+import { sanitizeContent } from "@/lib/img";
 import { LikeFilled } from "@ant-design/icons";
 import BoringAvatars from "boring-avatars";
 import { NextPage } from "next";
@@ -16,10 +17,7 @@ const ArticleCard: NextPage<ArticleCardProps> = (props: ArticleCardProps) => {
   const { title, content, uuid, userInfo, likesAmt, userId } =
     articleData || {};
   const router = useRouter();
-  const sanitizeContent = (text: string) => {
-    // 移除 ![](base64 图片数据) 格式的图片
-    return text.replace(/!\[.*?\]\((.*?)\)/g, "[图片]");
-  };
+
   const getFirstImageUrl = (text: string) => {
     const match = RegExp(/!\[.*?\]\((.*?)\)/).exec(text);
     if (match) {
@@ -61,7 +59,7 @@ const ArticleCard: NextPage<ArticleCardProps> = (props: ArticleCardProps) => {
             </div>
           </div>
           {/*  作者附加信息*/}
-          <div className={"article-meta  tw-mt-5"}>
+          <div className={"article-meta"}>
             <div className="article-meta-user tw-flex tw-items-center tw-gap-2.5 tw-text-xs  tw-text-slate-500">
               <BoringAvatars
                 size={20}
