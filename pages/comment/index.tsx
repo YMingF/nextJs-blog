@@ -45,6 +45,10 @@ const AppComment: NextPage<CommentProps> = (props) => {
   const [commentData, setCommentData] = useState<KeyValMap[]>(
     processCommentData(initialCommentData) || []
   );
+  const [editCommentPopoverState, setEditCommentPopoverState] = useState<{
+    [key: number]: boolean;
+  }>({});
+
   const createComment = useCallback(() => {
     const content = form.getFieldsValue().content;
     axios
@@ -71,7 +75,7 @@ const AppComment: NextPage<CommentProps> = (props) => {
     syncCommentData(response.data);
   }, []);
 
-  const removeComment = useCallback((comment: any) => {
+  const removeComment = useCallback((comment: any, index: number) => {
     axios
       .post(`/api/v1/comments/delete`, { id: comment.id })
       .then(async (response) => {
@@ -81,6 +85,12 @@ const AppComment: NextPage<CommentProps> = (props) => {
         } else {
           await message.error("删除失败");
         }
+      })
+      .finally(() => {
+        setEditCommentPopoverState({
+          ...editCommentPopoverState,
+          [index]: false,
+        });
       });
   }, []);
   const updateComment = useCallback((index: number, comment: KeyValMap) => {
@@ -138,6 +148,7 @@ const AppComment: NextPage<CommentProps> = (props) => {
       }}
     ></EmojiPicker>
   );
+
   return (
     <div className={`${styles.commentContainer} tw-p-2.5`}>
       <div className="commentBox tw-flex tw-flex-col tw-px-2.5">
@@ -189,7 +200,7 @@ const AppComment: NextPage<CommentProps> = (props) => {
                 <Button
                   danger
                   type="text"
-                  onClick={() => removeComment(comment)}
+                  onClick={() => removeComment(comment, index)}
                 >
                   删除
                 </Button>
@@ -214,6 +225,13 @@ const AppComment: NextPage<CommentProps> = (props) => {
                     content={editCommentPopover}
                     trigger="click"
                     placement={"bottom"}
+                    open={editCommentPopoverState[index]}
+                    onOpenChange={(open) =>
+                      setEditCommentPopoverState({
+                        ...editCommentPopoverState,
+                        [index]: open,
+                      })
+                    }
                   >
                     <SmallDashOutlined />
                   </Popover>
