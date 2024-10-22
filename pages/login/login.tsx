@@ -22,16 +22,17 @@ export function generateFocusErrorField(
   form: FormInstance<any>,
   fieldRefs: React.MutableRefObject<any>
 ) {
-  return useCallback(() => {
+  return () => {
     const errors = form.getFieldsError();
     const firstError = errors?.find((err) => err.errors.length > 0);
     if (firstError) {
       const fieldName = firstError.name;
       const errorField = fieldRefs.current[fieldName.toString()];
-      errorField && errorField.focus();
+      errorField?.focus();
     }
-  }, [form]);
+  };
 }
+
 let activeModelType: "sign_in" | "sign_up" | null = null;
 const App_Login: NextPage<LoginProps> = (props: any) => {
   const { user, storeUser } = useGlobalState();
@@ -48,7 +49,10 @@ const App_Login: NextPage<LoginProps> = (props: any) => {
   };
 
   const [messageApi, contextHolder] = message.useMessage();
-  const focusErrorField = generateFocusErrorField(form, fieldRefs);
+  const focusErrorField = useCallback(
+    generateFocusErrorField(form, fieldRefs),
+    [form]
+  );
   const validateConfirmPass = ({
     getFieldValue,
   }: {

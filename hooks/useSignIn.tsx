@@ -15,7 +15,10 @@ export function useSignIn() {
   updateErrors(serverErrors, form);
 
   const [messageApi, contextHolder] = message.useMessage();
-  const focusErrorField = generateFocusErrorField(form, fieldRefs);
+  const focusErrorField = useCallback(
+    generateFocusErrorField(form, fieldRefs),
+    [form]
+  );
   const { user, storeUser } = useGlobalState();
 
   const openSignIn = useCallback(() => {
