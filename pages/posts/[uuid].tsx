@@ -176,6 +176,7 @@ const postsShow: NextPage<Props> = (props) => {
             </div>
           </div>
           <article
+            className={`${styles.articleContent}`}
             dangerouslySetInnerHTML={{ __html: marked(post.content) }}
           ></article>
         </div>

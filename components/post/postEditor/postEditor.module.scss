@@ -2,6 +2,10 @@
   width: 82vw;
   margin: 0 auto;
   max-width: 100%;
+  img {
+    max-width: 100%;
+    height: auto;
+  }
   @media (min-width: 768px) {
     max-width: 720px;
   }

@@ -32,3 +32,10 @@ const CreatePost = withSession(
   }
 );
 export default CreatePost;
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "4mb",
+    },
+  },
+};
