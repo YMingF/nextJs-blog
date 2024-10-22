@@ -1,4 +1,5 @@
 import { KeyValMap } from "@/constants/common-type";
+import { MESSAGES } from "@/constants/messages";
 import { useGlobalState } from "@/context/globalStateContext";
 import { Empty } from "antd";
 import { get } from "lodash";
@@ -37,7 +38,7 @@ const Home: NextPage = (props: any) => {
       })}
       {posts?.length === 0 && (
         <div className={`${styles.emptyWrapper}`}>
-          <Empty description={"无数据"} />
+          <Empty description={MESSAGES.COMMON.NO_DATA} />
         </div>
       )}
       <style jsx>{`

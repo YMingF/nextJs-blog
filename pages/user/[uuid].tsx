@@ -1,5 +1,6 @@
 import ArticleList from "@/components/user/article.list";
 import { KeyValMap } from "@/constants/common-type";
+import { MESSAGES } from "@/constants/messages";
 import { globalPrisma } from "@/utils/prisma.utils";
 import { Tabs } from "antd";
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
@@ -21,7 +22,7 @@ const userDetailPage: NextPage<Props> = (props) => {
   const userDetailTabs = [
     {
       key: "posts",
-      label: "文章",
+      label: MESSAGES.POST.TITLE,
       children: <ArticleList posts={posts} />,
     },
   ];

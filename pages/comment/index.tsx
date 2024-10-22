@@ -1,5 +1,6 @@
 import CommentInputBox from "@/components/comment/inputBox/inputBox";
 import { KeyValMap } from "@/constants/common-type";
+import { MESSAGES } from "@/constants/messages";
 import { useGlobalState } from "@/context/globalStateContext";
 import { SmallDashOutlined } from "@ant-design/icons";
 import { Button, Card, Divider, message, Popover } from "antd";
@@ -45,13 +46,13 @@ const AppComment: NextPage<CommentProps> = (props) => {
         .post("/api/v1/comments/create", { content, userId, postId })
         .then(async (response) => {
           if (response.status === 200) {
-            await message.success("评论成功", 0.3);
+            await message.success(MESSAGES.COMMENT.CREATE_SUCCESS, 0.3);
             setMainCommentContent("");
             await reFetchComments();
           } else if (response.status === 401) {
-            await message.error("请先登录");
+            await message.error(MESSAGES.ERRORS.LOGIN_ERROR);
           } else {
-            await message.error("评论失败");
+            await message.error(MESSAGES.COMMENT.CREATE_ERROR);
           }
         });
     },
@@ -72,10 +73,10 @@ const AppComment: NextPage<CommentProps> = (props) => {
       .post(`/api/v1/comments/delete`, { id: comment.id })
       .then(async (response) => {
         if (response.status === 200) {
-          await message.success("删除成功", 0.5);
+          await message.success(MESSAGES.DELETE.SUCCESS, 0.5);
           await reFetchComments();
         } else {
-          await message.error("删除失败");
+          await message.error(MESSAGES.DELETE.ERROR);
         }
       })
       .finally(() => {
@@ -128,7 +129,7 @@ const AppComment: NextPage<CommentProps> = (props) => {
               type={"primary"}
               onClick={() => createComment(mainCommentContent)}
             >
-              发送
+              {MESSAGES.COMMON.SEND}
             </Button>
           </div>
         </div>
@@ -144,14 +145,14 @@ const AppComment: NextPage<CommentProps> = (props) => {
                   className={"tw-w-full"}
                   onClick={() => openEditComment(index)}
                 >
-                  修改
+                  {MESSAGES.COMMON.MODIFY}
                 </Button>
                 <Button
                   danger
                   type="text"
                   onClick={() => removeComment(comment, index)}
                 >
-                  删除
+                  {MESSAGES.COMMON.DELETE}
                 </Button>
               </div>
             </Card>
@@ -206,7 +207,7 @@ const AppComment: NextPage<CommentProps> = (props) => {
                         })
                       }
                     >
-                      取消
+                      {MESSAGES.COMMON.CANCEL}
                     </Button>
                     <Button
                       type={"primary"}
@@ -217,7 +218,7 @@ const AppComment: NextPage<CommentProps> = (props) => {
                         })
                       }
                     >
-                      确定
+                      {MESSAGES.COMMON.CONFIRM}
                     </Button>
                   </div>
                 </div>

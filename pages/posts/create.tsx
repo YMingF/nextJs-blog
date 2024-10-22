@@ -1,5 +1,6 @@
 import PostEditor from "@/components/post/postEditor/PostEditor";
 import { KeyValMap } from "@/constants/common-type";
+import { MESSAGES } from "@/constants/messages";
 import eventEmitter from "@/emitter/eventEmitter";
 import { message } from "antd";
 import axios from "axios";
@@ -24,7 +25,10 @@ const CreatePost = () => {
     axios
       .post("/api/v1/posts/create", { content: markdownData, title })
       .then(async ({ data }: KeyValMap) => {
-        await messageApi.success({ content: "发布成功", duration: 0.8 });
+        await messageApi.success({
+          content: MESSAGES.POST.CREATE_SUCCESS,
+          duration: 0.8,
+        });
         router.replace(`/posts/${data.uuid}`);
       });
   };

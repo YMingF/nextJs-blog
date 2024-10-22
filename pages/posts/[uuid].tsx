@@ -1,4 +1,5 @@
 import { KeyValMap } from "@/constants/common-type";
+import { MESSAGES } from "@/constants/messages";
 import { useGlobalState } from "@/context/globalStateContext";
 import AppComment from "@/pages/comment";
 import { formatDate } from "@/utils/date.utils";
@@ -51,7 +52,7 @@ const postsShow: NextPage<Props> = (props) => {
       async () => {
         await messageApi.open({
           type: "success",
-          content: "删除成功",
+          content: MESSAGES.DELETE.SUCCESS,
           duration: 1,
         });
         router.push("/");
@@ -59,7 +60,7 @@ const postsShow: NextPage<Props> = (props) => {
       async () => {
         await messageApi.open({
           type: "error",
-          content: "删除失败",
+          content: MESSAGES.DELETE.ERROR,
           duration: 500,
         });
       }
@@ -75,7 +76,7 @@ const postsShow: NextPage<Props> = (props) => {
     <>
       <div className={`tw-flex tw-flex-col tw-items-start`}>
         <Button type="link" onClick={editPost}>
-          编辑
+          {MESSAGES.COMMON.EDIT}
         </Button>
         <Button
           type="link"
@@ -87,7 +88,7 @@ const postsShow: NextPage<Props> = (props) => {
             }, 100);
           }}
         >
-          删除
+          {MESSAGES.COMMON.DELETE}
         </Button>
       </div>
     </>
@@ -95,7 +96,7 @@ const postsShow: NextPage<Props> = (props) => {
 
   const toggleComment = useCallback((val: boolean, user: any) => {
     if (val && !user) {
-      messageApi.error("请先登录");
+      messageApi.error(MESSAGES.ERRORS.LOGIN_ERROR);
       return;
     }
     setCommentDrawerOpen(val);
@@ -180,22 +181,22 @@ const postsShow: NextPage<Props> = (props) => {
         </div>
       </div>
       <Modal
-        title="注意"
+        title={MESSAGES.COMMON.ATTENTION}
         open={delModalOpen}
         onCancel={() => {
           setDelModalOpen(false);
         }}
         onOk={handleDelPost}
         closable={false}
-        okText={"确定"}
-        cancelText={"取消"}
+        okText={MESSAGES.COMMON.CONFIRM}
+        cancelText={MESSAGES.COMMON.CANCEL}
       >
-        删除是不可逆转的，此文章将被完全删除！
+        {MESSAGES.DELETE.CONFIRM}
       </Modal>
       {/*  展示评论内容*/}
       <Drawer
         width={"35%"}
-        title="评论"
+        title={MESSAGES.COMMENT.TITLE}
         onClose={() => toggleComment(false, user)}
         open={commentDrawerOpen}
       >

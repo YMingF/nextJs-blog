@@ -1,5 +1,6 @@
 import PostEditor from "@/components/post/postEditor/PostEditor";
 import { KeyValMap } from "@/constants/common-type";
+import { MESSAGES } from "@/constants/messages";
 import eventEmitter from "@/emitter/eventEmitter";
 import { globalPrisma } from "@/utils/prisma.utils";
 import { message } from "antd";
@@ -28,11 +29,11 @@ const PostEdit: NextPage<Props> = (props) => {
       })
       .then(
         async ({ data }: KeyValMap) => {
-          await messageApi.success("更新成功");
+          await messageApi.success(MESSAGES.POST.UPDATE_SUCCESS);
           router.push(`/posts/${data.uuid}`);
         },
         async () => {
-          await messageApi.error("更新失败");
+          await messageApi.error(MESSAGES.POST.UPDATE_ERROR);
         }
       );
   }, [uuid, markdownData, postTitle, messageApi, router]);

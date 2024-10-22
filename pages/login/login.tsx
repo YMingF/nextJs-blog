@@ -1,4 +1,5 @@
 import { KeyValMap } from "@/constants/common-type";
+import { MESSAGES } from "@/constants/messages";
 import {
   Button,
   Divider,
@@ -15,7 +16,7 @@ import { NamePath, StoreValue } from "rc-field-form/lib/interface";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useGlobalState } from "../../context/globalStateContext";
 
-interface App_LoginProps {}
+interface LoginProps {}
 
 export function generateFocusErrorField(
   form: FormInstance<any>,
@@ -32,7 +33,7 @@ export function generateFocusErrorField(
   }, [form]);
 }
 let activeModelType: "sign_in" | "sign_up" | null = null;
-const App_Login: NextPage<App_LoginProps> = (props: any) => {
+const App_Login: NextPage<LoginProps> = (props: any) => {
   const { user, storeUser } = useGlobalState();
   const fieldRefs = useRef<any>({});
   const [form] = Form.useForm();
@@ -42,8 +43,8 @@ const App_Login: NextPage<App_LoginProps> = (props: any) => {
   updateErrors(serverErrors, form);
 
   const titleMap = {
-    sign_in: "登录",
-    sign_up: "注册",
+    sign_in: MESSAGES.COMMON.SIGN_IN,
+    sign_up: MESSAGES.COMMON.SIGN_UP,
   };
 
   const [messageApi, contextHolder] = message.useMessage();
@@ -57,7 +58,7 @@ const App_Login: NextPage<App_LoginProps> = (props: any) => {
       if (!value || getFieldValue("password") === value) {
         return Promise.resolve();
       }
-      return Promise.reject(new Error("前后密码不一致！"));
+      return Promise.reject(new Error(MESSAGES.ERRORS.PASSWORD_IS_NOT_SAME));
     },
   });
   const openModal = useCallback((modalType: "sign_in" | "sign_up") => {
@@ -84,7 +85,7 @@ const App_Login: NextPage<App_LoginProps> = (props: any) => {
               label="Username"
               name="username"
               rules={[
-                { required: true, message: "不能为空" },
+                { required: true, message: MESSAGES.COMMON.CANNOT_BE_EMPTY },
                 validateUsername,
               ]}
             >
@@ -98,7 +99,9 @@ const App_Login: NextPage<App_LoginProps> = (props: any) => {
             <Form.Item
               label="Password"
               name="password"
-              rules={[{ required: true, message: "不能为空" }]}
+              rules={[
+                { required: true, message: MESSAGES.COMMON.CANNOT_BE_EMPTY },
+              ]}
             >
               <Input.Password
                 ref={(el) => {
@@ -108,11 +111,14 @@ const App_Login: NextPage<App_LoginProps> = (props: any) => {
             </Form.Item>
             {modalType === "sign_up" && (
               <Form.Item
-                label="确认密码"
+                label={MESSAGES.USER.CONFIRM_PASSWORD}
                 dependencies={["password"]}
                 name="passwordConfirmation"
                 rules={[
-                  { required: true, message: "请确认密码!" },
+                  {
+                    required: true,
+                    message: MESSAGES.USER.RE_CONFIRM_PASSWORD,
+                  },
                   validateConfirmPass,
                 ]}
               >
@@ -141,7 +147,7 @@ const App_Login: NextPage<App_LoginProps> = (props: any) => {
                 .then(async (successData) => {
                   if (modalType === "sign_in") {
                     messageApi.success({
-                      content: "登录成功",
+                      content: MESSAGES.USER.LOGIN_SUCCESS,
                       duration: 1,
                       onClose: () => {
                         storeUser(get(successData, "data"));
@@ -152,7 +158,7 @@ const App_Login: NextPage<App_LoginProps> = (props: any) => {
                     });
                   } else {
                     messageApi.success({
-                      content: "注册成功，即将自动登录",
+                      content: MESSAGES.USER.REGISTER_SUCCESS,
                       duration: 2,
                       onClose: async () => {
                         resolve(true);
@@ -185,10 +191,12 @@ const App_Login: NextPage<App_LoginProps> = (props: any) => {
   return (
     <div className={"tw-flex tw-justify-between tw-items-center"}>
       <Button type="primary" onClick={() => openModal("sign_in")}>
-        登录
+        {MESSAGES.COMMON.SIGN_IN}
       </Button>
       <Divider type="vertical" />
-      <Button onClick={() => openModal("sign_up")}> 注册</Button>
+      <Button onClick={() => openModal("sign_up")}>
+        {MESSAGES.COMMON.SIGN_UP}
+      </Button>
     </div>
   );
 };
@@ -222,7 +230,7 @@ const validateUsername = () => ({
         `/api/v1/user/isDuplicate?username=${value}`
       );
       if (JSON.parse(response.data)) {
-        return Promise.reject(new Error("用户名已存在"));
+        return Promise.reject(new Error(MESSAGES.USER.USERNAME_EXISTS));
       }
     } catch (error) {
       console.error("Username validation error:", error);
