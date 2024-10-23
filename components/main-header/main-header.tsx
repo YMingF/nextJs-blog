@@ -86,13 +86,19 @@ const MainHeader: NextPage = () => {
         className={`${styles.mainHeaderBox} home-header-box tw-flex tw-justify-center `}
       >
         <div
-          className={`${styles.innerWrapper} tw-flex tw-justify-between tw-items-center tw-w-3/4`}
+          className={`${styles.innerWrapper} tw-flex tw-justify-between tw-items-center`}
         >
           <div className="header-banner-left tw-flex tw-items-center">
-            <p className={"tw-cursor-pointer"} onClick={backToHome}>
-              vvv
-            </p>
-            <div>{!isEditMode(routeStatus) && <HeaderNav></HeaderNav>}</div>
+            <img
+              className={`tw-cursor-pointer ${styles.pageLogo}`}
+              src="/assets/pic/logo.svg"
+              alt="logo"
+              onClick={backToHome}
+            />
+
+            <div className="tw-ml-10">
+              {!isEditMode(routeStatus) && <HeaderNav></HeaderNav>}
+            </div>
           </div>
           <div className="header-btns tw-flex tw-items-center tw-gap-5">
             <div className={`${styles.searchBtn}`}>

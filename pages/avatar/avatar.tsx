@@ -8,17 +8,17 @@ import { NextRouter, useRouter } from "next/router";
 import { useCallback } from "react";
 import { useGlobalState } from "../../context/globalStateContext";
 import { useSignIn } from "../../hooks/useSignIn";
-
+import styles from "./avatar.module.scss";
 interface App_Avatar_Props {}
 
 const App_Avatar: NextPage<App_Avatar_Props> = (props) => {
   const { user: userInfo, storeUser } = useGlobalState();
   const { openSignIn } = useSignIn();
   const router = useRouter();
-  const [api, contextHolder] = notification.useNotification();
+  const [noteApi, contextHolder] = notification.useNotification();
 
   const logOut = useCallback(() => {
-    api.destroy("logout");
+    noteApi.destroy("logout");
     storeUser(null);
     axios.post("/api/v1/logout");
   }, []);
@@ -27,7 +27,7 @@ const App_Avatar: NextPage<App_Avatar_Props> = (props) => {
     const key = `open${Date.now()}`;
     const btn = (
       <Space>
-        <Button type="link" size="small" onClick={() => api.destroy()}>
+        <Button type="link" size="small" onClick={() => noteApi.destroy()}>
           取消
         </Button>
         <Button type="primary" size="small" onClick={() => logOut()}>
@@ -35,7 +35,7 @@ const App_Avatar: NextPage<App_Avatar_Props> = (props) => {
         </Button>
       </Space>
     );
-    api.warning({
+    noteApi.warning({
       message: "注意",
       description: "确定要退出？",
       placement: "top",
@@ -48,7 +48,7 @@ const App_Avatar: NextPage<App_Avatar_Props> = (props) => {
     <Card
       title={"账号：" + userInfo?.username}
       bordered={false}
-      className={"tw-px-12"}
+      className={`tw-px-12 ${styles.avatarCard}`}
     >
       <div className={"tw-flex tw-flex-col tw-gap-5"}>
         <Button
@@ -68,7 +68,7 @@ const App_Avatar: NextPage<App_Avatar_Props> = (props) => {
     </Card>
   );
   return (
-    <div className={"avatar-box "}>
+    <div className={`${styles.avatarBox}`}>
       {contextHolder}
       <Popover
         content={content}

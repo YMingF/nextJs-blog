@@ -1,4 +1,4 @@
-.mainHeaderBox{
+.mainHeaderBox {
   background: #fff;
   box-shadow: 0 2px 8px #f2f3f5;
   color: #909090;
@@ -9,12 +9,14 @@
   left: 0;
   right: 0;
   transition: all linear 0.3s;
-  .innerWrapper{
-    .navigation{
-      
-    }
+  .innerWrapper {
+    width: 85%;
   }
-  .searchBtn :global(.ant-input-affix-wrapper:focus-within){
+  .searchBtn :global(.ant-input-affix-wrapper:focus-within) {
     box-shadow: none;
+  }
+  .pageLogo {
+    width: 15%;
+    height: 15%;
   }
 }
