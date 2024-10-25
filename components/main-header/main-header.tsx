@@ -1,5 +1,6 @@
+import { expressApi } from "@/utils/api";
 import { FormOutlined } from "@ant-design/icons";
-import { Button, Input, message } from "antd";
+import { Button, Input, message, Select } from "antd";
 import axios from "axios";
 import { NextPage } from "next";
 import { usePathname } from "next/navigation";
@@ -56,9 +57,15 @@ const MainHeader: NextPage = () => {
   }, [pathname]);
 
   const onSearch = (value: any, _e: any, info: { source: any }) => {
-    axios.post(`/api/v1/search_api/search?content=${value}`).then((data) => {
-      eventEmitter.emit("searchFilterDataChanged", data);
-    });
+    if (searchType === "users") {
+      expressApi.post(`/filterUser`, { username: value }).then(({ data }) => {
+        // todo 处理用户的搜索结果，需要新建一个组件展示搜索到的用户结果。
+      });
+    } else {
+      axios.post(`/api/v1/search_api/search?content=${value}`).then((data) => {
+        eventEmitter.emit("searchFilterDataChanged", data);
+      });
+    }
   };
 
   useEffect(() => {
@@ -78,6 +85,10 @@ const MainHeader: NextPage = () => {
       setPreviousScrollTop(scrollTop);
     };
   }, [prevScrollTop]);
+  const [searchType, setSearchType] = useState("posts");
+  const handleTypeChange = (value: string) => {
+    setSearchType(value);
+  };
 
   return (
     <>
@@ -103,13 +114,23 @@ const MainHeader: NextPage = () => {
           <div className="header-btns tw-flex tw-items-center tw-gap-5">
             <div className={`${styles.searchBtn}`}>
               {!isEditMode(routeStatus) && routeStatus !== "detailPost" && (
-                <Search
-                  placeholder="请输入搜索内容"
-                  size="middle"
-                  allowClear
-                  onSearch={onSearch}
-                  enterButton
-                />
+                <div className="tw-flex tw-items-center tw-gap-1">
+                  <Select
+                    defaultValue={searchType}
+                    onChange={handleTypeChange}
+                    options={[
+                      { value: "posts", label: "文章" },
+                      { value: "users", label: "用户" },
+                    ]}
+                  />
+                  <Search
+                    placeholder="请输入搜索内容"
+                    size="middle"
+                    allowClear
+                    onSearch={onSearch}
+                    enterButton
+                  />
+                </div>
               )}
             </div>
             <div className={"write-btn"}>
