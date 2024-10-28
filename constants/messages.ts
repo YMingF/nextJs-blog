@@ -35,6 +35,7 @@ export const MESSAGES = {
     UPDATE_ERROR: "更新失败",
   },
   USER: {
+    TITLE: "用户",
     CONFIRM_PASSWORD: "确认密码",
     RE_CONFIRM_PASSWORD: "请确认密码!",
     LOGIN_SUCCESS: "登录成功",

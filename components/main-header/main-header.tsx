@@ -1,12 +1,9 @@
-import { MESSAGES } from "@/constants/messages";
-import { expressApi } from "@/utils/api";
-import { FormOutlined } from "@ant-design/icons";
-import { Button, Input, message, Select } from "antd";
-import axios from "axios";
+import { FormOutlined, SearchOutlined } from "@ant-design/icons";
+import { Button, Input, message } from "antd";
 import { NextPage } from "next";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useGlobalState } from "../../context/globalStateContext";
 import eventEmitter from "../../emitter/eventEmitter";
 import App_Avatar from "../../pages/avatar/avatar";
@@ -59,29 +56,12 @@ const MainHeader: NextPage = () => {
 
   const onSearch = (value: any, _e: any, info: { source: any }) => {
     if (!value && info.source !== "clear") {
-      setSearchBoxInvalid(true);
       return;
     }
-    setSearchBoxInvalid(false);
-    if (searchType === "users") {
-      expressApi.post(`/filterUser`, { username: value }).then(({ data }) => {
-        // todo 处理用户的搜索结果，需要新建一个组件展示搜索到的用户结果。
-      });
-    } else {
-      axios.post(`/api/v1/search_api/search?content=${value}`).then((data) => {
-        eventEmitter.emit("searchFilterDataChanged", data);
-      });
-    }
+    router.push(`/search?q=${value}&type=posts`);
   };
   const handleSearchChange = (e: any) => {
-    if (e.target.value && searchBoxInvalid) {
-      if (debounceTimer.current) {
-        clearTimeout(debounceTimer.current);
-      }
-      debounceTimer.current = setTimeout(() => {
-        setSearchBoxInvalid(false);
-      }, 200);
-    }
+    setSearchValue(e.target.value);
   };
   useEffect(() => {
     window.onscroll = function () {
@@ -100,12 +80,7 @@ const MainHeader: NextPage = () => {
       setPreviousScrollTop(scrollTop);
     };
   }, [prevScrollTop]);
-  const [searchType, setSearchType] = useState("posts");
-  const handleTypeChange = (value: string) => {
-    setSearchType(value);
-  };
-  const [searchBoxInvalid, setSearchBoxInvalid] = useState(false);
-  const debounceTimer = useRef<NodeJS.Timeout>(); // Move this here
+  const [searchValue, setSearchValue] = useState("");
 
   return (
     <>
@@ -131,29 +106,22 @@ const MainHeader: NextPage = () => {
             <div className={`${styles.searchBtn}`}>
               {!isEditMode(routeStatus) && routeStatus !== "detailPost" && (
                 <div className="tw-flex tw-items-start tw-gap-1">
-                  <Select
-                    defaultValue={searchType}
-                    onChange={handleTypeChange}
-                    options={[
-                      { value: "posts", label: "文章" },
-                      { value: "users", label: "用户" },
-                    ]}
-                  />
                   <div className="tw-flex tw-flex-col tw-gap-1">
                     <Search
                       placeholder="请输入搜索内容"
                       size="middle"
                       allowClear
+                      value={searchValue}
                       onSearch={onSearch}
-                      status={searchBoxInvalid ? "error" : ""}
                       onChange={handleSearchChange}
-                      enterButton
+                      enterButton={
+                        <Button
+                          type="primary"
+                          disabled={!searchValue}
+                          icon={<SearchOutlined />}
+                        ></Button>
+                      }
                     />
-                    {searchBoxInvalid && (
-                      <div className="tw-text-red-500 tw-text-xs">
-                        {MESSAGES.ERRORS.FIELD_CANNOT_BE_EMPTY}
-                      </div>
-                    )}
                   </div>
                 </div>
               )}
