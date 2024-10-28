@@ -1,3 +1,4 @@
+import { MESSAGES } from "@/constants/messages";
 import { expressApi } from "@/utils/api";
 import { FormOutlined } from "@ant-design/icons";
 import { Button, Input, message, Select } from "antd";
@@ -5,7 +6,7 @@ import axios from "axios";
 import { NextPage } from "next";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useGlobalState } from "../../context/globalStateContext";
 import eventEmitter from "../../emitter/eventEmitter";
 import App_Avatar from "../../pages/avatar/avatar";
@@ -57,6 +58,11 @@ const MainHeader: NextPage = () => {
   }, [pathname]);
 
   const onSearch = (value: any, _e: any, info: { source: any }) => {
+    if (!value && info.source !== "clear") {
+      setSearchBoxInvalid(true);
+      return;
+    }
+    setSearchBoxInvalid(false);
     if (searchType === "users") {
       expressApi.post(`/filterUser`, { username: value }).then(({ data }) => {
         // todo 处理用户的搜索结果，需要新建一个组件展示搜索到的用户结果。
@@ -67,7 +73,16 @@ const MainHeader: NextPage = () => {
       });
     }
   };
-
+  const handleSearchChange = (e: any) => {
+    if (e.target.value && searchBoxInvalid) {
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
+      }
+      debounceTimer.current = setTimeout(() => {
+        setSearchBoxInvalid(false);
+      }, 200);
+    }
+  };
   useEffect(() => {
     window.onscroll = function () {
       let navbar = document.querySelector(".home-header-box") as HTMLElement;
@@ -89,6 +104,8 @@ const MainHeader: NextPage = () => {
   const handleTypeChange = (value: string) => {
     setSearchType(value);
   };
+  const [searchBoxInvalid, setSearchBoxInvalid] = useState(false);
+  const debounceTimer = useRef<NodeJS.Timeout>(); // Move this here
 
   return (
     <>
@@ -101,12 +118,11 @@ const MainHeader: NextPage = () => {
         >
           <div className="header-banner-left tw-flex tw-items-center">
             <img
-              className={`tw-cursor-pointer ${styles.pageLogo}`}
               src="/assets/pic/logo.svg"
               alt="logo"
+              className={`tw-cursor-pointer ${styles.pageLogo}`}
               onClick={backToHome}
             />
-
             <div className="tw-ml-10">
               {!isEditMode(routeStatus) && <HeaderNav></HeaderNav>}
             </div>
@@ -114,7 +130,7 @@ const MainHeader: NextPage = () => {
           <div className="header-btns tw-flex tw-items-center tw-gap-5">
             <div className={`${styles.searchBtn}`}>
               {!isEditMode(routeStatus) && routeStatus !== "detailPost" && (
-                <div className="tw-flex tw-items-center tw-gap-1">
+                <div className="tw-flex tw-items-start tw-gap-1">
                   <Select
                     defaultValue={searchType}
                     onChange={handleTypeChange}
@@ -123,13 +139,22 @@ const MainHeader: NextPage = () => {
                       { value: "users", label: "用户" },
                     ]}
                   />
-                  <Search
-                    placeholder="请输入搜索内容"
-                    size="middle"
-                    allowClear
-                    onSearch={onSearch}
-                    enterButton
-                  />
+                  <div className="tw-flex tw-flex-col tw-gap-1">
+                    <Search
+                      placeholder="请输入搜索内容"
+                      size="middle"
+                      allowClear
+                      onSearch={onSearch}
+                      status={searchBoxInvalid ? "error" : ""}
+                      onChange={handleSearchChange}
+                      enterButton
+                    />
+                    {searchBoxInvalid && (
+                      <div className="tw-text-red-500 tw-text-xs">
+                        {MESSAGES.ERRORS.FIELD_CANNOT_BE_EMPTY}
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
