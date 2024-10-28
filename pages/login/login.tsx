@@ -65,6 +65,22 @@ const App_Login: NextPage<LoginProps> = (props: any) => {
       return Promise.reject(new Error(MESSAGES.ERRORS.PASSWORD_IS_NOT_SAME));
     },
   });
+  const handleModalOk = async () => {
+    try {
+      await form.validateFields();
+      await handleLoginConfirm(
+        form,
+        activeModelType,
+        messageApi,
+        storeUser,
+        setServerErrors
+      );
+    } catch (err) {
+      focusErrorField();
+      throw new Error(MESSAGES.ERRORS.SERVER_ERROR);
+    }
+  };
+
   const openModal = useCallback((modalType: "sign_in" | "sign_up") => {
     activeModelType = modalType;
     Modal.confirm({
@@ -139,56 +155,7 @@ const App_Login: NextPage<LoginProps> = (props: any) => {
       onCancel() {
         form.resetFields();
       },
-      onOk: () => {
-        return new Promise((resolve, reject) => {
-          form
-            .validateFields()
-            .then(() => {
-              const formData = form.getFieldsValue();
-              const api = modalType === "sign_in" ? "sessions" : "users";
-              axios
-                .post(`/api/v1/${api}`, formData)
-                .then(async (successData) => {
-                  if (modalType === "sign_in") {
-                    messageApi.success({
-                      content: MESSAGES.USER.LOGIN_SUCCESS,
-                      duration: 1,
-                      onClose: () => {
-                        storeUser(get(successData, "data"));
-                        resolve(true);
-                        setServerErrors({});
-                        form.resetFields();
-                      },
-                    });
-                  } else {
-                    messageApi.success({
-                      content: MESSAGES.USER.REGISTER_SUCCESS,
-                      duration: 2,
-                      onClose: async () => {
-                        resolve(true);
-                        storeUser(get(successData, "data"));
-                        await handleSignIn({
-                          username: formData.username,
-                          password: formData.password,
-                        });
-                        setServerErrors({});
-                        form.resetFields();
-                      },
-                    });
-                  }
-                })
-                .catch((errors) => {
-                  const { response } = errors || {};
-                  setServerErrors(get(response, "data", {}));
-                  reject(true);
-                });
-            })
-            .catch((errs) => {
-              focusErrorField();
-              reject(true);
-            });
-        });
-      },
+      onOk: handleModalOk,
     });
   }, []);
 
@@ -205,6 +172,53 @@ const App_Login: NextPage<LoginProps> = (props: any) => {
   );
 };
 export default App_Login;
+
+async function handleLoginConfirm(
+  form: FormInstance<any>,
+  modalType: string,
+  messageApi: any,
+  storeUser: any,
+  setServerErrors: any
+) {
+  const formData = form.getFieldsValue();
+  const api = modalType === "sign_in" ? "sessions" : "users";
+
+  try {
+    const successData = await axios.post(`/api/v1/${api}`, formData);
+
+    if (modalType === "sign_in") {
+      await showSuccessMessage(messageApi, MESSAGES.USER.LOGIN_SUCCESS);
+      storeUser(get(successData, "data"));
+    } else {
+      await showSuccessMessage(messageApi, MESSAGES.USER.REGISTER_SUCCESS);
+      storeUser(get(successData, "data"));
+      await handleSignIn({
+        username: formData.username,
+        password: formData.password,
+      });
+    }
+
+    setServerErrors({});
+    form.resetFields();
+    return true;
+  } catch (errors) {
+    const { response } = errors || {};
+    setServerErrors(get(response, "data", {}));
+    throw new Error(MESSAGES.ERRORS.SERVER_ERROR);
+  }
+}
+
+// Helper function for showing messages
+function showSuccessMessage(messageApi: any, content: string): Promise<void> {
+  return new Promise((resolve) => {
+    messageApi.success({
+      content,
+      duration: 1,
+      onClose: resolve,
+    });
+  });
+}
+
 export function updateErrors(
   serverErrors: { [p: string]: string[] },
   form: FormInstance<any>
