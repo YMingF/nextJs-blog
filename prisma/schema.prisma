@@ -17,12 +17,16 @@ datasource db {
 model User {
   id             Int       @id @default(autoincrement())
   username       String    @unique
-  password String
+  password       String
   uuid           String    @unique
+  followersCount Int       @default(0)
+  followingCount Int       @default(0)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   posts          Post[]   @relation("UserPosts")
   comments       Comment[] @relation("UserComments")
+  following      Follow[]  @relation("UserFollowing")
+  followers      Follow[]  @relation("UserFollowers")
 }
 
 model Post {
@@ -49,4 +53,16 @@ model Comment {
   userId    Int
   post      Post     @relation("PostComments", fields: [postId], references: [id], onDelete: Cascade)
   user      User     @relation("UserComments", fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Follow {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  followerId  Int      // 关注人ID
+  followingId Int      // 被关注人ID
+  follower    User     @relation("UserFollowing", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("UserFollowers", fields: [followingId], references: [id], onDelete: Cascade)
+  @@unique([followerId, followingId])  // 防止重复关注
+  @@index([followerId])
+  @@index([followingId])
 }

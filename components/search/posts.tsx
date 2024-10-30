@@ -13,6 +13,7 @@ const SearchPosts: NextPage<Props> = () => {
   const [prevQuery, setPrevQuery] = useState("");
   useEffect(() => {
     const fetchPosts = async () => {
+      // 有内容的时候，再去调接口搜索。避免筛选出全部的文章
       if (router.query?.q && router.query.q !== prevQuery) {
         const encodedQuery = router.query.q as string;
         const res = await axios.get(
