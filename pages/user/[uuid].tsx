@@ -2,7 +2,8 @@ import ArticleList from "@/components/user/article.list";
 import { KeyValMap } from "@/constants/common-type";
 import { MESSAGES } from "@/constants/messages";
 import { globalPrisma } from "@/utils/prisma.utils";
-import { Tabs } from "antd";
+import { Button, Tabs } from "antd";
+import BoringAvatars from "boring-avatars";
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
 import { useRouter } from "next/router";
 import { withSession } from "../../lib/withSession";
@@ -11,10 +12,11 @@ import styles from "./styles/userDetail.module.scss";
 
 type Props = {
   posts: KeyValMap;
+  userInfo: KeyValMap;
 };
 
 const userDetailPage: NextPage<Props> = (props) => {
-  const { posts } = props;
+  const { posts, userInfo } = props;
   const router = useRouter();
 
   useUserChangeListener(router);
@@ -28,12 +30,30 @@ const userDetailPage: NextPage<Props> = (props) => {
   ];
 
   return (
-    <div className={`${styles.userDetailBox} tw-mx-auto`}>
-      <Tabs
-        defaultActiveKey="posts"
-        items={userDetailTabs}
-        onChange={onTabChange}
-      />
+    <div className={`tw-flex tw-gap-4 ${styles.userDetailBox}  tw-mx-auto`}>
+      <div className={`${styles.userDetailTabs}`}>
+        <Tabs
+          defaultActiveKey="posts"
+          items={userDetailTabs}
+          onChange={onTabChange}
+        />
+      </div>
+      <div className={`${styles.userDetailInfo}`}>
+        <div className="tw-flex tw-gap-2 tw-w-fit">
+          <BoringAvatars
+            size={40}
+            name={userInfo?.id?.toString()}
+          ></BoringAvatars>
+          <span className="tw-text-center">{userInfo?.username}</span>
+        </div>
+        {/* 操作按钮 */}
+        <div className="tw-flex tw-gap-2">
+          <Button type="primary">关注</Button>
+          <Button>私信</Button>
+        </div>
+        {/* 关注列表 */}
+        <div>Ta 关注的</div>
+      </div>
     </div>
   );
 };
@@ -47,6 +67,9 @@ export const getServerSideProps: GetServerSideProps = withSession(
       where: { User: { uuid: String(uuid) } },
       include: { User: true },
     });
+    const userInfo = await globalPrisma.user.findUnique({
+      where: { uuid: String(uuid) },
+    });
     let postData = JSON.parse(JSON.stringify(posts));
     for (const element of postData) {
       const post: KeyValMap = element;
@@ -58,6 +81,7 @@ export const getServerSideProps: GetServerSideProps = withSession(
     return {
       props: {
         posts: postData,
+        userInfo: JSON.parse(JSON.stringify(userInfo)),
       },
     };
   }

@@ -1,7 +1,10 @@
+.postWrapper {
+  border-bottom: 1px solid #e8e8e8;
+  .subInfo {
+    color: #6b6b6b;
+  }
+}
 .postTitle {
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 24px;
   color: #252933;
   width: 100%;
   display: -webkit-box;
@@ -15,8 +18,5 @@
   color: #8a919f;
 }
 .postCard {
-  //   padding: 12px 20px 0;
-  background: #f9f9f9;
-  border-radius: 6px;
-  padding: 20px;
+  padding: 20px 10px;
 }

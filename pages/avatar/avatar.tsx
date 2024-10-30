@@ -87,6 +87,6 @@ const App_Avatar: NextPage<App_Avatar_Props> = (props) => {
 };
 export default App_Avatar;
 
-function navigateToUser(userInfo: KeyValMap, router: NextRouter) {
+export const navigateToUser = (userInfo: KeyValMap, router: NextRouter) => {
   router.push(`/user/${userInfo?.uuid}`);
-}
+};

@@ -2,6 +2,7 @@ import { expressApi } from "@/utils/api";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import UserProfile from "./userProfile";
 
 interface Props {
   // Define your props here
@@ -28,7 +29,7 @@ const SearchUsers: NextPage<Props> = () => {
   return (
     <div>
       {users.map((item) => (
-        <div key={item.uuid}>{item.username}</div>
+        <UserProfile key={item.uuid} userData={item} />
       ))}
     </div>
   );
