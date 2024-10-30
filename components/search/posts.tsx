@@ -1,4 +1,5 @@
 import { Empty } from "antd";
+import axios from "axios";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -12,16 +13,18 @@ const SearchPosts: NextPage<Props> = () => {
   const [prevQuery, setPrevQuery] = useState("");
   useEffect(() => {
     const fetchPosts = async () => {
-      if (router.query?.q !== prevQuery) {
+      if (router.query?.q && router.query.q !== prevQuery) {
         const encodedQuery = router.query.q as string;
-        const res = await fetch(`/api/v1/search_api/search?q=${encodedQuery}`);
-        const data = await res.json();
+        const res = await axios.get(
+          `/api/v1/search_api/search?q=${encodedQuery}`
+        );
+        const data = res.data;
         setPostsData(data || []);
         setPrevQuery(router.query.q as string);
       }
     };
     fetchPosts();
-  }, []);
+  }, [router.query.q, prevQuery]);
   return (
     <div>
       {postsData?.length > 0 ? (

@@ -12,10 +12,24 @@ const Search = async (req: NextApiRequest, res: NextApiResponse) => {
     searchRes = await globalPrisma.post.findMany({
       where: {
         OR: [
-          { content: { contains: queryContent, mode: "insensitive" } },
-          { title: { contains: queryContent, mode: "insensitive" } },
+          {
+            content: {
+              contains: queryContent,
+              mode: "insensitive",
+              not: {
+                contains: "data:image",
+              },
+            },
+          },
+          {
+            title: {
+              contains: queryContent,
+              mode: "insensitive",
+            },
+          },
         ],
       },
+      take: 20,
     });
   }
 
