@@ -47,12 +47,19 @@ const userDetailPage: NextPage<Props> = (props) => {
           <span className="tw-text-center">{userInfo?.username}</span>
         </div>
         {/* 操作按钮 */}
-        <div className="tw-flex tw-gap-2">
+        <div className="tw-flex tw-gap-2 tw-mt-3">
           <Button type="primary">关注</Button>
           <Button>私信</Button>
         </div>
         {/* 关注列表 */}
-        <div>Ta 关注的</div>
+        <div className={`${styles.followListBox} tw-flex tw-flex-col tw-gap-2`}>
+          <p className="tw-text-xs tw-text-slate-800 tw-leading-5 tw-font-medium">
+            Ta 关注的
+          </p>
+          <div
+            className={`${styles.followList} tw-flex tw-flex-wrap tw-gap-2`}
+          ></div>
+        </div>
       </div>
     </div>
   );

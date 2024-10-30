@@ -4,7 +4,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 const Search = async (req: NextApiRequest, res: NextApiResponse) => {
   let searchRes = [];
-  const queryContent = get(req, "query.q", "").toString();
+  const queryContent = decodeURIComponent(get(req, "query.q", "").toString());
 
   if (!queryContent) {
     searchRes = await globalPrisma.post.findMany();

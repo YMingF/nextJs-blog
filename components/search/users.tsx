@@ -1,4 +1,5 @@
 import { expressApi } from "@/utils/api";
+import { Empty } from "antd";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -15,7 +16,7 @@ const SearchUsers: NextPage<Props> = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       if (router.query?.q !== prevQuery) {
-        const encodedQuery = encodeURIComponent(router.query.q as string);
+        const encodedQuery = decodeURIComponent(router.query.q as string);
         const res = await expressApi.post(`/filterUser`, {
           username: encodedQuery,
         });
@@ -27,11 +28,17 @@ const SearchUsers: NextPage<Props> = () => {
   }, [router.query.q, router.query.type, prevQuery]);
 
   return (
-    <div>
-      {users.map((item) => (
-        <UserProfile key={item.uuid} userData={item} />
-      ))}
-    </div>
+    <>
+      {users?.length > 0 ? (
+        <div>
+          {users.map((item) => (
+            <UserProfile key={item.uuid} userData={item} />
+          ))}
+        </div>
+      ) : (
+        <Empty description="暂无数据" />
+      )}
+    </>
   );
 };
 

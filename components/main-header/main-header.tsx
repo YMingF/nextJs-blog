@@ -55,10 +55,8 @@ const MainHeader: NextPage = () => {
   }, [pathname]);
 
   const onSearch = (value: any, _e: any, info: { source: any }) => {
-    if (!value && info.source !== "clear") {
-      return;
-    }
-    router.push(`/search?q=${value}&type=posts`);
+    const encodedValue = encodeURIComponent(value);
+    router.push(`/search?q=${encodedValue}&type=posts`);
   };
   const handleSearchChange = (e: any) => {
     setSearchValue(e.target.value);

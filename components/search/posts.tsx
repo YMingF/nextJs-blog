@@ -1,3 +1,4 @@
+import { Empty } from "antd";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -12,7 +13,7 @@ const SearchPosts: NextPage<Props> = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       if (router.query?.q !== prevQuery) {
-        const encodedQuery = encodeURIComponent(router.query.q as string);
+        const encodedQuery = router.query.q as string;
         const res = await fetch(`/api/v1/search_api/search?q=${encodedQuery}`);
         const data = await res.json();
         setPostsData(data || []);
@@ -23,7 +24,11 @@ const SearchPosts: NextPage<Props> = () => {
   }, []);
   return (
     <div>
-      <ArticleList posts={postsData} />
+      {postsData?.length > 0 ? (
+        <ArticleList posts={postsData} />
+      ) : (
+        <Empty description="暂无数据" />
+      )}
     </div>
   );
 };
