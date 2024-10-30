@@ -14,6 +14,7 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { customNextApiRequest } from "../../common-type";
 import { withSession } from "../../lib/withSession";
+import { navigateToUser } from "../avatar/avatar";
 import styles from "./styles/post-detail.module.scss";
 
 type Props = {
@@ -126,12 +127,19 @@ const postsShow: NextPage<Props> = (props) => {
           <div
             className={`${styles.userBaseInfo} tw-flex tw-gap-2.5 tw-items-center`}
           >
-            <BoringAvatars
-              size={20}
-              name={postAuthorInfo?.username}
-            ></BoringAvatars>
-            <p className="tw-text-slate-500 tw-flex tw-gap-2.5 tw-items-center">
-              <span className="tw-text-sm">{postAuthorInfo?.username}</span>
+            <span
+              className={`tw-cursor-pointer ${styles.userAvatar}`}
+              onClick={() => navigateToUser(postAuthorInfo, router)}
+            >
+              <BoringAvatars
+                size={34}
+                name={postAuthorInfo?.id}
+              ></BoringAvatars>
+            </span>
+            <p className="tw-text-slate-500 tw-flex tw-gap-2.5 tw-items-center tw-m-0">
+              <span className="tw-text-sm tw-hover:underline">
+                {postAuthorInfo?.username}
+              </span>
               <span className="tw-text-sm">{formatDate(post?.updatedAt)}</span>
             </p>
           </div>

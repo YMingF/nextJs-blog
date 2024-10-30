@@ -1,6 +1,7 @@
 import ArticleList from "@/components/user/article.list";
 import { KeyValMap } from "@/constants/common-type";
 import { MESSAGES } from "@/constants/messages";
+import { useGlobalState } from "@/context/globalStateContext";
 import { globalPrisma } from "@/utils/prisma.utils";
 import { Button, Tabs } from "antd";
 import BoringAvatars from "boring-avatars";
@@ -18,7 +19,7 @@ type Props = {
 const userDetailPage: NextPage<Props> = (props) => {
   const { posts, userInfo } = props;
   const router = useRouter();
-
+  const { user } = useGlobalState();
   useUserChangeListener(router);
 
   const userDetailTabs = [
@@ -47,10 +48,12 @@ const userDetailPage: NextPage<Props> = (props) => {
           <span className="tw-text-center">{userInfo?.username}</span>
         </div>
         {/* 操作按钮 */}
-        <div className="tw-flex tw-gap-2 tw-mt-3">
-          <Button type="primary">关注</Button>
-          <Button>私信</Button>
-        </div>
+        {user?.id !== userInfo?.id && (
+          <div className="tw-flex tw-gap-2 tw-mt-3">
+            <Button type="primary">关注</Button>
+            <Button>私信</Button>
+          </div>
+        )}
         {/* 关注列表 */}
         <div className={`${styles.followListBox} tw-flex tw-flex-col tw-gap-2`}>
           <p className="tw-text-xs tw-text-slate-800 tw-leading-5 tw-font-medium">
