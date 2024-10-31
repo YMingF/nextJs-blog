@@ -1,4 +1,5 @@
 import { KeyValMap } from "@/constants/common-type";
+import { useLogin } from "@/hooks/useLogin";
 import { UserOutlined } from "@ant-design/icons";
 import { Button, Card, notification, Popover, Space } from "antd";
 import axios from "axios";
@@ -7,13 +8,12 @@ import { NextPage } from "next";
 import { NextRouter, useRouter } from "next/router";
 import { useCallback } from "react";
 import { useGlobalState } from "../../context/globalStateContext";
-import { useSignIn } from "../../hooks/useSignIn";
 import styles from "./avatar.module.scss";
 interface App_Avatar_Props {}
 
 const App_Avatar: NextPage<App_Avatar_Props> = (props) => {
   const { user: userInfo, storeUser } = useGlobalState();
-  const { openSignIn } = useSignIn();
+  const { showAuthModal } = useLogin();
   const router = useRouter();
   const [noteApi, contextHolder] = notification.useNotification();
 
@@ -58,7 +58,7 @@ const App_Avatar: NextPage<App_Avatar_Props> = (props) => {
         >
           个人主页
         </Button>
-        <Button type="text" onClick={openSignIn}>
+        <Button type="text" onClick={() => showAuthModal("sign_in")}>
           切换账户
         </Button>
         <Button type="text" onClick={openLogoutNotification}>
