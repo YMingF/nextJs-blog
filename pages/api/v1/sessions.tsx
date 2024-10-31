@@ -11,9 +11,11 @@ const Sessions = async (req: customNextApiRequest, res: NextApiResponse) => {
   try {
     const user = await prisma.user.findUnique({ where: { username } });
 
-    if (!user || password !== user.password) {
-      res.status(401).json({ error: "用户名或密码不正确" });
-      return;
+    if (!user) {
+      return res.status(404).json({ errorCode: "USER_NOT_FOUND" });
+    }
+    if (password !== user.password) {
+      return res.status(401).json({ errorCode: "PASSWORD_INCORRECT" });
     }
 
     req.session.set("currentUser", { ...user });

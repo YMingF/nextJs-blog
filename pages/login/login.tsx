@@ -65,7 +65,7 @@ const App_Login: NextPage<LoginProps> = (props: any) => {
       return Promise.reject(new Error(MESSAGES.ERRORS.PASSWORD_IS_NOT_SAME));
     },
   });
-  const handleModalOk = async () => {
+  const handleModalOk = async (close: Function) => {
     try {
       await form.validateFields();
       await handleLoginConfirm(
@@ -75,9 +75,10 @@ const App_Login: NextPage<LoginProps> = (props: any) => {
         storeUser,
         setServerErrors
       );
+      close();
     } catch (err) {
       focusErrorField();
-      throw new Error(MESSAGES.ERRORS.SERVER_ERROR);
+      return Promise.reject();
     }
   };
 
@@ -184,14 +185,14 @@ async function handleLoginConfirm(
   const api = modalType === "sign_in" ? "sessions" : "users";
 
   try {
-    const successData = await axios.post(`/api/v1/${api}`, formData);
+    const response = await axios.post(`/api/v1/${api}`, formData);
 
     if (modalType === "sign_in") {
       await showSuccessMessage(messageApi, MESSAGES.USER.LOGIN_SUCCESS);
-      storeUser(get(successData, "data"));
+      storeUser(get(response, "data"));
     } else {
       await showSuccessMessage(messageApi, MESSAGES.USER.REGISTER_SUCCESS);
-      storeUser(get(successData, "data"));
+      storeUser(get(response, "data"));
       await handleSignIn({
         username: formData.username,
         password: formData.password,
@@ -202,9 +203,14 @@ async function handleLoginConfirm(
     form.resetFields();
     return true;
   } catch (errors) {
-    const { response } = errors || {};
-    setServerErrors(get(response, "data", {}));
-    throw new Error(MESSAGES.ERRORS.SERVER_ERROR);
+    const errorCode = get(errors, "response.data.errorCode");
+    // username 和 password 是表单对应的属性名
+    const errorMap = {
+      USER_NOT_FOUND: { username: [MESSAGES.ERRORS.USER_NOT_FOUND] },
+      PASSWORD_INCORRECT: { password: [MESSAGES.ERRORS.PASSWORD_INCORRECT] },
+    } as KeyValMap;
+    setServerErrors(errorMap[errorCode] || {});
+    throw new Error(errorMap[errorCode] || MESSAGES.ERRORS.SERVER_ERROR);
   }
 }
 

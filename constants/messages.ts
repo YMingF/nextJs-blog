@@ -17,6 +17,8 @@ export const MESSAGES = {
     PASSWORD_IS_NOT_SAME: "前后密码不一致",
     SERVER_ERROR: "服务器错误",
     FIELD_CANNOT_BE_EMPTY: "不能为空",
+    USER_NOT_FOUND: "用户不存在",
+    PASSWORD_INCORRECT: "密码不正确",
   },
   DELETE: {
     CONFIRM: "此操作不可逆转，请确认是否继续！",
