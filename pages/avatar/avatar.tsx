@@ -21,6 +21,7 @@ const App_Avatar: NextPage<App_Avatar_Props> = (props) => {
     noteApi.destroy("logout");
     storeUser(null);
     axios.post("/api/v1/logout");
+    router.push("/");
   }, []);
 
   const openLogoutNotification = () => {
