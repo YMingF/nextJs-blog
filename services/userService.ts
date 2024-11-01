@@ -13,4 +13,10 @@ export const userService = {
       followingId,
     });
   },
+  getFollowees: async (followerId: number) => {
+    const res = await expressApi.post("/user/getFollowees", {
+      followerId,
+    });
+    return res.data;
+  },
 };
