@@ -133,7 +133,7 @@ const postsShow: NextPage<Props> = (props) => {
             >
               <BoringAvatars
                 size={34}
-                name={postAuthorInfo?.id}
+                name={postAuthorInfo?.id?.toString()}
               ></BoringAvatars>
             </span>
             <p className="tw-text-slate-500 tw-flex tw-gap-2.5 tw-items-center tw-m-0">

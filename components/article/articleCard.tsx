@@ -63,7 +63,7 @@ const ArticleCard: NextPage<ArticleCardProps> = (props: ArticleCardProps) => {
             <div className="article-meta-user tw-flex tw-items-center tw-gap-2.5 tw-text-xs  tw-text-slate-500">
               <BoringAvatars
                 size={20}
-                name={userId?.toString()}
+                name={userInfo?.[userId]?.id?.toString()}
               ></BoringAvatars>
               <span>{userInfo?.[userId]?.username}</span>
               <p className="tw-flex tw-items-center tw-gap-1">

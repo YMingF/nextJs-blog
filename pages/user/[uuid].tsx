@@ -64,7 +64,10 @@ const userDetailPage: NextPage<Props> = (props) => {
       </div>
       <div className={`${styles.userDetailInfo}`}>
         <div className="tw-flex tw-gap-2 tw-w-fit">
-          <BoringAvatars size={40} name={userInfo?.id}></BoringAvatars>
+          <BoringAvatars
+            size={40}
+            name={userInfo?.id?.toString()}
+          ></BoringAvatars>
           <span className="tw-text-center">{userInfo?.username}</span>
         </div>
         {/* 操作按钮 */}
