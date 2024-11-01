@@ -12,6 +12,7 @@
 ## 技术栈
 
 - **前端框架**: Next.js
+- **后端框架**: Express.js
 - **数据库**: PostgreSQL
 - **ORM**: Prisma
 - **容器化**: Docker
