@@ -13,8 +13,9 @@ import styles from "../styles/index.module.scss";
 const Home: NextPage = (props: any) => {
   const [posts, setPosts] = useState(props.posts || []);
   const { storeUserInfoMap } = useGlobalState();
-  storeUserInfoMap(props.userInfoMapping);
   useEffect(() => {
+    storeUserInfoMap(props.userInfoMapping);
+
     const handleSearchChanged = (data: any) => {
       const articleData = get(data, "data", []);
       setPosts(articleData);
