@@ -1,5 +1,6 @@
 import { customNextApiRequest } from "@/common-type";
 import ArticleList from "@/components/user/article.list";
+import FolloweeList from "@/components/user/followee.list";
 import { KeyValMap } from "@/constants/common-type";
 import { MESSAGES } from "@/constants/messages";
 import { useGlobalState } from "@/context/globalStateContext";
@@ -84,10 +85,11 @@ const userDetailPage: NextPage<Props> = (props) => {
           </div>
         )}
         {/* 关注列表 */}
-        <div className={`${styles.followListBox} tw-flex tw-flex-col tw-gap-2`}>
-          <p className="tw-text-xs tw-text-slate-800 tw-leading-5 tw-font-medium">
+        <div className={`${styles.followListBox} tw-flex tw-flex-col tw-gap-1`}>
+          <h4 className="tw-text-sm tw-text-slate-800 tw-leading-5 tw-font-medium">
             Ta 关注的
-          </p>
+          </h4>
+          <FolloweeList followerId={userInfo.id} />
           <div
             className={`${styles.followList} tw-flex tw-flex-wrap tw-gap-2`}
           ></div>
@@ -113,7 +115,6 @@ export const getServerSideProps: GetServerSideProps = withSession(
     });
 
     let followed = await getIsFollowed(loginedUser, userInfo);
-
     let postData = JSON.parse(JSON.stringify(posts));
     for (const element of postData) {
       const post: KeyValMap = element;

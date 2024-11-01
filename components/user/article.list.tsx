@@ -18,9 +18,8 @@ const ArticleList: NextPage<Props> = (props) => {
   return (
     <div className={`tw-flex tw-flex-col tw-gap-4 ${styles.articleList}`}>
       {postsData.map((post: KeyValMap) => (
-        <div className={styles.postWrapper}>
+        <div key={post.id} className={styles.postWrapper}>
           <div
-            key={post.id}
             className={`${styles.postCard} tw-flex tw-flex-col tw-cursor-pointer `}
             onClick={() => navToPostDetail(post.uuid)}
           >
