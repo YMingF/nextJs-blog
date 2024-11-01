@@ -1,5 +1,12 @@
-.followeeName {
-  &:hover {
-    text-decoration: underline;
+.followeeListBox {
+  .followeeItem {
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+  }
+  .followeeName {
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }

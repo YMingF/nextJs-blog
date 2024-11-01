@@ -4,13 +4,13 @@ import FolloweeList from "@/components/user/followee.list";
 import { KeyValMap } from "@/constants/common-type";
 import { MESSAGES } from "@/constants/messages";
 import { useGlobalState } from "@/context/globalStateContext";
-import { expressApi } from "@/utils/api";
+import { userService } from "@/services/userService";
 import { globalPrisma } from "@/utils/prisma.utils";
-import { Button, Tabs } from "antd";
+import { Button, Skeleton, Tabs } from "antd";
 import BoringAvatars from "boring-avatars";
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { withSession } from "../../lib/withSession";
 import { useUserChangeListener } from "./hooks/useUserChangeListener";
 import styles from "./styles/userDetail.module.scss";
@@ -24,9 +24,16 @@ type Props = {
 const userDetailPage: NextPage<Props> = (props) => {
   const { posts, userInfo, followed } = props;
   const [isFollowing, setIsFollowing] = useState(followed);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const { user } = useGlobalState();
+
   useUserChangeListener(router);
+
+  useEffect(() => {
+    setIsFollowing(followed);
+    setIsLoading(false);
+  }, [followed, router.query.uuid]);
 
   const userDetailTabs = [
     {
@@ -37,17 +44,13 @@ const userDetailPage: NextPage<Props> = (props) => {
   ];
 
   const handleFollow = async (followType: "follow" | "unfollow") => {
-    const reqData = {
-      followerId: user?.id,
-      followingId: userInfo?.id,
-    };
     if (followType === "follow") {
-      const res = await expressApi.post("/user/follow", reqData);
+      const res = await userService.follow(user?.id, userInfo.id);
       if (res.data.success) {
         setIsFollowing(true);
       }
     } else {
-      const res = await expressApi.post("/user/unfollow", reqData);
+      const res = await userService.unfollow(user?.id, userInfo.id);
       if (res.data.success) {
         setIsFollowing(false);
       }
@@ -55,47 +58,57 @@ const userDetailPage: NextPage<Props> = (props) => {
   };
 
   return (
-    <div className={`tw-flex tw-gap-4 ${styles.userDetailBox}  tw-mx-auto`}>
-      <div className={`${styles.userDetailTabs}`}>
-        <Tabs
-          defaultActiveKey="posts"
-          items={userDetailTabs}
-          onChange={onTabChange}
-        />
-      </div>
-      <div className={`${styles.userDetailInfo}`}>
-        <div className="tw-flex tw-gap-2 tw-w-fit">
-          <BoringAvatars
-            size={40}
-            name={userInfo?.id?.toString()}
-          ></BoringAvatars>
-          <span className="tw-text-center">{userInfo?.username}</span>
-        </div>
-        {/* 操作按钮 */}
-        {user?.id !== userInfo?.id && (
-          <div className="tw-flex tw-gap-2 tw-mt-3">
-            {isFollowing ? (
-              <Button onClick={() => handleFollow("unfollow")}>已关注</Button>
-            ) : (
-              <Button type="primary" onClick={() => handleFollow("follow")}>
-                关注
-              </Button>
-            )}
-            <Button>私信</Button>
+    <>
+      {isLoading ? (
+        <Skeleton />
+      ) : (
+        <div className={`tw-flex tw-gap-4 ${styles.userDetailBox}  tw-mx-auto`}>
+          <div className={`${styles.userDetailTabs}`}>
+            <Tabs
+              defaultActiveKey="posts"
+              items={userDetailTabs}
+              onChange={onTabChange}
+            />
           </div>
-        )}
-        {/* 关注列表 */}
-        <div className={`${styles.followListBox} tw-flex tw-flex-col tw-gap-1`}>
-          <h4 className="tw-text-sm tw-text-slate-800 tw-leading-5 tw-font-medium">
-            Ta 关注的
-          </h4>
-          <FolloweeList followerId={userInfo.id} />
-          <div
-            className={`${styles.followList} tw-flex tw-flex-wrap tw-gap-2`}
-          ></div>
+          <div className={`${styles.userDetailInfo}`}>
+            <div className="tw-flex tw-gap-2 tw-w-fit">
+              <BoringAvatars
+                size={40}
+                name={userInfo?.id?.toString()}
+              ></BoringAvatars>
+              <span className="tw-text-center">{userInfo?.username}</span>
+            </div>
+            {/* 操作按钮 */}
+            {user?.id !== userInfo?.id && !isLoading && (
+              <div className="tw-flex tw-gap-2 tw-mt-3">
+                {isFollowing ? (
+                  <Button onClick={() => handleFollow("unfollow")}>
+                    已关注
+                  </Button>
+                ) : (
+                  <Button type="primary" onClick={() => handleFollow("follow")}>
+                    关注
+                  </Button>
+                )}
+                <Button>私信</Button>
+              </div>
+            )}
+            {/* 关注列表 */}
+            <div
+              className={`${styles.followListBox} tw-flex tw-flex-col tw-gap-1`}
+            >
+              <h4 className="tw-text-sm tw-text-slate-800 tw-leading-5 tw-font-medium">
+                Ta 关注的
+              </h4>
+              <FolloweeList followerId={userInfo.id} />
+              <div
+                className={`${styles.followList} tw-flex tw-flex-wrap tw-gap-2`}
+              ></div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 
