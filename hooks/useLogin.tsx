@@ -65,7 +65,7 @@ export function useLogin() {
       closable: true,
       centered: true,
       okText: titleMap[modalType],
-      cancelText: null,
+      cancelText: MESSAGES.COMMON.CANCEL,
       content: (
         <>
           {contextHolder}
@@ -79,7 +79,7 @@ export function useLogin() {
             autoComplete="off"
           >
             <Form.Item
-              label="Username"
+              label={MESSAGES.USER.USERNAME}
               name="username"
               rules={[
                 { required: true, message: MESSAGES.COMMON.CANNOT_BE_EMPTY },
@@ -94,7 +94,7 @@ export function useLogin() {
             </Form.Item>
 
             <Form.Item
-              label="Password"
+              label={MESSAGES.USER.PASSWORD}
               name="password"
               rules={[
                 { required: true, message: MESSAGES.COMMON.CANNOT_BE_EMPTY },

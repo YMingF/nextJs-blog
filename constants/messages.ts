@@ -43,5 +43,7 @@ export const MESSAGES = {
     LOGIN_SUCCESS: "登录成功",
     REGISTER_SUCCESS: "注册成功，即将自动登录",
     USERNAME_EXISTS: "用户名已存在",
+    USERNAME: "用户名",
+    PASSWORD: "密码",
   },
 };
